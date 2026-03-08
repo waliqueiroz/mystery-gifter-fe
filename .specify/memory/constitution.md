@@ -1,21 +1,22 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: [unversioned template] → 1.0.0
-Modified principles: N/A (initial adoption)
-Added sections:
-  - Core Principles (5 principles)
-  - Frontend Standards
-  - Development Workflow
-  - Governance
-Removed sections: N/A (initial adoption)
+Version change: 1.0.0 → 1.1.0
+Modified principles: N/A
+Modified sections:
+  - Development Workflow: step 1 replaced (branch naming: ###-short-description → Gitflow)
+  - Development Workflow: step 6 expanded (Conventional Commits — types enumerated explicitly)
+Added sections: N/A
+Removed sections: N/A
 Templates updated:
   ✅ .specify/memory/constitution.md (this file)
-  ✅ .specify/templates/tasks-template.md (tests note updated: OPTIONAL → MANDATORY for components)
-  ⚠ .specify/templates/plan-template.md (Constitution Check gates should reference these 5 principles)
-  ⚠ .specify/templates/spec-template.md (Success Criteria should include performance and UX criteria)
+  ⚠ .specify/templates/tasks-template.md — branch naming examples still use ###-short-description;
+      update to feature/###-short-description when the speckit scripts are updated.
+  ⚠ speckit create-new-feature.sh — branch prefix (feature/) not yet added by the script;
+      manual adjustment required when creating branches until script is patched.
 Follow-up TODOs:
-  - None: all placeholders resolved.
+  - Update .specify/scripts/bash/create-new-feature.sh to prepend `feature/` prefix to generated
+    branch names, or support a --type flag (feature|fix|hotfix|release).
 -->
 
 # Mystery Gifter Frontend Constitution
@@ -134,22 +135,56 @@ for developers already familiar with the Next.js ecosystem.
 
 ## Development Workflow
 
-1. **Branch per feature**: every feature or fix lives on a dedicated branch following the
-   naming convention `###-short-description` (e.g., `001-gift-selection`).
+1. **Branch naming — Gitflow (NON-NEGOTIABLE)**: All branches MUST follow the Gitflow
+   naming convention. Branches NOT conforming to this pattern MUST NOT be merged.
+
+   | Branch type | Pattern | Purpose |
+   |-------------|---------|---------|
+   | Feature | `feature/###-short-description` | New functionality (e.g., `feature/001-gift-selection`) |
+   | Bug fix | `fix/###-short-description` | Non-critical defect corrections (e.g., `fix/002-login-redirect`) |
+   | Hotfix | `hotfix/###-short-description` | Critical production fixes (e.g., `hotfix/003-auth-crash`) |
+   | Release | `release/x.y.z` | Release preparation (e.g., `release/1.0.0`) |
+   | Integration | `develop` | Ongoing integration target; all feature/fix branches merge here |
+   | Production | `main` | Stable production branch; only release and hotfix branches merge here |
+
 2. **Spec before code**: a spec.md MUST exist before implementation begins for any
    non-trivial feature.
+
 3. **Tests alongside implementation**: unit tests MUST be committed in the same PR as the
    component implementation — not as a follow-up.
+
 4. **PR checklist**: before requesting review, the author MUST verify:
    - All unit tests pass locally (`npm test`).
    - Lint and type-check pass (`npm run lint && npm run type-check`).
    - Build succeeds (`npm run build`).
    - No console errors or warnings introduced.
    - Accessibility spot-check performed (keyboard navigation, color contrast).
+
 5. **Review requirements**: at least one approval required before merge; reviewer MUST
    verify constitution compliance, not just functional correctness.
-6. **Commit hygiene**: commits MUST follow Conventional Commits format
-   (`feat:`, `fix:`, `chore:`, `test:`, `docs:`, etc.).
+
+6. **Commit message format — Conventional Commits (NON-NEGOTIABLE)**: Every commit MUST
+   follow the Conventional Commits specification (`type(scope): description`). Commits
+   not conforming to this format MUST be rejected by the pre-commit hook or CI.
+
+   Allowed types:
+
+   | Type | When to use |
+   |------|-------------|
+   | `feat` | A new feature or user-visible behavior |
+   | `fix` | A bug fix |
+   | `test` | Adding or correcting tests |
+   | `refactor` | Code change with no functional effect |
+   | `style` | Formatting, whitespace, missing semicolons (no logic change) |
+   | `chore` | Tooling, config, dependency updates |
+   | `docs` | Documentation only |
+   | `perf` | Performance improvements |
+   | `ci` | CI/CD pipeline changes |
+   | `build` | Build system or external dependency changes |
+   | `revert` | Reverts a previous commit |
+
+   Breaking changes MUST append `!` after the type (e.g., `feat!: redesign auth flow`) and
+   include a `BREAKING CHANGE:` footer explaining the impact.
 
 ## Governance
 
@@ -173,4 +208,4 @@ conventions in the mystery-gifter-fe project.
 explicit justification documented in the Complexity Tracking table of the relevant plan.md
 before they may be merged.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
+**Version**: 1.1.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
