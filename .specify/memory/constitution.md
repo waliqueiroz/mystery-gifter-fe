@@ -1,22 +1,23 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.0.0 → 1.1.0
+Version change: 1.1.0 → 1.1.1
 Modified principles: N/A
 Modified sections:
-  - Development Workflow: step 1 replaced (branch naming: ###-short-description → Gitflow)
-  - Development Workflow: step 6 expanded (Conventional Commits — types enumerated explicitly)
+  - Development Workflow: step 7 added (SPECIFY_FEATURE env var — Gitflow/speckit compatibility)
 Added sections: N/A
 Removed sections: N/A
 Templates updated:
   ✅ .specify/memory/constitution.md (this file)
   ⚠ .specify/templates/tasks-template.md — branch naming examples still use ###-short-description;
       update to feature/###-short-description when the speckit scripts are updated.
-  ⚠ speckit create-new-feature.sh — branch prefix (feature/) not yet added by the script;
-      manual adjustment required when creating branches until script is patched.
+  ⚠ .specify/scripts/bash/create-new-feature.sh — branch prefix (feature/) not yet added by the
+      script; manual adjustment required when creating branches until script is patched.
 Follow-up TODOs:
   - Update .specify/scripts/bash/create-new-feature.sh to prepend `feature/` prefix to generated
     branch names, or support a --type flag (feature|fix|hotfix|release).
+  - Long-term: update .specify/scripts/bash/common.sh check_feature_branch() to recognize Gitflow
+    prefixes (feature/, fix/, hotfix/) natively, eliminating the need for SPECIFY_FEATURE.
 -->
 
 # Mystery Gifter Frontend Constitution
@@ -186,6 +187,28 @@ for developers already familiar with the Next.js ecosystem.
    Breaking changes MUST append `!` after the type (e.g., `feat!: redesign auth flow`) and
    include a `BREAKING CHANGE:` footer explaining the impact.
 
+7. **Speckit compatibility — `SPECIFY_FEATURE` (NON-NEGOTIABLE while scripts are not updated)**:
+   The speckit scripts (`common.sh`) locate the active spec by matching the git branch name
+   against the `###-short-description` pattern. Because this project uses Gitflow branch names
+   (e.g., `feature/001-initial-screens`), the scripts cannot resolve the spec directory
+   automatically.
+
+   **Before running any speckit command** (`/speckit.plan`, `/speckit.clarify`, `/speckit.tasks`,
+   etc.) on a Gitflow branch, the `SPECIFY_FEATURE` environment variable MUST be set to the
+   spec directory name — i.e., the `###-short-description` part **without** the Gitflow prefix:
+
+   ```bash
+   # Example: working on feature/001-initial-screens
+   export SPECIFY_FEATURE=001-initial-screens
+   ```
+
+   Derivation rule: strip the Gitflow prefix (`feature/`, `fix/`, `hotfix/`) from the branch
+   name to obtain the value. For `release/x.y.z` branches, speckit commands are not typically
+   used, so no value is needed.
+
+   This requirement is a temporary compatibility shim until
+   `.specify/scripts/bash/common.sh` is updated to natively recognize Gitflow prefixes.
+
 ## Governance
 
 This constitution supersedes all other development practices, coding guidelines, and informal
@@ -208,4 +231,4 @@ conventions in the mystery-gifter-fe project.
 explicit justification documented in the Complexity Tracking table of the relevant plan.md
 before they may be merged.
 
-**Version**: 1.1.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
+**Version**: 1.1.1 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
