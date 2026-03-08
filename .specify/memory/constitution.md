@@ -1,50 +1,176 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+==================
+Version change: [unversioned template] → 1.0.0
+Modified principles: N/A (initial adoption)
+Added sections:
+  - Core Principles (5 principles)
+  - Frontend Standards
+  - Development Workflow
+  - Governance
+Removed sections: N/A (initial adoption)
+Templates updated:
+  ✅ .specify/memory/constitution.md (this file)
+  ✅ .specify/templates/tasks-template.md (tests note updated: OPTIONAL → MANDATORY for components)
+  ⚠ .specify/templates/plan-template.md (Constitution Check gates should reference these 5 principles)
+  ⚠ .specify/templates/spec-template.md (Success Criteria should include performance and UX criteria)
+Follow-up TODOs:
+  - None: all placeholders resolved.
+-->
+
+# Mystery Gifter Frontend Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Code Quality
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+All code in this project MUST be clean, readable, and maintainable.
+Specifically:
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- Every file and module MUST have a single, clear responsibility (Single Responsibility Principle).
+- Functions and components MUST be small and focused — prefer composing small pieces over large,
+  multi-purpose implementations.
+- Magic numbers and inline strings MUST be extracted into named constants.
+- Dead code, unused imports, and commented-out blocks MUST NOT be committed.
+- TypeScript MUST be used throughout; `any` types are forbidden unless explicitly justified with
+  an inline comment.
+- Linting and formatting rules (ESLint + Prettier) MUST pass on every commit — no exceptions.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Consistent, high-quality code reduces onboarding friction, prevents subtle bugs,
+and ensures the codebase remains maintainable as the team and feature set grow.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### II. Unit Testing (NON-NEGOTIABLE)
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Every React component and every utility function in this project MUST have a corresponding
+unit test. This is a non-negotiable constraint that applies to all new and modified code.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Tests MUST be co-located with source files or placed in a parallel `__tests__` directory.
+- Tests MUST use React Testing Library and Jest (or Vitest if configured).
+- Each component test MUST cover: render without crashing, primary interactive behavior,
+  and any conditional rendering branches.
+- Tests MUST be written before or alongside implementation (test-first preferred, test-alongside
+  acceptable; test-after is NOT acceptable).
+- A PR MUST NOT be merged if test coverage for modified components drops below the project
+  threshold (minimum 80% line coverage).
+- Tests MUST NOT use implementation details (no direct access to internal state or refs);
+  test behavior from the user's perspective.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Unit tests are the primary safety net for refactoring and new feature development.
+Mandating them for every component prevents untested regressions and documents expected behavior.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### III. User Experience Consistency
+
+The UI MUST present a coherent, predictable experience across all screens and states.
+
+- A shared design token system (colors, spacing, typography) MUST be used — no ad-hoc
+  inline styles that duplicate or contradict the token system.
+- Loading, error, and empty states MUST be handled explicitly in every data-dependent component;
+  "undefined behavior" on network failure is not acceptable.
+- Interactive elements (buttons, links, forms) MUST follow consistent feedback patterns:
+  disabled state during submission, visible error messages on failure, success confirmation.
+- Accessibility (a11y) MUST be considered: all interactive elements MUST be keyboard-navigable
+  and have appropriate ARIA labels where native semantics are insufficient.
+- Responsive breakpoints MUST be respected on all new screens — no component may be
+  desktop-only unless explicitly scoped.
+
+**Rationale**: A consistent UX builds user trust and reduces support burden. Enforcing this at
+the constitution level prevents individual components from drifting from the established patterns.
+
+### IV. Performance Standards
+
+The application MUST meet the following performance targets, measured against Lighthouse or
+Core Web Vitals in CI:
+
+- **LCP (Largest Contentful Paint)**: ≤ 2.5 s on desktop, ≤ 4.0 s on mobile (3G simulated).
+- **CLS (Cumulative Layout Shift)**: ≤ 0.1 across all pages.
+- **INP (Interaction to Next Paint)**: ≤ 200 ms for primary interactions.
+- Images MUST use Next.js `<Image>` with explicit `width`, `height`, and appropriate `priority`
+  flags — raw `<img>` tags are forbidden.
+- JavaScript bundles MUST be code-split by route; no feature's code MUST be bundled into the
+  initial payload unless it is required for the initial render.
+- Third-party scripts MUST be loaded with `next/script` using an appropriate `strategy`
+  (`lazyOnload` by default).
+
+**Rationale**: Frontend performance directly impacts user retention and SEO. Explicit, measurable
+targets prevent performance regressions from going unnoticed during feature development.
+
+### V. Next.js Best Practices & Simplicity
+
+This project MUST follow the official Next.js App Router conventions and community-established
+patterns. Complexity MUST be justified — the simplest solution that meets requirements is
+always preferred (YAGNI).
+
+- Use the App Router (`app/`) directory for all routing; the Pages Router MUST NOT be used.
+- Server Components MUST be the default; add `"use client"` only when interactivity,
+  browser APIs, or hooks require it — and document why at the top of the file.
+- Data fetching MUST use Server Components + `fetch` with appropriate caching options,
+  or Server Actions for mutations; client-side `useEffect` for data fetching is forbidden
+  unless no server-side alternative exists.
+- Route handlers (`app/api/`) MUST be used only for endpoints that genuinely require server
+  logic; avoid creating API routes that simply proxy an existing backend.
+- Global state MUST be minimized; prefer URL state, server state (React Query / SWR), or
+  React context scoped to a subtree over a global store.
+- Dependencies MUST be evaluated for bundle size impact before adoption; prefer native
+  browser/Next.js capabilities over third-party libraries for standard tasks.
+
+**Rationale**: Following the framework's intended patterns ensures compatibility with future
+Next.js versions, benefits from built-in optimizations, and keeps the codebase approachable
+for developers already familiar with the Next.js ecosystem.
+
+## Frontend Standards
+
+**Language & Runtime**: TypeScript 5+, Node.js LTS
+**Framework**: Next.js 14+ (App Router)
+**Styling**: Tailwind CSS (or project-configured CSS solution) — no inline `style` props
+  except for dynamic values that cannot be expressed as class names.
+**Component library**: Shared component library under `src/components/ui/`; all reusable
+  primitives MUST live there and MUST have unit tests.
+**Testing stack**: Jest + React Testing Library (unit); Playwright or Cypress (E2E, optional
+  per feature).
+**Linting & formatting**: ESLint (next/core-web-vitals ruleset) + Prettier — enforced via
+  pre-commit hook and CI.
+**CI gate**: All tests MUST pass, linting MUST be clean, and build MUST succeed before any
+  PR is merged.
+
+## Development Workflow
+
+1. **Branch per feature**: every feature or fix lives on a dedicated branch following the
+   naming convention `###-short-description` (e.g., `001-gift-selection`).
+2. **Spec before code**: a spec.md MUST exist before implementation begins for any
+   non-trivial feature.
+3. **Tests alongside implementation**: unit tests MUST be committed in the same PR as the
+   component implementation — not as a follow-up.
+4. **PR checklist**: before requesting review, the author MUST verify:
+   - All unit tests pass locally (`npm test`).
+   - Lint and type-check pass (`npm run lint && npm run type-check`).
+   - Build succeeds (`npm run build`).
+   - No console errors or warnings introduced.
+   - Accessibility spot-check performed (keyboard navigation, color contrast).
+5. **Review requirements**: at least one approval required before merge; reviewer MUST
+   verify constitution compliance, not just functional correctness.
+6. **Commit hygiene**: commits MUST follow Conventional Commits format
+   (`feat:`, `fix:`, `chore:`, `test:`, `docs:`, etc.).
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices, coding guidelines, and informal
+conventions in the mystery-gifter-fe project.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendment procedure**:
+1. Propose the amendment in a PR that modifies this file.
+2. The PR description MUST explain the motivation, the version bump rationale, and list all
+   affected templates and docs.
+3. Amendment requires at least one approval from a project maintainer.
+4. On merge, `LAST_AMENDED_DATE` MUST be updated to the merge date and `CONSTITUTION_VERSION`
+   MUST be incremented per semantic versioning rules documented in the version line.
+
+**Versioning policy**:
+- MAJOR: removal or backward-incompatible redefinition of an existing principle.
+- MINOR: new principle or section added; material expansion of existing guidance.
+- PATCH: clarification, wording improvement, or typo fix with no semantic change.
+
+**Compliance review**: every PR review MUST include a constitution check. Violations require
+explicit justification documented in the Complexity Tracking table of the relevant plan.md
+before they may be merged.
+
+**Version**: 1.0.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
