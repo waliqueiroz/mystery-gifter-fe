@@ -80,9 +80,9 @@
 
 - [ ] T009 Create App Router route groups skeleton
   - Branch: `task/001-T009-route-groups` (stacked on T003)
-  - Create: `src/app/(public)/page.tsx` (placeholder `<main>Em construção</main>`), `src/app/(public)/login/page.tsx`, `src/app/(public)/registro/page.tsx`, `src/app/(protected)/layout.tsx` (minimal `"use client"` returning `<>{children}</>`), `src/app/(protected)/dashboard/page.tsx`
+  - Create: `src/app/(public)/page.tsx` (placeholder `<main>Em construção</main>`), `src/app/(public)/login/page.tsx`, `src/app/(public)/register/page.tsx`, `src/app/(protected)/layout.tsx` (minimal `"use client"` returning `<>{children}</>`), `src/app/(protected)/dashboard/page.tsx`
   - Delete: `src/app/page.tsx`, `src/app/page.module.css`
-  - **Acceptance**: `/`, `/login`, `/registro`, `/dashboard` all resolve; `npm run build` ✅
+  - **Acceptance**: `/`, `/login`, `/register`, `/dashboard` all resolve; `npm run build` ✅
 
 **Checkpoint**: Foundation complete — user story branches can now be created in parallel.
 
@@ -95,8 +95,8 @@
 **Branch**: `task/001-T010-landing-page` (stacked on T009, parallel with T011/T012/T013)
 
 - [ ] T010 [P] [US1] Implement HeroSection component + landing page in `src/components/landing/HeroSection.tsx`, `HeroSection.test.tsx`, and `src/app/(public)/page.tsx`
-  - `HeroSection.tsx`: Bootstrap 4 hero section, `<h1>Mystery Gifter</h1>`, product description (pt-BR), `<Link href="/login" className="btn btn-primary">Entrar</Link>`, `<Link href="/registro" className="btn btn-outline-primary">Criar conta</Link>`, responsive Bootstrap 4 grid
-  - `HeroSection.test.tsx`: renders "Mystery Gifter", renders "Entrar" link to /login, renders "Criar conta" link to /registro
+  - `HeroSection.tsx`: Bootstrap 4 hero section, `<h1>Mystery Gifter</h1>`, product description (pt-BR), `<Link href="/login" className="btn btn-primary">Entrar</Link>`, `<Link href="/register" className="btn btn-outline-primary">Criar conta</Link>`, responsive Bootstrap 4 grid
+  - `HeroSection.test.tsx`: renders "Mystery Gifter", renders "Entrar" link to /login, renders "Criar conta" link to /register
   - `src/app/(public)/page.tsx`: import HeroSection + wrap in GuestGuard (Server Component — GuestGuard is "use client" internally)
   - **Acceptance**: `npm test src/components/landing/HeroSection.test.tsx` passes; all text pt-BR; authenticated user redirected to `/dashboard`
 
@@ -106,16 +106,16 @@
 
 **Goal**: Registration form with 5 fields, client-side validation, auto-login after success.
 **Independent Test**: Submit valid form → two API calls → redirected to `/dashboard`
-**Branch**: `task/001-T011-registro-page` (stacked on T009, parallel with T010/T012/T013)
+**Branch**: `task/001-T011-register-page` (stacked on T009, parallel with T010/T012/T013)
 
-- [ ] T011 [P] [US2] Implement RegisterForm component + registro page in `src/components/register/RegisterForm.tsx`, `RegisterForm.test.tsx`, and `src/app/(public)/registro/page.tsx`
+- [ ] T011 [P] [US2] Implement RegisterForm component + register page in `src/components/register/RegisterForm.tsx`, `RegisterForm.test.tsx`, and `src/app/(public)/register/page.tsx`
   - `RegisterForm.tsx`: `"use client"`, uses FormField + Button, fields: nome, sobrenome, e-mail, senha, confirmação de senha
   - Client-side validation (before API call): all fields non-empty; senha ≥ 8 chars; confirmação === senha
   - On success: `register(payload)` → `setToken(session.access_token)` → `router.push('/dashboard')`
   - On failure: show inline error; 409 → "Este e-mail já está em uso."
   - Footer link: "Já tem conta? Entrar" → `/login`
   - `RegisterForm.test.tsx`: renders all 5 fields, shows error on mismatched passwords (no API call), shows error when fields empty, calls authService.register on valid submit, redirects to /dashboard on success, shows API error on failure
-  - `src/app/(public)/registro/page.tsx`: replace placeholder; wrap RegisterForm in GuestGuard
+  - `src/app/(public)/register/page.tsx`: replace placeholder; wrap RegisterForm in GuestGuard
   - **Acceptance**: `npm test src/components/register/RegisterForm.test.tsx` passes; all labels/errors pt-BR
 
 ---
@@ -131,7 +131,7 @@
   - Client-side validation: both fields non-empty before calling API
   - On success: `login(credentials)` → `setToken(session.access_token)` → `router.push('/dashboard')`
   - On 401: show "E-mail ou senha inválidos."
-  - Footer link: "Não tem conta? Criar conta" → `/registro`
+  - Footer link: "Não tem conta? Criar conta" → `/register`
   - `LoginForm.test.tsx`: renders email + password fields, shows error when fields empty (no API call), calls authService.login on valid submit, redirects to /dashboard on success, shows "E-mail ou senha inválidos." on 401
   - `src/app/(public)/login/page.tsx`: replace placeholder; wrap LoginForm in GuestGuard
   - **Acceptance**: `npm test src/components/login/LoginForm.test.tsx` passes; all labels/errors pt-BR
@@ -176,7 +176,7 @@ feature/001-initial-screens
     ├── T003-root-layout
     │   └── T009-route-groups
     │       ├── T010-landing-page    [US1]
-    │       ├── T011-registro-page   [US2]
+    │       ├── T011-register-page   [US2]
     │       ├── T012-login-page      [US3]
     │       └── T013-dashboard-page  [US4]
     ├── T004-ui-formfield
@@ -203,7 +203,7 @@ feature/001-initial-screens
 
 ### Incremental Delivery
 
-After MVP: add T011 (registro), T012 (login), T013 (dashboard) — each independently testable.
+After MVP: add T011 (register), T012 (login), T013 (dashboard) — each independently testable.
 
 ---
 
