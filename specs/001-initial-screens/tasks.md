@@ -32,33 +32,33 @@
 
 **⚠️ CRITICAL**: Create task branches AFTER T001 PR is merged into `feature/001-initial-screens`.
 
-- [ ] T002 [P] Create auth token helpers in `src/lib/auth.ts` + `src/lib/auth.test.ts`
+- [x] T002 [P] Create auth token helpers in `src/lib/auth.ts` + `src/lib/auth.test.ts`
   - Branch: `task/001-T002-auth-lib` (stacked on T001)
   - `src/lib/auth.ts`: export `TOKEN_KEY = 'mystery_gifter_token'`, `getToken()` (SSR-safe: guard `typeof window === 'undefined'`), `setToken(token)`, `clearToken()`, `isAuthenticated()`
   - `src/lib/auth.test.ts`: unit tests for all 4 functions with localStorage mocked; 100% line coverage
   - **Acceptance**: `npm test src/lib/auth.test.ts` passes; `getToken()` returns `null` server-side
 
-- [ ] T003 [P] Update root layout with Bootstrap 4 + AdminLTE CSS in `src/app/layout.tsx` + `src/app/globals.css`
+- [x] T003 [P] Update root layout with Bootstrap 4 + AdminLTE CSS in `src/app/layout.tsx` + `src/app/globals.css`
   - Branch: `task/001-T003-root-layout` (stacked on T001)
   - `src/app/globals.css`: replace content with Bootstrap 4 + AdminLTE 3.2 CSS imports
   - `src/app/layout.tsx`: set `<html lang="pt-BR">`, update metadata (title: "Mystery Gifter"), remove Geist font imports
   - **Acceptance**: Bootstrap 4 CSS loads; AdminLTE `.content-wrapper` class available; no Tailwind/Geist refs; `npm run build` ✅
 
-- [ ] T004 [P] Create FormField shared component in `src/components/ui/FormField/FormField.tsx` + `FormField.test.tsx`
+- [x] T004 [P] Create FormField shared component in `src/components/ui/FormField/FormField.tsx` + `FormField.test.tsx`
   - Branch: `task/001-T004-ui-formfield` (stacked on T001)
   - Props: `{ id, label, type?, value, onChange, error?, placeholder?, required? }`
   - Renders Bootstrap 4 `.form-group` with `label`, `input.form-control`, optional `.invalid-feedback` + `.is-invalid`
   - Tests: renders label, renders input, shows error when provided, hides error when absent
   - **Acceptance**: `npm test src/components/ui/FormField/FormField.test.tsx` passes
 
-- [ ] T005 [P] Create Button shared component in `src/components/ui/Button/Button.tsx` + `Button.test.tsx`
+- [x] T005 [P] Create Button shared component in `src/components/ui/Button/Button.tsx` + `Button.test.tsx`
   - Branch: `task/001-T005-ui-button` (stacked on T001)
   - Props: `{ children, type?, variant?: 'primary'|'secondary'|'danger', loading?, disabled?, onClick?, className? }`
   - When `loading=true`: button disabled + spinner with `aria-label="Carregando"`
   - Tests: renders text, shows spinner when loading, disables when loading, calls onClick, does not call onClick when disabled
   - **Acceptance**: `npm test src/components/ui/Button/Button.test.tsx` passes
 
-- [ ] T006 [P] Create auth service in `src/services/api/authService.ts` + `authService.test.ts`
+- [x] T006 [P] Create auth service in `src/services/api/authService.ts` + `authService.test.ts`
   - Branch: `task/001-T006-auth-service` (stacked on T001)
   - `login(credentials: LoginCredentials): Promise<AuthSession>` — `POST /api/v1/login`
   - `register(payload: CreateUserPayload): Promise<AuthSession>` — two sequential calls: `POST /api/v1/users` (201) → `POST /api/v1/login`
@@ -66,19 +66,19 @@
   - Tests with mocked `fetch`: login success, login 401, register success, register 409, network error
   - **Acceptance**: `npm test src/services/api/authService.test.ts` passes; no `any` types
 
-- [ ] T007 [P] Create AuthGuard component in `src/components/auth/AuthGuard.tsx` + `AuthGuard.test.tsx`
+- [x] T007 [P] Create AuthGuard component in `src/components/auth/AuthGuard.tsx` + `AuthGuard.test.tsx`
   - Branch: `task/001-T007-auth-guard` (stacked on T002)
   - `"use client"` — reads `isAuthenticated()` in `useEffect`; if no token → `router.push('/login')`; renders `null` during check
   - Tests: renders children when token present, redirects to `/login` when no token, returns null during check
   - **Acceptance**: `npm test src/components/auth/AuthGuard.test.tsx` passes
 
-- [ ] T008 [P] Create GuestGuard component in `src/components/auth/GuestGuard.tsx` + `GuestGuard.test.tsx`
+- [x] T008 [P] Create GuestGuard component in `src/components/auth/GuestGuard.tsx` + `GuestGuard.test.tsx`
   - Branch: `task/001-T008-guest-guard` (stacked on T002, parallel with T007)
   - `"use client"` — if `isAuthenticated()` → `router.push('/dashboard')`; renders `null` during check
   - Tests: renders children when no token, redirects to `/dashboard` when token present, returns null during check
   - **Acceptance**: `npm test src/components/auth/GuestGuard.test.tsx` passes
 
-- [ ] T009 Create App Router route groups skeleton
+- [x] T009 Create App Router route groups skeleton
   - Branch: `task/001-T009-route-groups` (stacked on T003)
   - Create: `src/app/(public)/page.tsx` (placeholder `<main>Em construção</main>`), `src/app/(public)/login/page.tsx`, `src/app/(public)/register/page.tsx`, `src/app/(protected)/layout.tsx` (minimal `"use client"` returning `<>{children}</>`), `src/app/(protected)/dashboard/page.tsx`
   - Delete: `src/app/page.tsx`, `src/app/page.module.css`
