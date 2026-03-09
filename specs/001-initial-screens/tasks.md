@@ -15,7 +15,7 @@
 
 > ⚠️ All subsequent tasks depend on this phase being merged into `feature/001-initial-screens`.
 
-- [ ] T001 Configure full project toolchain (TypeScript strict + ESLint + Prettier + Jest + AdminLTE/Bootstrap + env + types) — 5 commits:
+- [x] T001 Configure full project toolchain (TypeScript strict + ESLint + Prettier + Jest + AdminLTE/Bootstrap + env + types) — 5 commits:
   - **Commit 1** `chore(setup): enable TypeScript strict mode and configure ESLint + Prettier` — `tsconfig.json` (`noUncheckedIndexedAccess`), `.prettierrc`, `.prettierignore`, `package.json` (add `type-check` + `format` scripts, install `prettier`)
   - **Commit 2** `chore(setup): add Jest + React Testing Library with ts-jest` — `jest.config.ts` (jsdom, ts-jest, `@/` alias, 80% coverage), `jest.setup.ts`, `__mocks__/styleMock.ts`, `package.json` (add `test` + `test:coverage` scripts, install jest + RTL deps)
   - **Commit 3** `chore(setup): install AdminLTE 3.2, Bootstrap 4.6, Font Awesome, jQuery` — `package.json` (install `admin-lte@3.2`, `bootstrap@4.6`, `@fortawesome/fontawesome-free`, `jquery`, `@types/jquery`)
