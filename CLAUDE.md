@@ -53,6 +53,58 @@ npm run build        # Production build (must succeed before PR)
 - API calls go through the Next.js rewrites proxy (`/api/v1/*` → backend)
 - Auto-login after registration = two calls: POST /api/v1/users → POST /api/v1/login
 
+## Stacked Branches Workflow (NON-NEGOTIABLE for all features)
+
+Every task gets its own branch stacked on its dependency. This keeps PRs small (200–400 LOC target) and enables parallel review.
+
+### Branch naming
+
+```
+feature/###-description          ← feature base branch (Gitflow)
+task/###-T001-description        ← task branch, stacked on base or another task
+task/###-T002-description        ← parallel task, also stacked on base
+task/###-T010-description        ← stacked on task/###-T005-description
+```
+
+### Creating a stack
+
+```bash
+# Stack on the feature base
+git checkout feature/001-initial-screens
+git checkout -b task/001-T001-ts-eslint-prettier
+
+# Stack on another task branch
+git checkout task/001-T005-types
+git checkout -b task/001-T010-auth-service
+```
+
+### After a dependency PR merges into the feature branch
+
+```bash
+# Rebase dependent branch onto the updated base
+git checkout task/001-T010-auth-service
+git rebase --onto feature/001-initial-screens task/001-T005-types
+```
+
+### Rules
+
+- Each task branch touches only the files listed in its task .md spec
+- Parallel tasks (`[P]` marker in tasks/index.md) MUST NOT share files
+- PR title: `feat(T001): description` — Conventional Commits with task scope
+- Every PR targets its **parent branch**, not `develop` or `main`
+- Merge order follows the dependency graph in `specs/###/tasks/index.md`
+- After all task PRs merge into the feature branch, open one PR from `feature/` → `develop`
+
+### Checking stack
+
+```bash
+# See commits only in current task branch (vs its parent)
+git log --oneline feature/001-initial-screens..HEAD
+
+# See all task branches for a feature
+git branch | grep task/001
+```
+
 ## Recent Changes
 
 - 001-initial-screens: Initial screens MVP — landing, login, registro, dashboard
