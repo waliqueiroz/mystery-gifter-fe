@@ -1,10 +1,11 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.1.0 → 1.1.1
+Version change: 1.1.1 → 1.1.2
 Modified principles: N/A
 Modified sections:
-  - Development Workflow: step 7 added (SPECIFY_FEATURE env var — Gitflow/speckit compatibility)
+  - Frontend Standards: Tailwind CSS replaced with Bootstrap 4.6 + AdminLTE 3.2
+  - Principle III: design token reference updated to Bootstrap 4 + AdminLTE variables
 Added sections: N/A
 Removed sections: N/A
 Templates updated:
@@ -46,7 +47,8 @@ and ensures the codebase remains maintainable as the team and feature set grow.
 Every React component and every utility function in this project MUST have a corresponding
 unit test. This is a non-negotiable constraint that applies to all new and modified code.
 
-- Tests MUST be co-located with source files or placed in a parallel `__tests__` directory.
+- Tests MUST be co-located with source files in the same directory
+  (e.g., `Button.tsx` + `Button.test.tsx`); `__tests__` subdirectories MUST NOT be used.
 - Tests MUST use React Testing Library and Jest (or Vitest if configured).
 - Each component test MUST cover: render without crashing, primary interactive behavior,
   and any conditional rendering branches.
@@ -64,8 +66,9 @@ Mandating them for every component prevents untested regressions and documents e
 
 The UI MUST present a coherent, predictable experience across all screens and states.
 
-- A shared design token system (colors, spacing, typography) MUST be used — no ad-hoc
-  inline styles that duplicate or contradict the token system.
+- Bootstrap 4 variables and AdminLTE 3.2 theme variables MUST be used as the design token
+  system (colors, spacing, typography) — no ad-hoc inline styles that duplicate or
+  contradict these variables.
 - Loading, error, and empty states MUST be handled explicitly in every data-dependent component;
   "undefined behavior" on network failure is not acceptable.
 - Interactive elements (buttons, links, forms) MUST follow consistent feedback patterns:
@@ -123,8 +126,10 @@ for developers already familiar with the Next.js ecosystem.
 
 **Language & Runtime**: TypeScript 5+, Node.js LTS
 **Framework**: Next.js 14+ (App Router)
-**Styling**: Tailwind CSS (or project-configured CSS solution) — no inline `style` props
-  except for dynamic values that cannot be expressed as class names.
+**Styling**: Bootstrap 4.6 + AdminLTE 3.2 — Bootstrap 4 for public pages (landing, login,
+  registro); AdminLTE 3.2 for authenticated pages (dashboard and beyond). Tailwind CSS MUST
+  NOT be used — it conflicts with Bootstrap 4's reset and AdminLTE's CSS. No inline `style`
+  props except for dynamic values that cannot be expressed as Bootstrap/AdminLTE class names.
 **Component library**: Shared component library under `src/components/ui/`; all reusable
   primitives MUST live there and MUST have unit tests.
 **Testing stack**: Jest + React Testing Library (unit); Playwright or Cypress (E2E, optional
@@ -231,4 +236,4 @@ conventions in the mystery-gifter-fe project.
 explicit justification documented in the Complexity Tracking table of the relevant plan.md
 before they may be merged.
 
-**Version**: 1.1.1 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
+**Version**: 1.1.2 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
