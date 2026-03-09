@@ -15,7 +15,7 @@ Auto-generated from all feature plans. Last updated: 2026-03-08
 ```text
 src/
 ├── app/
-│   ├── (public)/            # Landing, login, registro — Bootstrap 4 pages
+│   ├── (public)/            # Landing, login, register — Bootstrap 4 pages
 │   ├── (protected)/         # Dashboard — AdminLTE layout
 │   ├── layout.tsx            # Root layout, global CSS
 │   └── globals.css
@@ -45,6 +45,7 @@ npm run build        # Production build (must succeed before PR)
 
 - Every React component and utility function MUST have a unit test — no exceptions
 - All UI text MUST be in Brazilian Portuguese (pt-BR)
+- Route segments (URL paths) MUST be in English — e.g., `/register` not `/registro`; only UI labels are pt-BR
 - `"use client"` required for: auth guards, forms, and anything reading localStorage
 - Auth guard: read `localStorage.getItem('mystery_gifter_token')` on mount; redirect if absent
 - Guest guard: if token present → redirect to `/dashboard`
@@ -107,7 +108,7 @@ git branch | grep task/001
 
 ## Recent Changes
 
-- 001-initial-screens: Initial screens MVP — landing, login, registro, dashboard
+- 001-initial-screens: Initial screens MVP — landing, login, register, dashboard
 
 <!-- MANUAL ADDITIONS START -->
 - Always answer in Brazilian Portuguese (pt-BR)

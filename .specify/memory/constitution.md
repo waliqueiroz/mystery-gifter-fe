@@ -106,6 +106,7 @@ patterns. Complexity MUST be justified — the simplest solution that meets requ
 always preferred (YAGNI).
 
 - Use the App Router (`app/`) directory for all routing; the Pages Router MUST NOT be used.
+- Route segments (directory names under `app/`) MUST be in English — e.g., `/register`, not `/registro`. UI text and labels remain in pt-BR; only the URL path is English.
 - Server Components MUST be the default; add `"use client"` only when interactivity,
   browser APIs, or hooks require it — and document why at the top of the file.
 - Data fetching MUST use Server Components + `fetch` with appropriate caching options,
