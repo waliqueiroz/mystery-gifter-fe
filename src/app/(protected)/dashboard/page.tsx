@@ -1,3 +1,10 @@
+import AuthGuard from '@/components/auth/AuthGuard'
+import DashboardContent from '@/components/dashboard/DashboardContent'
+
 export default function DashboardPage() {
-  return <main>Em construção</main>
+  return (
+    <AuthGuard>
+      <DashboardContent />
+    </AuthGuard>
+  )
 }
