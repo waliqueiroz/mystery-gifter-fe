@@ -13,3 +13,32 @@
   --mg-error: #fc8181;
   --mg-transition: 200ms ease-in-out;
 }
+
+/* =====================================================================
+   GLOBAL BASE
+   ===================================================================== */
+
+body {
+  background-color: var(--mg-bg) !important;
+  color: var(--mg-text) !important;
+}
+
+label {
+  color: var(--mg-text-muted);
+}
+
+/* Keyboard focus ring for all interactive elements — FR-017 */
+:focus-visible {
+  outline: 2px solid var(--mg-primary-hover);
+  outline-offset: 2px;
+}
+
+/* Suppress all transitions for prefers-reduced-motion users — FR-016 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
