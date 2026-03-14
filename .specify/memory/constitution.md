@@ -1,21 +1,24 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: [unversioned template] → 1.0.0
-Modified principles: N/A (initial adoption)
-Added sections:
-  - Core Principles (5 principles)
-  - Frontend Standards
-  - Development Workflow
-  - Governance
-Removed sections: N/A (initial adoption)
+Version change: 1.1.1 → 1.1.2
+Modified principles: N/A
+Modified sections:
+  - Frontend Standards: Tailwind CSS replaced with Bootstrap 4.6 + AdminLTE 3.2
+  - Principle III: design token reference updated to Bootstrap 4 + AdminLTE variables
+Added sections: N/A
+Removed sections: N/A
 Templates updated:
   ✅ .specify/memory/constitution.md (this file)
-  ✅ .specify/templates/tasks-template.md (tests note updated: OPTIONAL → MANDATORY for components)
-  ⚠ .specify/templates/plan-template.md (Constitution Check gates should reference these 5 principles)
-  ⚠ .specify/templates/spec-template.md (Success Criteria should include performance and UX criteria)
+  ⚠ .specify/templates/tasks-template.md — branch naming examples still use ###-short-description;
+      update to feature/###-short-description when the speckit scripts are updated.
+  ⚠ .specify/scripts/bash/create-new-feature.sh — branch prefix (feature/) not yet added by the
+      script; manual adjustment required when creating branches until script is patched.
 Follow-up TODOs:
-  - None: all placeholders resolved.
+  - Update .specify/scripts/bash/create-new-feature.sh to prepend `feature/` prefix to generated
+    branch names, or support a --type flag (feature|fix|hotfix|release).
+  - Long-term: update .specify/scripts/bash/common.sh check_feature_branch() to recognize Gitflow
+    prefixes (feature/, fix/, hotfix/) natively, eliminating the need for SPECIFY_FEATURE.
 -->
 
 # Mystery Gifter Frontend Constitution
@@ -44,7 +47,8 @@ and ensures the codebase remains maintainable as the team and feature set grow.
 Every React component and every utility function in this project MUST have a corresponding
 unit test. This is a non-negotiable constraint that applies to all new and modified code.
 
-- Tests MUST be co-located with source files or placed in a parallel `__tests__` directory.
+- Tests MUST be co-located with source files in the same directory
+  (e.g., `Button.tsx` + `Button.test.tsx`); `__tests__` subdirectories MUST NOT be used.
 - Tests MUST use React Testing Library and Jest (or Vitest if configured).
 - Each component test MUST cover: render without crashing, primary interactive behavior,
   and any conditional rendering branches.
@@ -62,8 +66,9 @@ Mandating them for every component prevents untested regressions and documents e
 
 The UI MUST present a coherent, predictable experience across all screens and states.
 
-- A shared design token system (colors, spacing, typography) MUST be used — no ad-hoc
-  inline styles that duplicate or contradict the token system.
+- Bootstrap 4 variables and AdminLTE 3.2 theme variables MUST be used as the design token
+  system (colors, spacing, typography) — no ad-hoc inline styles that duplicate or
+  contradict these variables.
 - Loading, error, and empty states MUST be handled explicitly in every data-dependent component;
   "undefined behavior" on network failure is not acceptable.
 - Interactive elements (buttons, links, forms) MUST follow consistent feedback patterns:
@@ -101,6 +106,7 @@ patterns. Complexity MUST be justified — the simplest solution that meets requ
 always preferred (YAGNI).
 
 - Use the App Router (`app/`) directory for all routing; the Pages Router MUST NOT be used.
+- Route segments (directory names under `app/`) MUST be in English — e.g., `/register`, not `/registro`. UI text and labels remain in pt-BR; only the URL path is English.
 - Server Components MUST be the default; add `"use client"` only when interactivity,
   browser APIs, or hooks require it — and document why at the top of the file.
 - Data fetching MUST use Server Components + `fetch` with appropriate caching options,
@@ -121,8 +127,10 @@ for developers already familiar with the Next.js ecosystem.
 
 **Language & Runtime**: TypeScript 5+, Node.js LTS
 **Framework**: Next.js 14+ (App Router)
-**Styling**: Tailwind CSS (or project-configured CSS solution) — no inline `style` props
-  except for dynamic values that cannot be expressed as class names.
+**Styling**: Bootstrap 4.6 + AdminLTE 3.2 — Bootstrap 4 for public pages (landing, login,
+  registro); AdminLTE 3.2 for authenticated pages (dashboard and beyond). Tailwind CSS MUST
+  NOT be used — it conflicts with Bootstrap 4's reset and AdminLTE's CSS. No inline `style`
+  props except for dynamic values that cannot be expressed as Bootstrap/AdminLTE class names.
 **Component library**: Shared component library under `src/components/ui/`; all reusable
   primitives MUST live there and MUST have unit tests.
 **Testing stack**: Jest + React Testing Library (unit); Playwright or Cypress (E2E, optional
@@ -134,22 +142,78 @@ for developers already familiar with the Next.js ecosystem.
 
 ## Development Workflow
 
-1. **Branch per feature**: every feature or fix lives on a dedicated branch following the
-   naming convention `###-short-description` (e.g., `001-gift-selection`).
+1. **Branch naming — Gitflow (NON-NEGOTIABLE)**: All branches MUST follow the Gitflow
+   naming convention. Branches NOT conforming to this pattern MUST NOT be merged.
+
+   | Branch type | Pattern | Purpose |
+   |-------------|---------|---------|
+   | Feature | `feature/###-short-description` | New functionality (e.g., `feature/001-gift-selection`) |
+   | Bug fix | `fix/###-short-description` | Non-critical defect corrections (e.g., `fix/002-login-redirect`) |
+   | Hotfix | `hotfix/###-short-description` | Critical production fixes (e.g., `hotfix/003-auth-crash`) |
+   | Release | `release/x.y.z` | Release preparation (e.g., `release/1.0.0`) |
+   | Integration | `develop` | Ongoing integration target; all feature/fix branches merge here |
+   | Production | `main` | Stable production branch; only release and hotfix branches merge here |
+
 2. **Spec before code**: a spec.md MUST exist before implementation begins for any
    non-trivial feature.
+
 3. **Tests alongside implementation**: unit tests MUST be committed in the same PR as the
    component implementation — not as a follow-up.
+
 4. **PR checklist**: before requesting review, the author MUST verify:
    - All unit tests pass locally (`npm test`).
    - Lint and type-check pass (`npm run lint && npm run type-check`).
    - Build succeeds (`npm run build`).
    - No console errors or warnings introduced.
    - Accessibility spot-check performed (keyboard navigation, color contrast).
+
 5. **Review requirements**: at least one approval required before merge; reviewer MUST
    verify constitution compliance, not just functional correctness.
-6. **Commit hygiene**: commits MUST follow Conventional Commits format
-   (`feat:`, `fix:`, `chore:`, `test:`, `docs:`, etc.).
+
+6. **Commit message format — Conventional Commits (NON-NEGOTIABLE)**: Every commit MUST
+   follow the Conventional Commits specification (`type(scope): description`). Commits
+   not conforming to this format MUST be rejected by the pre-commit hook or CI.
+
+   Allowed types:
+
+   | Type | When to use |
+   |------|-------------|
+   | `feat` | A new feature or user-visible behavior |
+   | `fix` | A bug fix |
+   | `test` | Adding or correcting tests |
+   | `refactor` | Code change with no functional effect |
+   | `style` | Formatting, whitespace, missing semicolons (no logic change) |
+   | `chore` | Tooling, config, dependency updates |
+   | `docs` | Documentation only |
+   | `perf` | Performance improvements |
+   | `ci` | CI/CD pipeline changes |
+   | `build` | Build system or external dependency changes |
+   | `revert` | Reverts a previous commit |
+
+   Breaking changes MUST append `!` after the type (e.g., `feat!: redesign auth flow`) and
+   include a `BREAKING CHANGE:` footer explaining the impact.
+
+7. **Speckit compatibility — `SPECIFY_FEATURE` (NON-NEGOTIABLE while scripts are not updated)**:
+   The speckit scripts (`common.sh`) locate the active spec by matching the git branch name
+   against the `###-short-description` pattern. Because this project uses Gitflow branch names
+   (e.g., `feature/001-initial-screens`), the scripts cannot resolve the spec directory
+   automatically.
+
+   **Before running any speckit command** (`/speckit.plan`, `/speckit.clarify`, `/speckit.tasks`,
+   etc.) on a Gitflow branch, the `SPECIFY_FEATURE` environment variable MUST be set to the
+   spec directory name — i.e., the `###-short-description` part **without** the Gitflow prefix:
+
+   ```bash
+   # Example: working on feature/001-initial-screens
+   export SPECIFY_FEATURE=001-initial-screens
+   ```
+
+   Derivation rule: strip the Gitflow prefix (`feature/`, `fix/`, `hotfix/`) from the branch
+   name to obtain the value. For `release/x.y.z` branches, speckit commands are not typically
+   used, so no value is needed.
+
+   This requirement is a temporary compatibility shim until
+   `.specify/scripts/bash/common.sh` is updated to natively recognize Gitflow prefixes.
 
 ## Governance
 
@@ -173,4 +237,4 @@ conventions in the mystery-gifter-fe project.
 explicit justification documented in the Complexity Tracking table of the relevant plan.md
 before they may be merged.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
+**Version**: 1.1.2 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
