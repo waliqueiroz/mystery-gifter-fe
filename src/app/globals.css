@@ -6,3 +6,6 @@
 
 /* AdminLTE 3.2 */
 @import 'admin-lte/dist/css/adminlte.min.css';
+
+/* Mystery Gifter dark purple theme — must be last to cascade over frameworks */
+@import './theme.css';
