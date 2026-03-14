@@ -1,0 +1,15 @@
+/* Mystery Gifter — Design Tokens
+ * All theme overrides reference these custom properties.
+ * Do not use hardcoded color values outside this file.
+ */
+:root {
+  --mg-primary: #6b46c1;
+  --mg-primary-hover: #9f7aea;
+  --mg-bg: #0f0f0f;
+  --mg-bg-secondary: #1a202c;
+  --mg-bg-card: #2d3748;
+  --mg-text: #ffffff;
+  --mg-text-muted: #a0aec0;
+  --mg-error: #fc8181;
+  --mg-transition: 200ms ease-in-out;
+}
