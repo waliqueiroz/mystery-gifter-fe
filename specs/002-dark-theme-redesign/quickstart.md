@@ -51,6 +51,15 @@ Use `.mg-hero` for a full-viewport hero with vertical purple gradient + parallax
 3. Always reference design tokens via `var(--mg-*)`.
 4. For new interactive elements, always add a `transition: ... var(--mg-transition)` rule.
 
+## Reduced Motion & Focus
+
+The theme applies two global accessibility rules automatically — no action needed in component code:
+
+- **`prefers-reduced-motion`**: All CSS transitions and animations are suppressed globally when the user's OS requests reduced motion. The parallax effect also falls back to a static gradient.
+- **`:focus-visible`**: All interactive elements display a purple outline (`2px solid var(--mg-primary-hover)`) when focused via keyboard. This does **not** appear on mouse clicks.
+
+Do not override `:focus-visible` with `outline: none` anywhere in new CSS — this would break keyboard accessibility.
+
 ## Accessibility Checklist for New Components
 
 - All text on dark backgrounds must maintain ≥ 4.5:1 contrast (WCAG AA).

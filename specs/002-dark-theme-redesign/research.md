@@ -77,6 +77,26 @@
 
 ---
 
+## Decision 6: prefers-reduced-motion Scope
+
+**Decision**: A single blanket rule `@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }` suppresses all CSS transitions and animations globally, in addition to the parallax-specific `background-attachment: scroll` already in `.mg-hero`.
+
+**Rationale**: Per Clarification Q5 (Session 2026-03-14), user selected "suppress all transitions." This matches WCAG 2.3 SC 2.3.3 (AAA) and the widespread industry practice of a single global reset rule. A single selector is simpler and more maintainable than per-component rules, and eliminates the risk of missing any transition.
+
+**Alternatives considered**: Parallax-only suppression (rejected — misses hover/focus transitions which can also cause discomfort for users with vestibular disorders).
+
+---
+
+## Decision 7: Keyboard Focus Ring Scope
+
+**Decision**: `:focus-visible { outline: 2px solid var(--mg-primary-hover); outline-offset: 2px; }` applies the purple focus ring to all interactive elements globally.
+
+**Rationale**: Per Clarification Q6 (Session 2026-03-14), user selected "all interactive elements." Using `:focus-visible` (not `:focus`) avoids showing the ring on mouse clicks while preserving it for keyboard navigation — satisfying WCAG AA 2.4.7. A single global rule is more maintainable than per-element rules and ensures no interactive element is accidentally left without a visible keyboard indicator.
+
+**Alternatives considered**: Form-fields-only (rejected — buttons and navbar items are also keyboard-navigable and must meet WCAG 2.4.7).
+
+---
+
 ## Files Affected
 
 | File | Action | Reason |

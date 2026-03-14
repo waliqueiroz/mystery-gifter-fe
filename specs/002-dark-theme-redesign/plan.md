@@ -9,6 +9,8 @@ Apply a mandatory dark purple visual theme to all existing screens (landing, log
 1. Creating a single `src/app/theme.css` with CSS custom properties (design tokens) and Bootstrap/AdminLTE override rules — imported last in `globals.css` so it cascades over framework defaults.
 2. Applying new utility classes (`mg-hero`, `mg-hero-title`) to `HeroSection` for the parallax background and gradient text on the landing page.
 3. Changing the protected layout navbar from `navbar-white navbar-light` to `navbar-dark` for correct text contrast on the dark purple background.
+4. Adding a global `prefers-reduced-motion` rule that suppresses all CSS transitions (FR-016).
+5. Adding a `:focus-visible` rule for keyboard navigation focus rings on all interactive elements (FR-017).
 
 No new npm packages are required. All changes are compatible with Bootstrap 4.6 + AdminLTE 3.2. All other components (Button, FormField, LoginForm, RegisterForm, DashboardContent) are automatically themed by CSS cascade — no code changes needed in those files.
 
@@ -29,9 +31,9 @@ No new npm packages are required. All changes are compatible with Bootstrap 4.6 
 | Gate | Status | Notes |
 |------|--------|-------|
 | I — Code Quality | ✅ Pass | CSS custom properties as design tokens; no magic numbers; `theme.css` has single responsibility |
-| II — Unit Tests | ✅ Pass | Modified components (HeroSection, ProtectedLayout) must include test updates in the same PR |
-| III — UX Consistency | ✅ Pass | Feature enforces cross-page consistency; focus, error, and hover states are all defined |
-| IV — Performance | ✅ Pass | Parallax is CSS-only (`background-attachment: fixed`); disabled on ≤ 768px; no new JS weight |
+| II — Unit Tests | ✅ Pass | Modified components (HeroSection, ProtectedLayout) include test updates in the same PR |
+| III — UX Consistency | ✅ Pass | Feature enforces cross-page consistency; focus (FR-017), error, and hover states all defined |
+| IV — Performance | ✅ Pass | Parallax is CSS-only; disabled on ≤ 768px and `prefers-reduced-motion`; no new JS weight |
 | V — Next.js Best Practices | ✅ Pass | No new dependencies; static values in CSS file, not inline styles |
 
 ## Project Structure
@@ -87,16 +89,36 @@ The following defines the complete structure of `src/app/theme.css`:
 }
 ```
 
-### Global Dark Background
+### Global Base Styles
 
 ```css
 body {
   background-color: var(--mg-bg) !important;
   color: var(--mg-text) !important;
 }
+
+label {
+  color: var(--mg-text-muted);
+}
+
+/* Keyboard focus ring for all interactive elements (FR-017) */
+:focus-visible {
+  outline: 2px solid var(--mg-primary-hover);
+  outline-offset: 2px;
+}
+
+/* Suppress all transitions for users who prefer reduced motion (FR-016) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
 ```
 
-### Bootstrap Primary Color Override (buttons, links)
+### Bootstrap Primary Color Override
 
 ```css
 .btn-primary {
@@ -145,12 +167,9 @@ body {
 .invalid-feedback {
   color: var(--mg-error);
 }
-label {
-  color: var(--mg-text-muted);
-}
 ```
 
-### Cards (auth pages)
+### Cards
 
 ```css
 .card {
@@ -199,7 +218,7 @@ label {
 }
 ```
 
-### AdminLTE Navbar (dashboard)
+### AdminLTE Navbar
 
 ```css
 .main-header.navbar {
@@ -229,7 +248,7 @@ label {
 
 **File**: `src/components/landing/HeroSection.tsx`
 
-Replace the outer wrapper `className` to use `mg-hero` instead of `container d-flex flex-column align-items-center justify-content-center min-vh-100`, and add `mg-hero-title` to the main `<h1>` element. The centering flexbox utilities (`d-flex`, `flex-column`, `align-items-center`, `justify-content-center`) are preserved alongside `mg-hero`.
+Replace the outer wrapper `className` to use `mg-hero` instead of `container d-flex flex-column align-items-center justify-content-center min-vh-100`, and add `mg-hero-title` to the main `<h1>` element. The centering utilities (`d-flex`, `flex-column`, `align-items-center`, `justify-content-center`) are preserved alongside `mg-hero`. Note that `container` and `min-vh-100` are removed — `mg-hero` already sets `min-height: 100vh` and the gradient must span the full viewport width, not be constrained by Bootstrap's container padding.
 
 **Before** (outer wrapper):
 ```tsx
@@ -246,8 +265,6 @@ Replace the outer wrapper `className` to use `mg-hero` instead of `container d-f
 ## ProtectedLayout Component Change
 
 **File**: `src/app/(protected)/layout.tsx`
-
-Replace `navbar-white navbar-light` with `navbar-dark`:
 
 **Before**:
 ```tsx

@@ -93,11 +93,13 @@ As an authenticated user, I want the dashboard to follow the same dark/purple th
 - **FR-008**: Form fields (login and register) MUST display a purple light border or glow when focused, and MUST display a soft red (#FC8181) border and error message text when in an invalid/error state.
 - **FR-009**: The password field on authentication pages MUST include a descriptive Font Awesome icon (lock).
 - **FR-010**: The dashboard navbar MUST have a dark purple background with white text and icons.
-- **FR-011**: The dashboard main content background MUST use very dark gray (#1A202C or #2D3748).
+- **FR-011**: The dashboard main content background MUST use #1A202C as its background color.
 - **FR-012**: The system MUST apply the dark theme mandatorily, regardless of the user's operating system color preference.
 - **FR-013**: The theme MUST be implemented by overriding CSS variables and adding extra classes, without recreating Bootstrap 4.6 or AdminLTE 3.2 components from scratch.
 - **FR-014**: All style customizations MUST preserve the mobile-first responsiveness inherited from Bootstrap/AdminLTE.
 - **FR-015**: The landing page parallax effect MUST be implemented with performance-appropriate techniques and MUST be disabled on screens ≤ 768px wide, displaying a static gradient background instead.
+- **FR-016**: The system MUST suppress all CSS transitions and the parallax effect when the user's operating system reports `prefers-reduced-motion: reduce`.
+- **FR-017**: All interactive elements — buttons, links, and navbar items — MUST display a visible purple focus ring (matching the form field focus style) when focused via keyboard navigation, using the `:focus-visible` pseudo-class.
 
 ## Success Criteria *(mandatory)*
 
@@ -118,6 +120,9 @@ As an authenticated user, I want the dashboard to follow the same dark/purple th
 - Q: Should the parallax effect be disabled or only optimized on mobile devices? → A: Disable parallax on mobile/tablet (≤ 768px); display a static gradient background instead.
 - Q: What color should be used for form field validation error states? → A: Soft red (#FC8181) — harmonizes with the dark theme while remaining recognizable as an error indicator.
 - Q: What direction should the landing page background gradient follow? → A: Vertical — top dark (#6B46C1) to bottom light (#9F7AEA).
+- Q: Which background color should be used for the dashboard content wrapper — #1A202C or #2D3748? → A: #1A202C — darker tone creates stronger contrast with card surfaces (#2D3748) and maintains visual hierarchy.
+- Q: Should `prefers-reduced-motion` suppress only the parallax effect or all CSS transitions? → A: All CSS transitions — a single blanket rule suppresses parallax and all hover/focus transitions for users who prefer reduced motion.
+- Q: Should the visible keyboard focus indicator (purple ring) apply only to form fields or to all interactive elements? → A: All interactive elements — buttons, links, and navbar items MUST display a purple focus ring via `:focus-visible` for consistent keyboard navigation.
 
 ## Assumptions
 

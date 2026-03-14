@@ -34,7 +34,7 @@ CSS-only tasks do not require test tasks — tests are only required when compon
 
 **Note**: No component markup changes in this phase. All tasks append CSS rules to `src/app/theme.css`.
 
-- [ ] T003 [US1] Add global base overrides to `src/app/theme.css`: `body` (background-color, color) and `label` (color using `--mg-text-muted`)
+- [ ] T003 [US1] Add global base overrides to `src/app/theme.css`: `body` (background-color, color), `label` (color using `--mg-text-muted`), global `:focus-visible` purple outline for all interactive elements (FR-017), and `@media (prefers-reduced-motion: reduce)` blanket rule suppressing all transitions and animations (FR-016)
 - [ ] T004 [US1] Add button overrides to `src/app/theme.css`: `.btn-primary` (bg, border, transition) and `.btn-primary:hover/:focus` + `.btn-outline-primary` and `.btn-outline-primary:hover`
 - [ ] T005 [US1] Add form control overrides to `src/app/theme.css`: `.form-control` (bg, border, color), `::placeholder`, `:focus` (purple ring), `.form-control.is-invalid` (soft red border), `.invalid-feedback` (soft red text)
 - [ ] T006 [US1] Add card and alert overrides to `src/app/theme.css`: `.card` (bg, purple border, shadow), `.card-body` (text color), `.alert-danger` (dark red tint bg, soft red border and text)
