@@ -126,7 +126,7 @@
 **Independent Test**: Submit valid credentials → `mystery_gifter_token` set in localStorage → `/dashboard`
 **Branch**: `task/001-T012-login-page` (stacked on T009, parallel with T010/T011/T013)
 
-- [ ] T012 [P] [US3] Implement LoginForm component + login page in `src/components/login/LoginForm.tsx`, `LoginForm.test.tsx`, and `src/app/(public)/login/page.tsx`
+- [x] T012 [P] [US3] Implement LoginForm component + login page in `src/components/login/LoginForm.tsx`, `LoginForm.test.tsx`, and `src/app/(public)/login/page.tsx`
   - `LoginForm.tsx`: `"use client"`, uses FormField + Button, fields: e-mail, senha
   - Client-side validation: both fields non-empty before calling API
   - On success: `login(credentials)` → `setToken(session.access_token)` → `router.push('/dashboard')`
@@ -144,7 +144,7 @@
 **Independent Test**: Access `/dashboard` with token → sees "O melhor está por vir" + logout clears token + redirects to `/login`
 **Branch**: `task/001-T013-dashboard-page` (stacked on T009, parallel with T010/T011/T012)
 
-- [ ] T013 [P] [US4] Implement AdminLTE dashboard layout + DashboardContent in `src/app/(protected)/layout.tsx`, `src/components/dashboard/DashboardContent.tsx`, `DashboardContent.test.tsx`, `AdminLTELayout.test.tsx`, and `src/app/(protected)/dashboard/page.tsx`
+- [x] T013 [P] [US4] Implement AdminLTE dashboard layout + DashboardContent in `src/app/(protected)/layout.tsx`, `src/components/dashboard/DashboardContent.tsx`, `DashboardContent.test.tsx`, `AdminLTELayout.test.tsx`, and `src/app/(protected)/dashboard/page.tsx`
   - `src/app/(protected)/layout.tsx`: `"use client"`, AdminLTE `.wrapper` structure: `<nav className="main-header">` (logout button) + `<div className="content-wrapper">{children}</div>`; logout: `clearToken()` → `router.push('/login')`
   - `src/components/dashboard/DashboardContent.tsx`: AdminLTE `.content` with `<h1>O melhor está por vir</h1>` + supporting subtext (pt-BR)
   - `DashboardContent.test.tsx`: renders "O melhor está por vir", renders page
