@@ -42,3 +42,33 @@ label {
     animation: none !important;
   }
 }
+
+/* =====================================================================
+   BUTTONS
+   ===================================================================== */
+
+.btn-primary {
+  background-color: var(--mg-primary);
+  border-color: var(--mg-primary);
+  color: var(--mg-text);
+  transition: background-color var(--mg-transition), border-color var(--mg-transition);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--mg-primary-hover);
+  border-color: var(--mg-primary-hover);
+  color: var(--mg-text);
+}
+
+.btn-outline-primary {
+  color: var(--mg-primary-hover);
+  border-color: var(--mg-primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background-color: var(--mg-primary);
+  border-color: var(--mg-primary);
+  color: var(--mg-text);
+}
