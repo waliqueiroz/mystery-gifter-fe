@@ -70,7 +70,7 @@ export default function RegisterForm() {
     <div className="container d-flex align-items-center justify-content-center min-vh-100">
       <div className="card" style={{ width: '100%', maxWidth: 480 }}>
         <div className="card-body p-5">
-          <h1 className="card-title text-center mb-4">Criar conta</h1>
+          <h1 className="text-center mb-4">Criar conta</h1>
           <form onSubmit={handleSubmit} noValidate>
             {error && <div className="alert alert-danger">{error}</div>}
             <FormField
