@@ -94,7 +94,7 @@
 **Independent Test**: Navigate `/` without session → landing renders "Mystery Gifter" + both CTAs
 **Branch**: `task/001-T010-landing-page` (stacked on T009, parallel with T011/T012/T013)
 
-- [ ] T010 [P] [US1] Implement HeroSection component + landing page in `src/components/landing/HeroSection.tsx`, `HeroSection.test.tsx`, and `src/app/(public)/page.tsx`
+- [x] T010 [P] [US1] Implement HeroSection component + landing page in `src/components/landing/HeroSection.tsx`, `HeroSection.test.tsx`, and `src/app/(public)/page.tsx`
   - `HeroSection.tsx`: Bootstrap 4 hero section, `<h1>Mystery Gifter</h1>`, product description (pt-BR), `<Link href="/login" className="btn btn-primary">Entrar</Link>`, `<Link href="/register" className="btn btn-outline-primary">Criar conta</Link>`, responsive Bootstrap 4 grid
   - `HeroSection.test.tsx`: renders "Mystery Gifter", renders "Entrar" link to /login, renders "Criar conta" link to /register
   - `src/app/(public)/page.tsx`: import HeroSection + wrap in GuestGuard (Server Component — GuestGuard is "use client" internally)
@@ -108,7 +108,7 @@
 **Independent Test**: Submit valid form → two API calls → redirected to `/dashboard`
 **Branch**: `task/001-T011-register-page` (stacked on T009, parallel with T010/T012/T013)
 
-- [ ] T011 [P] [US2] Implement RegisterForm component + register page in `src/components/register/RegisterForm.tsx`, `RegisterForm.test.tsx`, and `src/app/(public)/register/page.tsx`
+- [x] T011 [P] [US2] Implement RegisterForm component + register page in `src/components/register/RegisterForm.tsx`, `RegisterForm.test.tsx`, and `src/app/(public)/register/page.tsx`
   - `RegisterForm.tsx`: `"use client"`, uses FormField + Button, fields: nome, sobrenome, e-mail, senha, confirmação de senha
   - Client-side validation (before API call): all fields non-empty; senha ≥ 8 chars; confirmação === senha
   - On success: `register(payload)` → `setToken(session.access_token)` → `router.push('/dashboard')`
