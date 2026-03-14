@@ -19,8 +19,8 @@ CSS-only tasks do not require test tasks — tests are only required when compon
 
 **Purpose**: Create the theme file and wire it into the CSS pipeline. Unblocks all user story phases.
 
-- [ ] T001 Create `src/app/theme.css` with `:root` CSS design tokens only (`--mg-primary`, `--mg-primary-hover`, `--mg-bg`, `--mg-bg-secondary`, `--mg-bg-card`, `--mg-text`, `--mg-text-muted`, `--mg-error`, `--mg-transition`) — no override rules yet
-- [ ] T002 Update `src/app/globals.css` to append `@import './theme.css';` after the AdminLTE import line
+- [x] T001 Create `src/app/theme.css` with `:root` CSS design tokens only (`--mg-primary`, `--mg-primary-hover`, `--mg-bg`, `--mg-bg-secondary`, `--mg-bg-card`, `--mg-text`, `--mg-text-muted`, `--mg-error`, `--mg-transition`) — no override rules yet
+- [x] T002 Update `src/app/globals.css` to append `@import './theme.css';` after the AdminLTE import line
 
 > **Checkpoint**: `theme.css` exists and is loaded. CSS variables are available globally. No visual change yet.
 
