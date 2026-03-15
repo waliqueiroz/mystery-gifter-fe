@@ -126,17 +126,6 @@ label {
   position: relative;
   min-height: 100vh;
   background: linear-gradient(to bottom, var(--mg-primary), var(--mg-primary-hover));
-  background-attachment: fixed;
-}
-@media (max-width: 768px) {
-  .mg-hero {
-    background-attachment: scroll;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mg-hero {
-    background-attachment: scroll;
-  }
 }
 .mg-hero-title {
   background: linear-gradient(to right, #fff, var(--mg-primary-hover));
