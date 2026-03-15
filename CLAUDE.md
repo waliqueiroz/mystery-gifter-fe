@@ -43,7 +43,23 @@ npm run lint         # ESLint
 npm run build        # Production build (must succeed before PR)
 ```
 
-## Key Rules (from Constitution v1.1.1)
+## Style Guide (from Constitution v1.2.0)
+
+All new screens and components MUST follow these rules — see constitution for full detail.
+
+- **Theme file**: all style changes go in `src/app/theme.css` only; no hardcoded colors elsewhere
+- **Design tokens**: use CSS custom properties — `--mg-primary` (#6B46C1), `--mg-primary-hover`
+  (#9F7AEA), `--mg-bg` (#0F0F0F), `--mg-bg-secondary` (#1A202C), `--mg-bg-card` (#2D3748),
+  `--mg-text` (#FFF), `--mg-text-muted` (#A0AEC0), `--mg-error` (#FC8181),
+  `--mg-transition` (200ms ease-in-out)
+- **Dark mode mandatory**: no light mode; `body` background is always `var(--mg-bg)`
+- **Custom classes**: project-specific classes MUST be prefixed `mg-` (e.g. `mg-hero`, `mg-feature-card`)
+- **No inline styles** for static values — use tokens or Bootstrap/AdminLTE classes
+- **Accessibility**: contrast ≥ 4.5:1; `:focus-visible` purple ring on all interactive elements;
+  `aria-hidden="true"` on purely decorative elements
+- **Gradients**: `to bottom` for backgrounds, `to right` for text gradient effects
+
+## Key Rules (from Constitution v1.2.0)
 
 - Every React component and utility function MUST have a unit test — no exceptions
 - All UI text MUST be in Brazilian Portuguese (pt-BR)

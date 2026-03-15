@@ -1,19 +1,19 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.1.1 → 1.1.2
-Modified principles: N/A
+Version change: 1.1.2 → 1.2.0
+Modified principles:
+  - Principle III (UX Consistency): added reference to mandatory Style Guide section
 Modified sections:
-  - Frontend Standards: Tailwind CSS replaced with Bootstrap 4.6 + AdminLTE 3.2
-  - Principle III: design token reference updated to Bootstrap 4 + AdminLTE variables
-Added sections: N/A
+  - Frontend Standards: added reference to theme.css and Style Guide
+Added sections:
+  - Style Guide (new section): design tokens, color palette, typography, component overrides,
+    accessibility rules, and extension pattern — derived from feature/002-dark-theme-redesign
 Removed sections: N/A
 Templates updated:
   ✅ .specify/memory/constitution.md (this file)
-  ⚠ .specify/templates/tasks-template.md — branch naming examples still use ###-short-description;
-      update to feature/###-short-description when the speckit scripts are updated.
-  ⚠ .specify/scripts/bash/create-new-feature.sh — branch prefix (feature/) not yet added by the
-      script; manual adjustment required when creating branches until script is patched.
+  ✅ plan-template.md — Constitution Check gate already generic; no change needed
+  ✅ tasks-template.md — already references Principle II; no change needed
 Follow-up TODOs:
   - Update .specify/scripts/bash/create-new-feature.sh to prepend `feature/` prefix to generated
     branch names, or support a --type flag (feature|fix|hotfix|release).
@@ -66,9 +66,12 @@ Mandating them for every component prevents untested regressions and documents e
 
 The UI MUST present a coherent, predictable experience across all screens and states.
 
-- Bootstrap 4 variables and AdminLTE 3.2 theme variables MUST be used as the design token
-  system (colors, spacing, typography) — no ad-hoc inline styles that duplicate or
-  contradict these variables.
+- The Style Guide defined in this constitution (see **Style Guide** section) MUST be followed
+  on all new screens and components — no ad-hoc colors, spacing, or component variants that
+  contradict the established design tokens.
+- Bootstrap 4 variables and AdminLTE 3.2 theme variables MUST be used as the base design
+  system; overrides MUST be applied exclusively through `src/app/theme.css` using the defined
+  CSS custom properties.
 - Loading, error, and empty states MUST be handled explicitly in every data-dependent component;
   "undefined behavior" on network failure is not acceptable.
 - Interactive elements (buttons, links, forms) MUST follow consistent feedback patterns:
@@ -106,7 +109,8 @@ patterns. Complexity MUST be justified — the simplest solution that meets requ
 always preferred (YAGNI).
 
 - Use the App Router (`app/`) directory for all routing; the Pages Router MUST NOT be used.
-- Route segments (directory names under `app/`) MUST be in English — e.g., `/register`, not `/registro`. UI text and labels remain in pt-BR; only the URL path is English.
+- Route segments (directory names under `app/`) MUST be in English — e.g., `/register`, not
+  `/registro`. UI text and labels remain in pt-BR; only the URL path is English.
 - Server Components MUST be the default; add `"use client"` only when interactivity,
   browser APIs, or hooks require it — and document why at the top of the file.
 - Data fetching MUST use Server Components + `fetch` with appropriate caching options,
@@ -127,10 +131,12 @@ for developers already familiar with the Next.js ecosystem.
 
 **Language & Runtime**: TypeScript 5+, Node.js LTS
 **Framework**: Next.js 14+ (App Router)
-**Styling**: Bootstrap 4.6 + AdminLTE 3.2 — Bootstrap 4 for public pages (landing, login,
-  registro); AdminLTE 3.2 for authenticated pages (dashboard and beyond). Tailwind CSS MUST
-  NOT be used — it conflicts with Bootstrap 4's reset and AdminLTE's CSS. No inline `style`
-  props except for dynamic values that cannot be expressed as Bootstrap/AdminLTE class names.
+**Styling**: Bootstrap 4.6 + AdminLTE 3.2, extended by `src/app/theme.css` (see Style Guide).
+  Tailwind CSS MUST NOT be used — it conflicts with Bootstrap 4's reset and AdminLTE's CSS.
+  No inline `style` props except for dynamic values that cannot be expressed as class names.
+**Theme file**: All style customizations MUST live in `src/app/theme.css`, imported last in
+  `src/app/globals.css` so it cascades over framework defaults. Hardcoded color or spacing
+  values outside this file are forbidden.
 **Component library**: Shared component library under `src/components/ui/`; all reusable
   primitives MUST live there and MUST have unit tests.
 **Testing stack**: Jest + React Testing Library (unit); Playwright or Cypress (E2E, optional
@@ -139,6 +145,138 @@ for developers already familiar with the Next.js ecosystem.
   pre-commit hook and CI.
 **CI gate**: All tests MUST pass, linting MUST be clean, and build MUST succeed before any
   PR is merged.
+
+## Style Guide
+
+This section defines the mandatory visual identity for Mystery Gifter. Every new screen,
+component, or feature MUST conform to these rules. Deviations require explicit justification
+in the feature's `plan.md` Complexity Tracking table.
+
+### Dark Theme (NON-NEGOTIABLE)
+
+- The application MUST operate in **mandatory dark mode** at all times.
+- There is no light mode alternative — `prefers-color-scheme: light` is intentionally ignored.
+- The `body` background MUST always resolve to `var(--mg-bg)` (`#0F0F0F`).
+
+### Design Tokens
+
+All visual values MUST be referenced via the CSS custom properties defined in `:root` inside
+`src/app/theme.css`. Adding a hardcoded hex, rgb, or hsl value anywhere outside that file
+is a constitution violation.
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--mg-primary` | `#6B46C1` | Buttons, borders, active states |
+| `--mg-primary-hover` | `#9F7AEA` | Hover/focus states, accents |
+| `--mg-bg` | `#0F0F0F` | Page background (body) |
+| `--mg-bg-secondary` | `#1A202C` | Dashboard content, input backgrounds |
+| `--mg-bg-card` | `#2D3748` | Card backgrounds |
+| `--mg-text` | `#FFFFFF` | Primary text on dark backgrounds |
+| `--mg-text-muted` | `#A0AEC0` | Labels, placeholders, secondary text |
+| `--mg-error` | `#FC8181` | Validation errors, danger alerts |
+| `--mg-transition` | `200ms ease-in-out` | All hover/focus transitions |
+
+### Color Palette
+
+- **Primary purple** (`--mg-primary`, `#6B46C1`): action buttons, highlights, card borders.
+- **Accent purple** (`--mg-primary-hover`, `#9F7AEA`): hover states, focus rings, gradient ends.
+- **Background** (`--mg-bg`, `#0F0F0F`): default page background.
+- **Surface dark** (`--mg-bg-secondary`, `#1A202C`): inputs, dashboard content area.
+- **Surface card** (`--mg-bg-card`, `#2D3748`): card components.
+- **Text primary** (`--mg-text`, `#FFFFFF`): body and heading text.
+- **Text muted** (`--mg-text-muted`, `#A0AEC0`): labels, captions, placeholders.
+- **Error/danger** (`--mg-error`, `#FC8181`): soft red — invalid fields, `.alert-danger`.
+- **Gradients**: use `linear-gradient` between `--mg-primary` and `--mg-primary-hover` only.
+  Direction MUST be `to bottom` for backgrounds and `to right` for text gradient effects.
+
+### Typography
+
+- Use the default sans-serif font stack provided by Bootstrap 4.6 / AdminLTE 3.2.
+  No custom web fonts may be added unless approved in a spec and measured against LCP budget.
+- Font Awesome Free is the approved icon library; new icon libraries MUST NOT be introduced.
+- Heading text on dark backgrounds MUST use `--mg-text` (`#FFFFFF`).
+- Body and secondary text MUST use `--mg-text` or `--mg-text-muted` (`#A0AEC0`).
+- Minimum contrast ratio: **4.5:1** (WCAG AA) for all text/background combinations.
+
+### Component Overrides
+
+All Bootstrap and AdminLTE component overrides MUST be placed in `src/app/theme.css`.
+The following rules are already established and MUST NOT be duplicated or contradicted:
+
+**Buttons**
+- `.btn-primary`: background `--mg-primary`, border `--mg-primary`, text white.
+  Hover/focus: background and border transition to `--mg-primary-hover`.
+- `.btn-outline-primary`: border `--mg-primary`, text `--mg-primary-hover`.
+  Hover/focus: background `--mg-primary`, text white.
+- Inside `.mg-hero`: `.btn-outline-primary` MUST use white text and semi-transparent
+  white border (`rgba(255,255,255,0.7)`) to maintain contrast on the gradient background.
+
+**Form Controls**
+- `.form-control`: background `--mg-bg-secondary`, border `#4A5568`, text `--mg-text`.
+- `::placeholder`: color `--mg-text-muted`.
+- `:focus`: border `--mg-primary-hover`, box-shadow `0 0 0 0.2rem rgba(159,122,234,0.25)`.
+- `.form-control.is-invalid`: border `--mg-error`.
+- `.invalid-feedback`: color `--mg-error`.
+
+**Cards**
+- `.card`: background `--mg-bg-card`, border `1px solid --mg-primary`,
+  box-shadow `0 8px 32px rgba(107,70,193,0.3)`.
+- `.card-body`: color `--mg-text`.
+
+**Alerts**
+- `.alert-danger`: background `rgba(252,129,129,0.1)`, border `--mg-error`, text `--mg-error`.
+  Other alert variants (success, warning, info) inherit Bootstrap defaults unless overridden
+  in a future feature spec.
+
+**AdminLTE Navbar & Content**
+- `.main-header.navbar`: background `--mg-primary` (`!important`).
+- `.main-header .nav-link`, `.main-header .navbar-brand`, `.main-header .btn-link`:
+  color `--mg-text` (`!important`), hover color `--mg-primary-hover`.
+- `.content-wrapper`: background `--mg-bg-secondary` (`!important`).
+- The `<nav>` in the protected layout MUST use the `navbar-dark` Bootstrap modifier class
+  (not `navbar-white navbar-light`).
+
+### Landing Page Hero
+
+The landing page hero uses dedicated utility classes that MUST be applied as defined:
+
+- `.mg-hero`: full-viewport section (`min-height: 100vh`, `position: relative`,
+  `overflow: hidden`) with a vertical purple gradient background.
+- `.mg-hero-title`: gradient text (`linear-gradient to right`, white → `--mg-primary-hover`)
+  using `background-clip: text`.
+- `.mg-hero-icon`: floating icon above the heading — `display: inline-block`, animated
+  with `mg-float` keyframe.
+- `.mg-feature-card`: glassmorphism card (`rgba(255,255,255,0.1)` bg, white border,
+  `0.75rem` border-radius) used for feature highlights below the CTAs.
+- Future landing page sections MUST reuse these tokens and follow the same gradient language.
+
+### Accessibility Rules
+
+- **Focus rings**: ALL interactive elements MUST display a visible purple focus ring via
+  `:focus-visible { outline: 2px solid var(--mg-primary-hover); outline-offset: 2px; }`.
+  This rule is global and MUST NOT be overridden to `none` without providing an alternative.
+- **Reduced motion**: the global rule `@media (prefers-reduced-motion: reduce)` suppresses
+  ALL CSS transitions and animations. New animations MUST NOT add their own reduced-motion
+  overrides — the global blanket rule already covers them.
+- **Contrast**: every text/background combination MUST meet a minimum ratio of 4.5:1.
+  Use the browser DevTools accessibility panel or axe to verify before merging.
+- **Decorative elements**: purely decorative elements (icons, orbs, shapes) MUST carry
+  `aria-hidden="true"` so they are invisible to screen readers.
+
+### Extension Pattern
+
+When a new feature requires new visual elements:
+
+1. **Add tokens first**: if a new color, spacing, or transition value is needed, add it as
+   a CSS custom property to `:root` in `src/app/theme.css` before using it anywhere.
+2. **Override, never duplicate**: extend Bootstrap/AdminLTE components via additional CSS rules
+   in `theme.css` — never copy/paste their HTML structure to create a look-alike from scratch.
+3. **Namespace custom classes**: all project-specific utility classes MUST be prefixed with
+   `mg-` (e.g., `.mg-hero`, `.mg-feature-card`) to avoid collisions with Bootstrap utilities.
+4. **No inline styles for static values**: `style` props on JSX elements MUST NOT be used
+   for values that can be expressed as a CSS class or design token.
+5. **Spec the change**: visual changes affecting more than one component MUST be documented
+   in the feature spec (FR section) and reflected in `theme.css` as a single, reviewable diff.
 
 ## Development Workflow
 
@@ -165,7 +303,8 @@ for developers already familiar with the Next.js ecosystem.
    - Lint and type-check pass (`npm run lint && npm run type-check`).
    - Build succeeds (`npm run build`).
    - No console errors or warnings introduced.
-   - Accessibility spot-check performed (keyboard navigation, color contrast).
+   - Accessibility spot-check performed (keyboard navigation, color contrast ≥ 4.5:1).
+   - New visual elements follow the Style Guide (design tokens, `mg-` prefix, no inline styles).
 
 5. **Review requirements**: at least one approval required before merge; reviewer MUST
    verify constitution compliance, not just functional correctness.
@@ -237,4 +376,4 @@ conventions in the mystery-gifter-fe project.
 explicit justification documented in the Complexity Tracking table of the relevant plan.md
 before they may be merged.
 
-**Version**: 1.1.2 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-08
+**Version**: 1.2.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-03-15
