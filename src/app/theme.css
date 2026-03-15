@@ -146,7 +146,7 @@ label {
   50% { transform: translateY(-10px); }
 }
 .mg-hero-icon {
-  display: block;
+  display: inline-block;
   font-size: 4rem;
   color: rgba(255, 255, 255, 0.9);
   animation: mg-float 3s ease-in-out infinite;
