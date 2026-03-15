@@ -119,6 +119,7 @@ label {
    ===================================================================== */
 
 .mg-hero {
+  position: relative;
   min-height: 100vh;
   background: linear-gradient(to bottom, var(--mg-primary), var(--mg-primary-hover));
   background-attachment: fixed;
@@ -139,6 +140,48 @@ label {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+/* Hero icon */
+@keyframes mg-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.mg-hero-icon {
+  display: block;
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.9);
+  animation: mg-float 3s ease-in-out infinite;
+}
+
+/* Feature cards */
+.mg-feature-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  color: var(--mg-text);
+  transition: background-color var(--mg-transition), transform var(--mg-transition);
+}
+.mg-feature-card:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-4px);
+}
+.mg-feature-card i {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Scroll indicator */
+@keyframes mg-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+.mg-scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.25rem;
+  animation: mg-bounce 1.5s ease-in-out infinite;
+}
+
 .mg-hero .btn-outline-primary {
   color: var(--mg-text);
   border-color: rgba(255, 255, 255, 0.7);
