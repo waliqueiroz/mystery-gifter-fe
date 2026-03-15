@@ -51,7 +51,9 @@ label {
   background-color: var(--mg-primary);
   border-color: var(--mg-primary);
   color: var(--mg-text);
-  transition: background-color var(--mg-transition), border-color var(--mg-transition);
+  transition:
+    background-color var(--mg-transition),
+    border-color var(--mg-transition);
 }
 .btn-primary:hover,
 .btn-primary:focus {
@@ -78,7 +80,9 @@ label {
   background-color: var(--mg-bg-secondary);
   border-color: #4a5568;
   color: var(--mg-text);
-  transition: border-color var(--mg-transition), box-shadow var(--mg-transition);
+  transition:
+    border-color var(--mg-transition),
+    box-shadow var(--mg-transition);
 }
 .form-control::placeholder {
   color: var(--mg-text-muted);
@@ -119,19 +123,9 @@ label {
    ===================================================================== */
 
 .mg-hero {
+  position: relative;
   min-height: 100vh;
   background: linear-gradient(to bottom, var(--mg-primary), var(--mg-primary-hover));
-  background-attachment: fixed;
-}
-@media (max-width: 768px) {
-  .mg-hero {
-    background-attachment: scroll;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mg-hero {
-    background-attachment: scroll;
-  }
 }
 .mg-hero-title {
   background: linear-gradient(to right, #fff, var(--mg-primary-hover));
@@ -139,6 +133,42 @@ label {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+/* Hero icon */
+@keyframes mg-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.mg-hero-icon {
+  display: inline-block;
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.9);
+  animation: mg-float 2s ease-in-out infinite;
+}
+
+/* Feature cards */
+.mg-feature-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  color: var(--mg-text);
+  transition:
+    background-color var(--mg-transition),
+    transform var(--mg-transition);
+}
+.mg-feature-card:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-4px);
+}
+.mg-feature-card i {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .mg-hero .btn-outline-primary {
   color: var(--mg-text);
   border-color: rgba(255, 255, 255, 0.7);
