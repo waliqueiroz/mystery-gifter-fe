@@ -42,3 +42,121 @@ label {
     animation: none !important;
   }
 }
+
+/* =====================================================================
+   BUTTONS
+   ===================================================================== */
+
+.btn-primary {
+  background-color: var(--mg-primary);
+  border-color: var(--mg-primary);
+  color: var(--mg-text);
+  transition: background-color var(--mg-transition), border-color var(--mg-transition);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--mg-primary-hover);
+  border-color: var(--mg-primary-hover);
+  color: var(--mg-text);
+}
+.btn-outline-primary {
+  color: var(--mg-primary-hover);
+  border-color: var(--mg-primary);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background-color: var(--mg-primary);
+  border-color: var(--mg-primary);
+  color: var(--mg-text);
+}
+
+/* =====================================================================
+   FORM CONTROLS
+   ===================================================================== */
+
+.form-control {
+  background-color: var(--mg-bg-secondary);
+  border-color: #4a5568;
+  color: var(--mg-text);
+  transition: border-color var(--mg-transition), box-shadow var(--mg-transition);
+}
+.form-control::placeholder {
+  color: var(--mg-text-muted);
+}
+.form-control:focus {
+  background-color: var(--mg-bg-secondary);
+  border-color: var(--mg-primary-hover);
+  color: var(--mg-text);
+  box-shadow: 0 0 0 0.2rem rgba(159, 122, 234, 0.25);
+}
+.form-control.is-invalid {
+  border-color: var(--mg-error);
+}
+.invalid-feedback {
+  color: var(--mg-error);
+}
+
+/* =====================================================================
+   CARDS & ALERTS
+   ===================================================================== */
+
+.card {
+  background-color: var(--mg-bg-card);
+  border: 1px solid var(--mg-primary);
+  box-shadow: 0 8px 32px rgba(107, 70, 193, 0.3);
+}
+.card-body {
+  color: var(--mg-text);
+}
+.alert-danger {
+  background-color: rgba(252, 129, 129, 0.1);
+  border-color: var(--mg-error);
+  color: var(--mg-error);
+}
+
+/* =====================================================================
+   LANDING PAGE HERO
+   ===================================================================== */
+
+.mg-hero {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, var(--mg-primary), var(--mg-primary-hover));
+  background-attachment: fixed;
+}
+@media (max-width: 768px) {
+  .mg-hero {
+    background-attachment: scroll;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mg-hero {
+    background-attachment: scroll;
+  }
+}
+.mg-hero-title {
+  background: linear-gradient(to right, #fff, var(--mg-primary-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =====================================================================
+   ADMINLTE NAVBAR & CONTENT
+   ===================================================================== */
+
+.main-header.navbar {
+  background-color: var(--mg-primary) !important;
+}
+.main-header .nav-link,
+.main-header .navbar-brand,
+.main-header .btn-link {
+  color: var(--mg-text) !important;
+  transition: color var(--mg-transition);
+}
+.main-header .nav-link:hover,
+.main-header .btn-link:hover {
+  color: var(--mg-primary-hover) !important;
+}
+.content-wrapper {
+  background-color: var(--mg-bg-secondary) !important;
+}

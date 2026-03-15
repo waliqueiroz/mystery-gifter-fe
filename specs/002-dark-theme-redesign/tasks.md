@@ -34,10 +34,10 @@ CSS-only tasks do not require test tasks — tests are only required when compon
 
 **Note**: No component markup changes in this phase. All tasks append CSS rules to `src/app/theme.css`.
 
-- [ ] T003 [US1] Add global base overrides to `src/app/theme.css`: `body` (background-color, color), `label` (color using `--mg-text-muted`), global `:focus-visible` purple outline for all interactive elements (FR-017), and `@media (prefers-reduced-motion: reduce)` blanket rule suppressing all transitions and animations (FR-016)
-- [ ] T004 [US1] Add button overrides to `src/app/theme.css`: `.btn-primary` (bg, border, transition) and `.btn-primary:hover/:focus` + `.btn-outline-primary` and `.btn-outline-primary:hover`
-- [ ] T005 [US1] Add form control overrides to `src/app/theme.css`: `.form-control` (bg, border, color), `::placeholder`, `:focus` (purple ring), `.form-control.is-invalid` (soft red border), `.invalid-feedback` (soft red text)
-- [ ] T006 [US1] Add card and alert overrides to `src/app/theme.css`: `.card` (bg, purple border, shadow), `.card-body` (text color), `.alert-danger` (dark red tint bg, soft red border and text)
+- [x] T003 [US1] Add global base overrides to `src/app/theme.css`: `body` (background-color, color), `label` (color using `--mg-text-muted`), global `:focus-visible` purple outline for all interactive elements (FR-017), and `@media (prefers-reduced-motion: reduce)` blanket rule suppressing all transitions and animations (FR-016)
+- [x] T004 [US1] Add button overrides to `src/app/theme.css`: `.btn-primary` (bg, border, transition) and `.btn-primary:hover/:focus` + `.btn-outline-primary` and `.btn-outline-primary:hover`
+- [x] T005 [US1] Add form control overrides to `src/app/theme.css`: `.form-control` (bg, border, color), `::placeholder`, `:focus` (purple ring), `.form-control.is-invalid` (soft red border), `.invalid-feedback` (soft red text)
+- [x] T006 [US1] Add card and alert overrides to `src/app/theme.css`: `.card` (bg, purple border, shadow), `.card-body` (text color), `.alert-danger` (dark red tint bg, soft red border and text)
 
 > **Checkpoint (US1 complete)**: Login and register pages fully reflect the dark theme via CSS cascade. No component files were changed. Run `npm test` — all existing tests must still pass.
 
@@ -49,9 +49,9 @@ CSS-only tasks do not require test tasks — tests are only required when compon
 
 **Independent Test**: Access the public root route (`/`). Scrolling on desktop triggers a parallax background effect. On mobile (≤ 768px) the background is a static gradient. The main title renders with a left-to-right purple gradient.
 
-- [ ] T007 [US2] Add hero CSS to `src/app/theme.css`: `.mg-hero` (vertical gradient, `background-attachment: fixed`, `min-height: 100vh`) with `@media (max-width: 768px)` and `@media (prefers-reduced-motion: reduce)` overriding to `background-attachment: scroll`; `.mg-hero-title` (gradient text via `background-clip: text`)
-- [ ] T008 [P] [US2] Update `src/components/landing/HeroSection.tsx`: replace outer wrapper class `container d-flex flex-column align-items-center justify-content-center min-vh-100` with `mg-hero d-flex flex-column align-items-center justify-content-center`; add `mg-hero-title` to the `<h1>` element
-- [ ] T009 [P] [US2] Update `src/components/landing/HeroSection.test.tsx`: update CSS class assertions to match the new `mg-hero` wrapper and `mg-hero-title` heading classes
+- [x] T007 [US2] Add hero CSS to `src/app/theme.css`: `.mg-hero` (vertical gradient, `background-attachment: fixed`, `min-height: 100vh`) with `@media (max-width: 768px)` and `@media (prefers-reduced-motion: reduce)` overriding to `background-attachment: scroll`; `.mg-hero-title` (gradient text via `background-clip: text`)
+- [x] T008 [P] [US2] Update `src/components/landing/HeroSection.tsx`: replace outer wrapper class `container d-flex flex-column align-items-center justify-content-center min-vh-100` with `mg-hero d-flex flex-column align-items-center justify-content-center`; add `mg-hero-title` to the `<h1>` element
+- [x] T009 [P] [US2] Update `src/components/landing/HeroSection.test.tsx`: update CSS class assertions to match the new `mg-hero` wrapper and `mg-hero-title` heading classes
 
 > **Note**: T008 and T009 touch different files and can be implemented in parallel. Both depend on T007.
 
@@ -77,9 +77,9 @@ CSS-only tasks do not require test tasks — tests are only required when compon
 
 **Independent Test**: Log in and access `/dashboard`. The navbar is dark purple with white links and logout button. The content background is `#1A202C`. Hovering navbar links shows a light purple accent.
 
-- [ ] T010 [US4] Add AdminLTE overrides to `src/app/theme.css`: `.main-header.navbar` (purple bg), `.main-header .nav-link`, `.main-header .navbar-brand`, `.main-header .btn-link` (white text, hover purple), `.content-wrapper` (dark secondary bg)
-- [ ] T011 [P] [US4] Update `src/app/(protected)/layout.tsx`: replace `navbar-white navbar-light` with `navbar-dark` in the `<nav>` className
-- [ ] T012 [P] [US4] Update `src/app/(protected)/AdminLTELayout.test.tsx`: update navbar class assertions to expect `navbar-dark` instead of `navbar-white` and `navbar-light`
+- [x] T010 [US4] Add AdminLTE overrides to `src/app/theme.css`: `.main-header.navbar` (purple bg), `.main-header .nav-link`, `.main-header .navbar-brand`, `.main-header .btn-link` (white text, hover purple), `.content-wrapper` (dark secondary bg)
+- [x] T011 [P] [US4] Update `src/app/(protected)/layout.tsx`: replace `navbar-white navbar-light` with `navbar-dark` in the `<nav>` className
+- [x] T012 [P] [US4] Update `src/app/(protected)/AdminLTELayout.test.tsx`: update navbar class assertions to expect `navbar-dark` instead of `navbar-white` and `navbar-light`
 
 > **Note**: T011 and T012 touch different files and can be implemented in parallel. Both depend on T010.
 
@@ -91,8 +91,8 @@ CSS-only tasks do not require test tasks — tests are only required when compon
 
 **Purpose**: Final cross-cutting quality gate before the feature branch is merged.
 
-- [ ] T013 Run full test suite `npm test` and confirm zero failures across all modified components
-- [ ] T014 [P] Run production build `npm run build` and confirm it succeeds with no errors
+- [x] T013 Run full test suite `npm test` and confirm zero failures across all modified components
+- [x] T014 [P] Run production build `npm run build` and confirm it succeeds with no errors
 - [ ] T015 [P] Accessibility spot-check: use browser devtools to verify contrast ratios ≥ 4.5:1 on body text, card text, button text, and error messages (per SC-002)
 
 ---

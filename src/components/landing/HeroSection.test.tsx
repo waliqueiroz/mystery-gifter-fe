@@ -16,6 +16,16 @@ describe('HeroSection', () => {
     expect(screen.getByRole('heading', { name: 'Mystery Gifter' })).toBeInTheDocument()
   })
 
+  it('renders hero wrapper with mg-hero class', () => {
+    const { container } = render(<HeroSection />)
+    expect(container.firstChild).toHaveClass('mg-hero')
+  })
+
+  it('renders heading with mg-hero-title class', () => {
+    render(<HeroSection />)
+    expect(screen.getByRole('heading', { name: 'Mystery Gifter' })).toHaveClass('mg-hero-title')
+  })
+
   it('renders "Entrar" link pointing to /login', () => {
     render(<HeroSection />)
     const link = screen.getByRole('link', { name: 'Entrar' })
