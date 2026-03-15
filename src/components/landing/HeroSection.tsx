@@ -42,9 +42,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-      <div className="mg-scroll-indicator" aria-hidden="true">
-        <i className="fas fa-chevron-down" />
-      </div>
     </div>
   )
 }

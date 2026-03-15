@@ -52,8 +52,4 @@ describe('HeroSection', () => {
     expect(screen.getByText('Gerencie tudo')).toBeInTheDocument()
   })
 
-  it('renders scroll indicator', () => {
-    const { container } = render(<HeroSection />)
-    expect(container.querySelector('.mg-scroll-indicator')).toBeInTheDocument()
-  })
 })
