@@ -32,6 +32,24 @@ describe('HeroSection', () => {
 
   it('renders product description', () => {
     render(<HeroSection />)
-    expect(screen.getByText(/amigo secreto/i)).toBeInTheDocument()
+    expect(screen.getByText(/Organize grupos de amigo secreto/i)).toBeInTheDocument()
   })
+
+  it('renders hero wrapper with mg-hero class', () => {
+    const { container } = render(<HeroSection />)
+    expect(container.firstChild).toHaveClass('mg-hero')
+  })
+
+  it('renders heading with mg-hero-title class', () => {
+    render(<HeroSection />)
+    expect(screen.getByRole('heading', { name: 'Mystery Gifter' })).toHaveClass('mg-hero-title')
+  })
+
+  it('renders three feature cards', () => {
+    render(<HeroSection />)
+    expect(screen.getByText('Crie grupos')).toBeInTheDocument()
+    expect(screen.getByText('Sorteie nomes')).toBeInTheDocument()
+    expect(screen.getByText('Gerencie tudo')).toBeInTheDocument()
+  })
+
 })

@@ -54,4 +54,16 @@ describe('ProtectedLayout', () => {
     expect(container.querySelector('.main-header')).toBeInTheDocument()
     expect(container.querySelector('.content-wrapper')).toBeInTheDocument()
   })
+
+  it('applies navbar-dark class to main header nav', () => {
+    const { container } = render(
+      <ProtectedLayout>
+        <div>conteúdo</div>
+      </ProtectedLayout>,
+    )
+    const nav = container.querySelector('nav.main-header')
+    expect(nav).toHaveClass('navbar-dark')
+    expect(nav).not.toHaveClass('navbar-white')
+    expect(nav).not.toHaveClass('navbar-light')
+  })
 })

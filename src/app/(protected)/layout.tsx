@@ -13,7 +13,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="wrapper">
-      <nav className="main-header navbar navbar-expand navbar-white navbar-light">
+      <nav className="main-header navbar navbar-expand navbar-dark">
         <ul className="navbar-nav ml-auto">
           <li className="nav-item">
             <button className="btn btn-link nav-link" onClick={handleLogout}>

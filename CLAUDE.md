@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-03-08
 
 ## Active Technologies
+- TypeScript 5+, Node.js LTS + Next.js 15.5.4, Bootstrap 4.6, AdminLTE 3.2, Font Awesome Free (002-dark-theme-redesign)
+- N/A (styling-only feature) (002-dark-theme-redesign)
 
 - **Framework**: Next.js 15.5.4, App Router, React 19, TypeScript 5+
 - **UI**: AdminLTE 3.2 (dashboard), Bootstrap 4.6 (public pages), Font Awesome (free)
@@ -46,6 +48,7 @@ npm run build        # Production build (must succeed before PR)
 - Every React component and utility function MUST have a unit test — no exceptions
 - All UI text MUST be in Brazilian Portuguese (pt-BR)
 - Route segments (URL paths) MUST be in English — e.g., `/register` not `/registro`; only UI labels are pt-BR
+- Spec files, checklists, plans, and all speckit artifacts MUST be written in English — pt-BR applies only to UI text visible to end users
 - `"use client"` required for: auth guards, forms, and anything reading localStorage
 - Auth guard: read `localStorage.getItem('mystery_gifter_token')` on mount; redirect if absent
 - Guest guard: if token present → redirect to `/dashboard`
@@ -107,6 +110,7 @@ git branch | grep task/001
 ```
 
 ## Recent Changes
+- 002-dark-theme-redesign: Added TypeScript 5+, Node.js LTS + Next.js 15.5.4, Bootstrap 4.6, AdminLTE 3.2, Font Awesome Free
 
 - 001-initial-screens: Initial screens MVP — landing, login, register, dashboard
 
