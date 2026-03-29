@@ -126,10 +126,10 @@ git branch | grep task/001
 ```
 
 ## Recent Changes
+- 003-group-management: Added TypeScript 5+, Node.js LTS
 - 002-dark-theme-redesign: Added TypeScript 5+, Node.js LTS + Next.js 15.5.4, Bootstrap 4.6, AdminLTE 3.2, Font Awesome Free
 
 - 001-initial-screens: Initial screens MVP — landing, login, register, dashboard
 
 <!-- MANUAL ADDITIONS START -->
-- Always answer in Brazilian Portuguese (pt-BR)
 <!-- MANUAL ADDITIONS END -->

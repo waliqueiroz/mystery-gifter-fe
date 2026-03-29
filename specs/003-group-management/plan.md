@@ -1,0 +1,273 @@
+# Implementation Plan: Secret Santa Group Management
+
+**Branch**: `003-group-management` | **Date**: 2026-03-29 | **Spec**: `specs/003-group-management/spec.md`
+**Input**: Feature specification — 7 user stories covering group lifecycle: list, create, invite, member management, draw, result reveal, and reopen/archive.
+
+---
+
+## Summary
+
+Implement all group management flows on the existing Next.js App Router + AdminLTE dashboard frontend. The frontend is a pure API consumer — all business logic (draw algorithm, invite token generation, membership rules) lives in the Go backend at `/api/v1`. Three new pages are introduced (`/groups`, `/groups/[id]`, `/invite/[token]`), along with ~12 new components, 2 new services, and 2 new UI primitives (Toast, ConfirmModal).
+
+**⚠️ Before implementation begins**: four backend changes are required (see section below). BC-001 and BC-003 are critical blockers. BC-002 affects non-owner invite display but can be worked around with a degraded fallback. BC-004 is docs-only.
+
+---
+
+## ⚠️ Required Backend Changes
+
+### BC-001 — Critical blocker: `description` must be optional in `CreateGroupDTO`
+
+- **File**: `internal/infra/entrypoint/rest/group_dto.go`
+- **Change**: `validate:"required,max=255"` → `validate:"omitempty,max=255"` on `Description` field. Remove `// required: true` Swagger annotation.
+- **Why**: FR-002 defines description as optional. Current backend rejects requests with no description.
+
+### BC-002 — Critical: Add `GET /api/v1/groups/{groupID}/invites/active`
+
+- **Required endpoint**: Returns the most recent non-expired `GroupInvite` for a group.
+- **Access**: Any group member (not owner-only).
+- **Response 200**: `GroupInviteDTO` | **Response 404**: no active invite exists.
+- **Why**: FR-004/005/006/007 require all members to view and share the invite link. Currently the create-invite endpoint is owner-only and there is no GET endpoint to retrieve an existing invite.
+- **Fallback until merged**: Non-owner members see "Peça ao dono do grupo para gerar o link de convite." The owner retains full invite functionality via `POST /api/v1/groups/{groupID}/invites`.
+
+### BC-003 — Critical blocker: Add membership check to `GET /api/v1/groups/{groupID}`
+
+- **Change**: Return `403 Forbidden` if the authenticated user is not in `group.Users`.
+- **Why**: FR-003 (as clarified) redirects non-members to `/groups` with an error toast. Currently the backend returns full group data to any authenticated user — a data-leak.
+
+### BC-004 — Docs only: Fix Swagger description for `ReopenGroup`
+
+- **Current**: "Reopens an archived group" — wrong.
+- **Correct**: "Reopens a group with MATCHED status, clearing all draw results."
+- **Why**: The domain code already enforces this correctly; only the docs are wrong.
+
+---
+
+## Technical Context
+
+**Language/Version**: TypeScript 5+, Node.js LTS
+**Framework**: Next.js 15.5.4, App Router, React 19
+**UI**: AdminLTE 3.2 (protected pages), Bootstrap 4.6, Font Awesome Free
+**Auth**: JWT in `localStorage` (`mystery_gifter_token`); Bearer token for all API calls
+**Session**: Current user object stored in `localStorage` (`mystery_gifter_user`) — see D-001 in `research.md`
+**Testing**: Jest + jest-environment-jsdom + React Testing Library + ts-jest
+**Backend API**: `http://localhost:8080/api/v1` (proxied via Next.js rewrites: `/api/v1/:path*`)
+**Performance Goals**: Groups list < 2s; draw completes < 5s; animations ≤ 400ms (SC-001, SC-005, SC-008)
+**Constraints**: No Tailwind; no inline styles for static values; dark mode mandatory; Bootstrap 4 (not 5)
+
+---
+
+## Constitution Check
+
+| Gate | Status | Notes |
+|------|--------|-------|
+| I — Code Quality: SRP, no `any`, no dead code | ✅ Pass | Each component has one responsibility; `any` forbidden |
+| II — Unit Testing: every component and util has tests | ✅ Pass | All new components + services + utils require co-located tests |
+| III — UX Consistency: Style Guide, loading/error/empty states | ✅ Pass | All states explicitly specified; style guide followed |
+| IV — Performance: LCP ≤ 2.5s, CLS ≤ 0.1, INP ≤ 200ms; code-split by route | ✅ Pass | Each new page is a separate route chunk; no heavy third-party dependencies added |
+| V — Next.js BP: App Router; Server Components default; `"use client"` justified | ✅ Pass | See justifications below |
+
+**`"use client"` justifications** (all new pages and feature components):
+- `groups/page.tsx`: reads `localStorage` (token + user id), manages pagination state
+- `groups/[id]/page.tsx`: reads `localStorage`, conditional owner/member UI
+- `invite/[token]/page.tsx`: reads `localStorage` auth check, calls join API
+- All `components/groups/*` and `components/invite/*`: interactive state, event handlers
+
+---
+
+## Project Structure
+
+### Documentation (this feature)
+
+```text
+specs/003-group-management/
+├── plan.md              ← This file
+├── research.md          ← Phase 0: API audit, decisions, gaps
+├── data-model.md        ← Phase 1: TypeScript types + state transitions
+├── contracts/
+│   └── api-contracts.md ← Phase 1: Full API contract per endpoint
+└── tasks.md             ← Phase 2 (generated by /speckit.tasks)
+```
+
+### Source Code
+
+```text
+src/
+├── app/
+│   ├── (protected)/
+│   │   └── groups/
+│   │       ├── page.tsx               # Groups list page — "use client"
+│   │       └── [id]/
+│   │           └── page.tsx           # Group detail page — "use client"
+│   └── invite/
+│       └── [token]/
+│           └── page.tsx               # Invite join page — "use client", standalone
+│
+├── components/
+│   ├── groups/
+│   │   ├── GroupList/
+│   │   │   ├── GroupList.tsx          # Paginated list + "Load More" button
+│   │   │   └── GroupList.test.tsx
+│   │   ├── GroupCard/
+│   │   │   ├── GroupCard.tsx          # Single group card (name, member count, status badge)
+│   │   │   └── GroupCard.test.tsx
+│   │   ├── GroupEmptyState/
+│   │   │   ├── GroupEmptyState.tsx    # Empty state with CTA
+│   │   │   └── GroupEmptyState.test.tsx
+│   │   ├── CreateGroupModal/
+│   │   │   ├── CreateGroupModal.tsx   # Modal with name + description form
+│   │   │   └── CreateGroupModal.test.tsx
+│   │   ├── GroupStatusBadge/
+│   │   │   ├── GroupStatusBadge.tsx   # Reusable status pill (OPEN/MATCHED/ARCHIVED)
+│   │   │   └── GroupStatusBadge.test.tsx
+│   │   ├── MemberList/
+│   │   │   ├── MemberList.tsx         # Members table; remove button for owner (pre-draw)
+│   │   │   └── MemberList.test.tsx
+│   │   ├── InviteSection/
+│   │   │   ├── InviteSection.tsx      # Invite card + copy/share; hidden post-draw
+│   │   │   └── InviteSection.test.tsx
+│   │   ├── DrawButton/
+│   │   │   ├── DrawButton.tsx         # Disabled + tooltip when < 3 members or not OPEN
+│   │   │   └── DrawButton.test.tsx
+│   │   ├── ResultReveal/
+│   │   │   ├── ResultReveal.tsx       # CSS 3D card flip; fetches match on demand
+│   │   │   └── ResultReveal.test.tsx
+│   │   └── GroupActions/
+│   │       ├── GroupActions.tsx       # Reopen / Archive buttons (owner only)
+│   │       └── GroupActions.test.tsx
+│   │
+│   ├── invite/
+│   │   └── InviteJoinCard/
+│   │       ├── InviteJoinCard.tsx     # UI on /invite/[token]: join button + states
+│   │       └── InviteJoinCard.test.tsx
+│   │
+│   └── ui/
+│       ├── Toast/
+│       │   ├── Toast.tsx              # Individual toast item
+│       │   ├── Toast.test.tsx
+│       │   ├── ToastProvider.tsx      # Context provider; exposes useToast()
+│       │   ├── ToastProvider.test.tsx
+│       │   └── useToast.ts            # Hook: { showToast }
+│       └── ConfirmModal/
+│           ├── ConfirmModal.tsx       # Generic "Are you sure?" modal (Archive, Reopen)
+│           └── ConfirmModal.test.tsx
+│
+├── services/api/
+│   ├── groupService.ts                # All group CRUD + action API calls
+│   ├── groupService.test.ts
+│   ├── inviteService.ts               # Create invite + join via invite
+│   └── inviteService.test.ts
+│
+├── lib/
+│   ├── auth.ts                        # (existing) — extended: clearToken also clears user
+│   ├── auth.test.ts                   # (existing) — extended with new clearToken behaviour
+│   └── session.ts                     # NEW: getUser(), setUser(user), clearUser()
+│   └── session.test.ts
+│
+└── types/
+    ├── api.ts                         # Extended: Group, GroupSummary, Match, GroupInvite,
+    │                                  #   Paging, GroupSearchResult, CreateGroupPayload
+    └── forms.ts                       # Extended: CreateGroupFormData
+```
+
+---
+
+## Key Design Decisions
+
+### 1. Current user storage (`lib/session.ts`)
+
+The feature needs `currentUser.id` to filter the groups list (`?user_id={id}`), determine owner role, and know which match is "mine". A new `lib/session.ts` stores the full `User` object in `localStorage` (key: `mystery_gifter_user`). `authService.ts` calls `setUser()` after every successful login/register. `clearToken()` is extended to also call `clearUser()`. See research D-001.
+
+### 2. Groups list pagination + archived filter
+
+`GET /api/v1/groups?user_id={id}&sort_by=created_at&sort_direction=DESC&limit=15&offset={n}`. No `status` filter is sent — the backend `status` param accepts only a single value (cannot express "not ARCHIVED"). ARCHIVED groups are filtered client-side from each fetched page before rendering. "Load More" shows while `paging.offset + paging.limit < paging.total`. See research D-002.
+
+### 3. Invite route (`app/invite/[token]/page.tsx`)
+
+Standalone page, not inside any layout group. Uses an `InviteGuard` component:
+- If **not authenticated**: stores `/invite/{token}` in `sessionStorage` as `returnUrl`, redirects to `/login`
+- If **authenticated**: renders `InviteJoinCard` which calls `POST /api/v1/invites/{token}/join`
+
+The existing `LoginForm` is extended to read `?returnUrl=` query param and redirect after login. See research D-003.
+
+### 4. Toast provider
+
+`ToastProvider` wraps `(protected)/layout.tsx`. Non-protected pages (invite page) create their own local toast state. Any component calls `useToast().showToast({ message, type })`. Auto-dismisses after 4 s. See research D-004.
+
+### 5. Result reveal animation
+
+Pure CSS 3D card flip (`perspective` + `rotateY(180deg)` on click). Front face: mystery icon + "Ver meu presenteado" button. Back face: recipient's full name + icon. Transition: 400ms. No external animation library. `prefers-reduced-motion` already suppressed globally by theme. See research D-005.
+
+### 6. Invite card display (pending BC-002)
+
+Until `GET /api/v1/groups/{groupID}/invites/active` is available:
+- **Owner**: sees the "Gerar link de convite" button → calls `POST /api/v1/groups/{id}/invites` → shows card with copy/share.
+- **Non-owner members**: sees "Peça ao dono do grupo para compartilhar o link de convite." placeholder.
+- After BC-002 merges: both owner and members call the same GET endpoint; the frontend UX becomes identical for all members.
+
+### 7. `GroupDTO.matches` security
+
+`GET /api/v1/groups/{id}` returns all match pairs. The frontend ignores the `matches` array entirely in all display logic. The individual reveal calls `GET /api/v1/groups/{id}/matches/user` only when the user explicitly taps the reveal button.
+
+---
+
+## Component Responsibility Map
+
+| Component | Reads | Writes / calls |
+|-----------|-------|----------------|
+| `GroupList` | `groupService.listGroups()`, pagination state | `CreateGroupModal` open |
+| `GroupCard` | `GroupSummary` prop | navigate to `/groups/{id}` |
+| `GroupEmptyState` | — | `CreateGroupModal` open |
+| `CreateGroupModal` | form state | `groupService.createGroup()` |
+| `GroupStatusBadge` | `GroupStatus` prop | — |
+| `MemberList` | `Group.users`, `currentUser.id` | `groupService.removeMember()` |
+| `InviteSection` | `Group.id`, `Group.owner_id`, `currentUser.id` | `inviteService.getActiveInvite()` or `inviteService.createInvite()`; clipboard API; Web Share API |
+| `DrawButton` | `Group.users.length`, `Group.status` | `groupService.generateDraw()` |
+| `ResultReveal` | `Group.id`, `Group.status`, flip state | `inviteService.getUserMatch()` |
+| `GroupActions` | `Group.status`, `currentUser.id === Group.owner_id` | `groupService.reopenGroup()`, `groupService.archiveGroup()` |
+| `InviteJoinCard` | invite token (from URL), join state | `inviteService.joinGroup()` |
+| `ToastProvider` | — | exposes `useToast()` context |
+| `ConfirmModal` | `isOpen`, `message`, `onConfirm` | `onConfirm()`, `onCancel()` |
+
+---
+
+## Complexity Tracking
+
+No constitution violations. No complexity justification required.
+
+---
+
+## Theme Extensions (`src/app/theme.css`)
+
+New CSS custom properties and classes needed (added in implementation):
+
+```css
+/* Invite card */
+.mg-invite-card { /* glassmorphism card for invite display */ }
+
+/* Result reveal (CSS 3D card flip) */
+.mg-result-card { perspective: 1000px; }
+.mg-result-card-inner { transition: transform 400ms ease-in-out; transform-style: preserve-3d; }
+.mg-result-card-inner.flipped { transform: rotateY(180deg); }
+.mg-result-card-front,
+.mg-result-card-back { backface-visibility: hidden; }
+.mg-result-card-back { transform: rotateY(180deg); }
+
+/* Status badge */
+.mg-badge-open    { /* green accent */ }
+.mg-badge-matched { /* purple accent */ }
+.mg-badge-archived { /* muted */ }
+
+/* Toast */
+.mg-toast-container { /* fixed bottom-right */ }
+.mg-toast { /* card + shadow, dark themed */ }
+```
+
+All new colors MUST be added as CSS custom properties in `:root` first (Extension Pattern rule 1).
+
+---
+
+## Suggested next command
+
+```
+/speckit.tasks
+```

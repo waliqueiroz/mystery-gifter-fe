@@ -18,6 +18,14 @@
 - Q: Does the groups list require pagination support? → A: Yes. The backend already paginates the groups list; the frontend must support paginated loading.
 - Q: What pagination UX pattern for the groups list? → A: "Load more" button — the user explicitly triggers loading the next page; no infinite scroll or numbered pagination.
 
+### Session 2026-03-29
+
+- Q: What is the frontend route structure for the invite link page? → A: `/invite/[token]` — a dedicated public root-level route.
+- Q: What UI feedback pattern should be used when any group management API call fails (network error, 5xx)? → A: Global error toast for all API failures.
+- Q: What happens when a logged-in non-member navigates directly to a group detail URL? → A: Redirect to `/dashboard` with an error toast ("Grupo não encontrado ou sem acesso").
+- Q: Which reveal animation should be used for the draw result? → A: Animated CSS 3D card flip.
+- Q: What is the fallback when the Web Share API is not supported by the browser? → A: Copy the invite link to clipboard and show a confirmation toast (same behaviour as FR-006).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - List and Create Groups (Priority: P1)
@@ -92,7 +100,7 @@ A group owner can trigger the secret santa draw when the group has at least thre
 
 ### User Story 5 - View Draw Result (Priority: P5)
 
-After the draw, each member can view their personal result — who they are giving a gift to. The reveal is presented in a visually engaging way (e.g., an animated card flip or spotlight effect). The result is only visible to the individual member and is not shared with others.
+After the draw, each member can view their personal result — who they are giving a gift to. The reveal is presented as an animated CSS 3D card flip: the front face shows a mystery/placeholder side, and flipping reveals the recipient's name on the back. The result is only visible to the individual member and is not shared with others.
 
 **Why this priority**: The result reveal is the climactic user experience of the product. It depends on the draw (P4) having been completed.
 
@@ -140,6 +148,10 @@ A group owner can permanently archive a group, removing it from the active list.
 
 ---
 
+### Non-Functional / Quality Attributes
+
+- **Error Handling**: All API call failures (network error, 5xx backend response) across all group management operations MUST display a global error toast. The toast MUST be dismissed automatically or by user interaction and MUST NOT block the current page content.
+
 ### Edge Cases
 
 - What happens when fewer than 3 members are in the group and the owner interacts with the disabled draw button?
@@ -156,13 +168,13 @@ A group owner can permanently archive a group, removing it from the active list.
 
 - **FR-001**: System MUST display active (non-archived) groups belonging to the logged-in user on the groups dashboard, showing name, member count, and status. The list MUST support a "load more" button pattern to fetch additional pages from the backend's paginated API, and MUST hide the button when no more pages are available.
 - **FR-002**: System MUST allow the group owner to create a new group by providing a name (required) and optional description.
-- **FR-003**: System MUST provide a group detail page showing members list, group status, and available actions for the current user's role (owner vs. member).
+- **FR-003**: System MUST provide a group detail page showing members list, group status, and available actions for the current user's role (owner vs. member). If the logged-in user is not a member of the requested group (API returns 403/404), the system MUST redirect them to `/dashboard` and display an error toast ("Grupo não encontrado ou sem acesso").
 - **FR-004**: System MUST generate a unique, shareable invite link for each group, visible to all group members.
 - **FR-005**: System MUST display a visually styled virtual invite card showing the group name and owner name, visible to all group members.
 - **FR-006**: System MUST allow any group member to copy the invite link to the clipboard with a confirmation feedback.
-- **FR-007**: System MUST support native sharing of the invite link on supported devices for any group member.
-- **FR-008**: System MUST automatically add a logged-in user to an open group when they visit a valid invite link.
-- **FR-009**: System MUST redirect unauthenticated users who visit an invite link to login/register before completing the join.
+- **FR-007**: System MUST support native sharing of the invite link (Web Share API) for any group member on supported devices. When the Web Share API is unavailable (e.g., desktop browsers), the system MUST fall back to copying the invite link to the clipboard and displaying a confirmation toast (identical to FR-006 behaviour).
+- **FR-008**: System MUST automatically add a logged-in user to an open group when they visit a valid invite link at the route `/invite/[token]`.
+- **FR-009**: System MUST redirect unauthenticated users who visit `/invite/[token]` to login/register, then return them to complete the join flow after authentication.
 - **FR-010**: System MUST block joining via invite link when the group status is "draw completed", showing a message that the owner must reopen the group first.
 - **FR-011**: System MUST block joining via invite link when the group is archived, showing a message that the group is no longer active.
 - **FR-012**: System MUST allow the group owner to remove a member before the draw is completed.
@@ -171,7 +183,7 @@ A group owner can permanently archive a group, removing it from the active list.
 - **FR-015**: System MUST assign each member exactly one unique recipient during the draw, with no self-assignments.
 - **FR-016**: System MUST change the group status to "draw completed" after a successful draw.
 - **FR-017**: System MUST hide the invite section on the group detail page when the group status is "draw completed" or "archived".
-- **FR-018**: System MUST allow each member to reveal their assigned recipient through an engaging visual interaction.
+- **FR-018**: System MUST allow each member to reveal their assigned recipient through an animated CSS 3D card flip interaction (front face shows a placeholder/mystery side; back face reveals the recipient's name).
 - **FR-019**: System MUST show each member only their own recipient — no member can see another's assignment.
 - **FR-020**: System MUST allow the group owner to reopen a group with "draw completed" status, clearing all draw results and returning the group to "open" status.
 - **FR-021**: System MUST allow the group owner to permanently archive a group; this action is irreversible and the group cannot be restored.
@@ -183,7 +195,7 @@ A group owner can permanently archive a group, removing it from the active list.
 
 - **Group**: Represents a secret santa circle — has a name, optional description, owner, status (open / draw completed / archived), and creation date. Status transitions: open → draw completed (after draw); draw completed → open (reopen); open or draw completed → archived (permanent).
 - **Member**: A user who belongs to a group — has join status and an optional recipient assignment after the draw. Assignments are cleared when the group is reopened.
-- **Invite**: A unique token/link tied to a group — valid only when group status is "open"; blocked for "draw completed" and "archived" groups.
+- **Invite**: A unique token/link tied to a group — exposed at the frontend route `/invite/[token]`; valid only when group status is "open"; blocked for "draw completed" and "archived" groups.
 - **Draw Result**: A private mapping of member → recipient produced after the draw — visible only to the assigned member; cleared when the group is reopened.
 
 ## Success Criteria *(mandatory)*
