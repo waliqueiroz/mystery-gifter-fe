@@ -1,6 +1,6 @@
 # API Contracts: Secret Santa Group Management
 
-**Branch**: `003-group-management` | **Date**: 2026-03-29
+**Branch**: `003-group-management` | **Date**: 2026-03-29 (v2 — all backend gaps resolved)
 **Base URL** (via Next.js rewrite proxy): `/api/v1`
 **Auth**: All endpoints require `Authorization: Bearer <token>` except where noted.
 
@@ -20,6 +20,34 @@ function authHeaders(): HeadersInit {
 
 ---
 
+## HTTP client pattern (all services)
+
+```typescript
+async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(path, {
+    ...init,
+    headers: { ...authHeaders(), ...init?.headers },
+  })
+
+  if (response.status === 401) {
+    clearToken()
+    clearUser()
+    throw new Error('Sessão expirada. Faça login novamente.')
+  }
+
+  if (!response.ok) {
+    const error: ApiError = await response.json()
+    throw new Error(error.message ?? 'Ocorreu um erro. Tente novamente.')
+  }
+
+  return response.json() as Promise<T>
+}
+```
+
+All service functions use `apiFetch`. The calling component catches thrown errors and passes the message to `useToast().showToast({ message, type: 'error' })`.
+
+---
+
 ## Groups
 
 ### List groups for the current user
@@ -27,11 +55,15 @@ function authHeaders(): HeadersInit {
 ```
 GET /api/v1/groups
   ?user_id={currentUserId}
+  &status=OPEN
+  &status=MATCHED
   &limit=15
   &offset={offset}
   &sort_by=created_at
   &sort_direction=DESC
 ```
+
+The `status` parameter accepts multiple values via repeated query params (`collectionFormat: multi`). Sending `OPEN` + `MATCHED` returns only active (non-archived) groups — no client-side filtering needed.
 
 **Response 200**: `GroupSearchResult`
 
@@ -42,16 +74,15 @@ GET /api/v1/groups
 }
 ```
 
-**Error responses**:
-| Status | Trigger | Frontend action |
-|--------|---------|----------------|
-| 401 | Token invalid/expired | Clear session → redirect `/login` |
-| 400/422 | Bad query params | Error toast |
-
 **Pagination logic**:
-- Show "Load More" when `paging.offset + paging.limit < paging.total`
-- On "Load More": `offset += limit`, append results
-- Filter out `status === 'ARCHIVED'` from results client-side before rendering
+- Show "Carregar mais" button when `paging.offset + paging.limit < paging.total`
+- On click: `offset += limit`, append results to list
+
+**Error responses**:
+| Status | Frontend action |
+|--------|----------------|
+| 401 | Clear session → redirect `/login` |
+| 400/422 | Error toast |
 
 ---
 
@@ -65,10 +96,10 @@ Body: { "name": "string", "description"?: "string" }
 **Response 201**: `Group`
 
 **Error responses**:
-| Status | Trigger | Frontend action |
-|--------|---------|----------------|
-| 400/422 | Validation failed | Inline form error |
-| 401 | Unauthenticated | Clear session → redirect `/login` |
+| Status | Frontend action |
+|--------|----------------|
+| 400/422 | Inline form error in `CreateGroupModal` |
+| 401 | Clear session → redirect `/login` |
 
 ---
 
@@ -83,8 +114,8 @@ GET /api/v1/groups/{groupId}
 **Error responses**:
 | Status | Trigger | Frontend action |
 |--------|---------|----------------|
-| 401 | Unauthenticated | Clear session → redirect `/login` |
-| 403 | Not a group member (pending BC-003) | Error toast → redirect `/groups` |
+| 401 | Token invalid | Clear session → redirect `/login` |
+| 403 | Not a group member | Error toast → redirect `/groups` |
 | 404 | Group not found | Error toast → redirect `/groups` |
 
 ---
@@ -156,7 +187,7 @@ POST /api/v1/groups/{groupId}/reopen
 | 401 | Unauthenticated | Clear session → redirect `/login` |
 | 403 | Not owner | Error toast |
 | 404 | Group not found | Error toast |
-| 409 | Group not MATCHED (already OPEN or ARCHIVED) | Error toast |
+| 409 | Group is not MATCHED (already OPEN or ARCHIVED) | Error toast |
 
 ---
 
@@ -180,13 +211,13 @@ POST /api/v1/groups/{groupId}/archive
 
 ## Invites
 
-### Create invite link (owner only)
+### Get active invite (any group member)
 
 ```
-POST /api/v1/groups/{groupId}/invites
+GET /api/v1/groups/{groupId}/invites/active
 ```
 
-**Response 201**: `GroupInvite`
+**Response 200**: `GroupInvite`
 
 ```json
 {
@@ -202,6 +233,30 @@ POST /api/v1/groups/{groupId}/invites
 const shareUrl = `${window.location.origin}/invite/${invite.id}`
 ```
 
+**Response 404**: No active invite exists.
+
+**Frontend behaviour by role**:
+- **Owner on 404**: show "Gerar link de convite" button → calls `POST` below
+- **Non-owner on 404**: show "Peça ao dono para gerar o link de convite."
+- **200 (any member)**: render invite card with copy and share buttons
+
+**Error responses**:
+| Status | Trigger | Frontend action |
+|--------|---------|----------------|
+| 401 | Unauthenticated | Clear session → redirect `/login` |
+| 403 | Not a group member | Error toast |
+| 404 | No active invite | See role-based behavior above |
+
+---
+
+### Create invite link (owner only)
+
+```
+POST /api/v1/groups/{groupId}/invites
+```
+
+**Response 201**: `GroupInvite` — frontend immediately renders the invite card.
+
 **Error responses**:
 | Status | Trigger | Frontend action |
 |--------|---------|----------------|
@@ -212,77 +267,29 @@ const shareUrl = `${window.location.origin}/invite/${invite.id}`
 
 ---
 
-### Get active invite (any member) — Pending BC-002
-
-```
-GET /api/v1/groups/{groupId}/invites/active
-```
-
-**Response 200**: `GroupInvite`
-**Response 404**: No active invite exists
-
-**Frontend behaviour on 404**: Show message "Peça ao dono do grupo para gerar o link de convite."
-
-> ⚠️ This endpoint does not yet exist. Until BC-002 is merged, only the owner
-> can see/share the invite (by calling `POST /api/v1/groups/{groupId}/invites`).
-> Non-owner members see a placeholder message.
-
----
-
 ### Join group via invite
 
 ```
 POST /api/v1/invites/{inviteToken}/join
 ```
 
-**Response 200**: `Group` (the joined group)
+**Response 200**: `Group` (the joined group) → redirect to `/groups/{group.id}`
 
 **Error responses**:
 | Status | Trigger | Frontend action |
 |--------|---------|----------------|
 | 401 | Unauthenticated | Store returnUrl → redirect `/login` |
-| 404 | Invite not found | Show "Link inválido ou expirado" message |
-| 409 | Invite expired or group not OPEN | Show contextual message (expired vs. draw completed) |
+| 404 | Invite not found | Show "Link inválido ou expirado." |
+| 409 | Invite expired or group not OPEN | Show contextual message |
 
 ---
 
 ## Error response shape
 
-All error responses follow this shape:
-
 ```typescript
 interface ApiError {
   code: string     // e.g. "bad_request", "forbidden", "conflict"
-  message: string  // English; frontend maps to pt-BR
+  message: string  // English from backend; frontend maps to pt-BR
   details?: unknown
-}
-```
-
-The frontend service layer catches all non-2xx responses, reads this body, and triggers the `useToast()` error toast with a pt-BR message.
-
----
-
-## HTTP client pattern (all services)
-
-```typescript
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    headers: { ...authHeaders(), ...init?.headers },
-  })
-
-  if (response.status === 401) {
-    clearToken()
-    clearUser()
-    // Redirect handled by the calling component or AuthGuard
-    throw new Error('Sessão expirada. Faça login novamente.')
-  }
-
-  if (!response.ok) {
-    const error: ApiError = await response.json()
-    throw new Error(error.message ?? 'Ocorreu um erro. Tente novamente.')
-  }
-
-  return response.json() as Promise<T>
 }
 ```

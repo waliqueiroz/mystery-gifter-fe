@@ -9,36 +9,14 @@
 
 Implement all group management flows on the existing Next.js App Router + AdminLTE dashboard frontend. The frontend is a pure API consumer — all business logic (draw algorithm, invite token generation, membership rules) lives in the Go backend at `/api/v1`. Three new pages are introduced (`/groups`, `/groups/[id]`, `/invite/[token]`), along with ~12 new components, 2 new services, and 2 new UI primitives (Toast, ConfirmModal).
 
-**⚠️ Before implementation begins**: four backend changes are required (see section below). BC-001 and BC-003 are critical blockers. BC-002 affects non-owner invite display but can be worked around with a degraded fallback. BC-004 is docs-only.
+All previously identified backend gaps have been resolved. Implementation can proceed without any degraded fallbacks.
 
----
-
-## ⚠️ Required Backend Changes
-
-### BC-001 — Critical blocker: `description` must be optional in `CreateGroupDTO`
-
-- **File**: `internal/infra/entrypoint/rest/group_dto.go`
-- **Change**: `validate:"required,max=255"` → `validate:"omitempty,max=255"` on `Description` field. Remove `// required: true` Swagger annotation.
-- **Why**: FR-002 defines description as optional. Current backend rejects requests with no description.
-
-### BC-002 — Critical: Add `GET /api/v1/groups/{groupID}/invites/active`
-
-- **Required endpoint**: Returns the most recent non-expired `GroupInvite` for a group.
-- **Access**: Any group member (not owner-only).
-- **Response 200**: `GroupInviteDTO` | **Response 404**: no active invite exists.
-- **Why**: FR-004/005/006/007 require all members to view and share the invite link. Currently the create-invite endpoint is owner-only and there is no GET endpoint to retrieve an existing invite.
-- **Fallback until merged**: Non-owner members see "Peça ao dono do grupo para gerar o link de convite." The owner retains full invite functionality via `POST /api/v1/groups/{groupID}/invites`.
-
-### BC-003 — Critical blocker: Add membership check to `GET /api/v1/groups/{groupID}`
-
-- **Change**: Return `403 Forbidden` if the authenticated user is not in `group.Users`.
-- **Why**: FR-003 (as clarified) redirects non-members to `/groups` with an error toast. Currently the backend returns full group data to any authenticated user — a data-leak.
-
-### BC-004 — Docs only: Fix Swagger description for `ReopenGroup`
-
-- **Current**: "Reopens an archived group" — wrong.
-- **Correct**: "Reopens a group with MATCHED status, clearing all draw results."
-- **Why**: The domain code already enforces this correctly; only the docs are wrong.
+| # | Backend change | Status |
+|---|---------------|--------|
+| BC-001 | `description` optional in `CreateGroupDTO` | ✅ Resolved |
+| BC-002 | `GET /api/v1/groups/{groupID}/invites/active` for all members | ✅ Resolved |
+| BC-003 | Membership check (403) on `GET /api/v1/groups/{groupID}` | ✅ Resolved |
+| BC-004 | Correct Swagger description for `ReopenGroup` | ✅ Resolved |
 
 ---
 
@@ -179,7 +157,7 @@ The feature needs `currentUser.id` to filter the groups list (`?user_id={id}`), 
 
 ### 2. Groups list pagination + archived filter
 
-`GET /api/v1/groups?user_id={id}&sort_by=created_at&sort_direction=DESC&limit=15&offset={n}`. No `status` filter is sent — the backend `status` param accepts only a single value (cannot express "not ARCHIVED"). ARCHIVED groups are filtered client-side from each fetched page before rendering. "Load More" shows while `paging.offset + paging.limit < paging.total`. See research D-002.
+`GET /api/v1/groups?user_id={id}&status=OPEN&status=MATCHED&sort_by=created_at&sort_direction=DESC&limit=15&offset={n}`. The backend now supports multi-value `status` filtering (`collectionFormat: multi`). Sending both `OPEN` and `MATCHED` returns only active groups server-side — no client-side filtering. "Load More" shows while `paging.offset + paging.limit < paging.total`. See research D-002.
 
 ### 3. Invite route (`app/invite/[token]/page.tsx`)
 
@@ -197,12 +175,12 @@ The existing `LoginForm` is extended to read `?returnUrl=` query param and redir
 
 Pure CSS 3D card flip (`perspective` + `rotateY(180deg)` on click). Front face: mystery icon + "Ver meu presenteado" button. Back face: recipient's full name + icon. Transition: 400ms. No external animation library. `prefers-reduced-motion` already suppressed globally by theme. See research D-005.
 
-### 6. Invite card display (pending BC-002)
+### 6. Invite display for all members
 
-Until `GET /api/v1/groups/{groupID}/invites/active` is available:
-- **Owner**: sees the "Gerar link de convite" button → calls `POST /api/v1/groups/{id}/invites` → shows card with copy/share.
-- **Non-owner members**: sees "Peça ao dono do grupo para compartilhar o link de convite." placeholder.
-- After BC-002 merges: both owner and members call the same GET endpoint; the frontend UX becomes identical for all members.
+`InviteSection` calls `GET /api/v1/groups/{groupID}/invites/active` for all members:
+- **200** (any member): render invite card with copy/share.
+- **404 + owner**: show "Gerar link de convite" button → calls `POST /api/v1/groups/{id}/invites` → renders card.
+- **404 + non-owner**: show "Peça ao dono para gerar o link de convite." placeholder.
 
 ### 7. `GroupDTO.matches` security
 

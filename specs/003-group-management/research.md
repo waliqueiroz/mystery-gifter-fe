@@ -1,10 +1,11 @@
 # Research: Secret Santa Group Management
 
-**Branch**: `003-group-management` | **Date**: 2026-03-29
+**Branch**: `003-group-management` | **Date**: 2026-03-29 (updated: backend audit v2)
 
 ## 1. Backend API Audit
 
 **Source**: `/Users/waliqueiroz/Documents/projetos/mystery-gifter-api/`
+**Backend status**: All previously identified gaps (BC-001 through BC-004) have been resolved.
 
 ### Endpoints Available
 
@@ -12,14 +13,15 @@
 |--------|------|------|-------|
 | GET | /api/v1/groups | Bearer | Paginated search; `user_id` filter scopes to member groups |
 | POST | /api/v1/groups | Bearer | Creates group; authenticated user becomes owner |
-| GET | /api/v1/groups/{groupID} | Bearer | Full `GroupDTO` including all matches and users |
+| GET | /api/v1/groups/{groupID} | Bearer | Full `GroupDTO`; returns 403 if requester is not a member |
 | DELETE | /api/v1/groups/{groupID}/users/{userID} | Bearer | Owner-only; group must be OPEN |
 | POST | /api/v1/groups/{groupID}/matches | Bearer | Owner-only; requires ≥ 3 members and OPEN status |
 | GET | /api/v1/groups/{groupID}/matches/user | Bearer | Returns `UserDTO` of the current user's recipient |
 | POST | /api/v1/groups/{groupID}/reopen | Bearer | Owner-only; only works on MATCHED groups (not ARCHIVED) |
 | POST | /api/v1/groups/{groupID}/archive | Bearer | Owner-only; works on OPEN and MATCHED groups |
-| POST | /api/v1/groups/{groupID}/invites | Bearer | **Owner-only** — creates a new time-limited invite |
-| POST | /api/v1/invites/{inviteID}/join | Bearer | Any member; adds authenticated user to group |
+| POST | /api/v1/groups/{groupID}/invites | Bearer | Owner-only — creates a new time-limited invite |
+| GET | /api/v1/groups/{groupID}/invites/active | Bearer | Any member — returns the most recent non-expired invite; 404 if none |
+| POST | /api/v1/invites/{inviteID}/join | Bearer | Any authenticated user; adds them to the group |
 
 ### Group Status Enum
 
@@ -75,36 +77,16 @@ The invite `id` is the token embedded in the share URL: `https://<host>/invite/{
 
 ---
 
-## 2. Backend Gaps (Required Changes)
+## 2. Backend Gap Status (all resolved)
 
-### BC-001 — Critical: `description` must be optional in `CreateGroupDTO`
+| # | Gap | Status |
+|---|-----|--------|
+| BC-001 | `description` optional in `CreateGroupDTO` | ✅ Fixed — `validate:"omitempty,max=255"` |
+| BC-002 | `GET /api/v1/groups/{groupID}/invites/active` for all members | ✅ Added — 403 if not member, 404 if no active invite |
+| BC-003 | Membership check on `GET /api/v1/groups/{groupID}` | ✅ Fixed — `group.CanView()` called in service layer; returns 403 |
+| BC-004 | Correct Swagger description for `ReopenGroup` | ✅ Fixed — now reads "Reopens a group with MATCHED status" |
 
-- **File**: `internal/infra/entrypoint/rest/group_dto.go`, line 22
-- **Current**: `validate:"required,max=255"`
-- **Required**: `validate:"omitempty,max=255"` (also remove `required` from Swagger comment)
-- **Impact**: Blocks FR-002 — the spec defines description as optional
-
-### BC-002 — Critical: No GET endpoint for active invite (non-owner members blocked)
-
-- **Current**: `POST /api/v1/groups/{groupID}/invites` is owner-only (enforced in domain `CanCreateInvite`). No GET endpoint exists to retrieve an existing invite.
-- **Required**: `GET /api/v1/groups/{groupID}/invites/active`
-  - Accessible to any group member
-  - Returns the most recent non-expired invite; 404 if none exists
-  - Frontend behaviour when 404: show "Peça ao dono para gerar o link de convite."
-- **Impact**: Blocks FR-004, FR-005, FR-006, FR-007 for non-owner members
-
-### BC-003 — Critical: `GET /api/v1/groups/{groupID}` has no membership check
-
-- **Current**: Any authenticated user can retrieve any group's full data (users, matches, description). No 403 guard.
-- **Required**: Return `403 Forbidden` if the authenticated user is not in `group.Users`
-- **Impact**: Spec (FR-003 as clarified) relies on 403/404 to trigger the redirect-to-dashboard behaviour for non-members. Also a security concern (data leakage).
-
-### BC-004 — Documentation: Wrong description in `ReopenGroup` Swagger
-
-- **Current description**: "Reopens an archived group" — incorrect
-- **Correct**: "Reopens a group with MATCHED status, clearing all draw results and returning the group to OPEN"
-- The domain code already enforces this correctly — this is a docs-only fix
-- **Impact**: Documentation only, no functional change
+No outstanding backend gaps. Implementation can proceed without degraded fallbacks.
 
 ---
 
@@ -114,27 +96,38 @@ The invite `id` is the token embedded in the share URL: `https://<host>/invite/{
 
 **Decision**: Extend localStorage to store the full `User` object (key: `mystery_gifter_user`) in addition to the JWT token.
 
-**Rationale**: The feature requires the current user's `id` throughout (filtering groups list, determining owner role, comparing with `owner_id`). Decoding the JWT client-side is fragile; storing the user object at login time is the established pattern for this codebase and avoids an extra `/api/v1/users/me` call.
+**Rationale**: The feature requires the current user's `id` throughout (filtering groups list, determining owner role, comparing with `owner_id`). Decoding the JWT client-side is fragile; storing the user object at login time is the established pattern for this codebase and avoids an extra API call.
 
-**Implementation**: New `src/lib/session.ts` with `getUser()`, `setUser(user)`, `clearUser()`. The existing `authService.ts` will call `setUser()` after each successful login/register. `clearToken()` → extended to also call `clearUser()`.
+**Implementation**: New `src/lib/session.ts` with `getUser()`, `setUser(user)`, `clearUser()`. The existing `authService.ts` calls `setUser()` after each successful login/register. `clearToken()` is extended to also call `clearUser()`.
 
 **Alternatives considered**:
 - Decode JWT client-side: rejected — brittle, couples frontend to JWT structure changes
-- Add `GET /api/v1/users/me` call on every page load: rejected — unnecessary latency
+- `GET /api/v1/users/me` call on every page load: rejected — unnecessary latency
 
 ---
 
 ### D-002: Groups list — filtering archived groups
 
-**Decision**: Pass `user_id={currentUserId}` without a `status` filter. Filter ARCHIVED groups client-side from each fetched page before rendering.
+**Decision**: Pass `user_id={currentUserId}&status=OPEN&status=MATCHED` to the search endpoint. The backend now supports multi-value status filtering via repeated query params (`collectionFormat: multi`).
 
-**Rationale**: The backend `status` filter accepts only a single enum value, making it impossible to request "OPEN or MATCHED" in one call. Making two parallel calls and merging results complicates pagination significantly. Since most users will have few archived groups, client-side filtering is acceptable for MVP.
+**Rationale**: The backend `Statuses []GroupStatus` field accepts multiple values. Sending `?status=OPEN&status=MATCHED` returns only active (non-archived) groups server-side, making pagination fully accurate with no client-side filtering needed.
 
-**Tradeoff**: If a page result has many ARCHIVED groups, the visible list may have fewer than `limit` items per load. The "Load More" button appears when `offset + limit < total` (based on raw total from backend).
+**Implementation**:
+```typescript
+const params = new URLSearchParams({
+  user_id: currentUserId,
+  limit: '15',
+  offset: String(offset),
+  sort_by: 'created_at',
+  sort_direction: 'DESC',
+})
+params.append('status', 'OPEN')
+params.append('status', 'MATCHED')
+```
 
 **Alternatives considered**:
-- Two parallel API calls (OPEN + MATCHED): rejected — complicates pagination and error handling
-- Backend multi-status filter (BC-005 nice-to-have): deferred to a future backend improvement
+- Client-side filtering (previous plan): superseded — server-side is cleaner and pagination is reliable
+- Two parallel API calls (OPEN + MATCHED): rejected — unnecessary now that multi-value is supported
 
 ---
 
@@ -142,7 +135,7 @@ The invite `id` is the token embedded in the share URL: `https://<host>/invite/{
 
 **Decision**: Place `/invite/[token]` as a standalone page at `app/invite/[token]/page.tsx`, outside any route group, with its own auth-handling `InviteGuard` component.
 
-**Rationale**: The page must be reachable by unauthenticated users (to redirect to login) but also complete a join action after authentication. It doesn't use AdminLTE dashboard layout.
+**Rationale**: The page must be reachable by unauthenticated users (to redirect to login) but also complete a join action after authentication. It does not use the AdminLTE dashboard layout.
 
 **Implementation**: `InviteGuard` checks `isAuthenticated()`:
 - If **not authenticated**: stores `returnUrl=/invite/{token}` in `sessionStorage`, redirects to `/login`
@@ -156,7 +149,7 @@ The existing `LoginForm` is extended to read `returnUrl` from query params and r
 
 **Decision**: Implement a `ToastProvider` React context wrapping the protected layout (`(protected)/layout.tsx`) and the invite page. Exposes a `useToast()` hook.
 
-**Rationale**: The spec (clarification 2) requires all API failures to show a global error toast. A context-based provider is the simplest solution that allows any nested component to trigger toasts without prop-drilling.
+**Rationale**: All API failures display a global error toast (clarification 2). A context-based provider allows any nested component to trigger toasts without prop-drilling.
 
 **Implementation**: `src/components/ui/Toast/Toast.tsx` + `ToastProvider.tsx` + `useToast.ts`. Toast auto-dismisses after 4 seconds.
 
@@ -170,15 +163,17 @@ The existing `LoginForm` is extended to read `returnUrl` from query params and r
 
 **Alternatives considered**:
 - Framer Motion: rejected — added bundle weight not justified for a single animation
-- CSS `@keyframes` opacity fade: rejected — less thematic than card flip for "reveal a secret"
+- CSS `@keyframes` opacity fade: rejected — less thematic for a "reveal a secret" experience
 
 ---
 
-### D-006: Invite card visual design
+### D-006: Invite display for all members (updated after BC-002)
 
-**Decision**: The virtual invite card uses `mg-` prefixed classes, renders the group name, owner's full name, and a decorative gift icon. A "Copiar link" button and a "Compartilhar" button sit below the card.
+**Decision**: The `InviteSection` component calls `GET /api/v1/groups/{groupID}/invites/active` for all members (owner and non-owner). Response shapes:
+- **200**: render the invite card with copy/share for all members.
+- **404**: owner sees "Gerar link de convite" button (calls `POST /api/v1/groups/{id}/invites`); non-owners see "Peça ao dono para gerar o link de convite."
 
-**Rationale**: Aligns with the style guide's glassmorphism/gradient language already used in `.mg-feature-card` and `.mg-hero`.
+**Rationale**: The backend now exposes a member-accessible GET endpoint. All members benefit from the invite card once any active invite exists. Only the owner can create one when none is active.
 
 ---
 
@@ -198,9 +193,9 @@ All feature components under `components/groups/` and `components/invite/` are `
 
 | Existing asset | Reuse in this feature |
 |----------------|----------------------|
-| `lib/auth.ts` | `getToken`, `isAuthenticated`, `clearToken` — reused as-is |
+| `lib/auth.ts` | `getToken`, `isAuthenticated`, `clearToken` — reused, `clearToken` extended |
 | `components/auth/AuthGuard.tsx` | Wraps group pages |
 | `components/ui/Button` | Used throughout group flows |
-| `components/ui/FormField` | Create group form, invite-join confirmation |
+| `components/ui/FormField` | Create group form |
 | `services/api/authService.ts` | Extended to call `setUser()` after login |
-| `src/app/theme.css` | Extended with new tokens for invite card, result reveal |
+| `src/app/theme.css` | Extended with new tokens for invite card, result reveal, status badges, toast |

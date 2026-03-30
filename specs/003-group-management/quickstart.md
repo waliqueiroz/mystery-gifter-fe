@@ -4,16 +4,14 @@
 
 ## Prerequisites
 
-Before starting implementation, ensure the following backend changes are in place:
+All required backend changes are in place — no blockers.
 
 | # | Change | Status |
 |---|--------|--------|
-| BC-001 | `description` optional in `CreateGroupDTO` | ❌ Pending |
-| BC-002 | `GET /api/v1/groups/{id}/invites/active` endpoint | ❌ Pending |
-| BC-003 | Membership check on `GET /api/v1/groups/{id}` | ❌ Pending |
-| BC-004 | Fix Swagger description for `ReopenGroup` | ❌ Pending |
-
-BC-001 and BC-003 block their respective frontend tasks. BC-002 has a degraded fallback (owner-only invite until it lands). BC-004 is docs-only.
+| BC-001 | `description` optional in `CreateGroupDTO` | ✅ Done |
+| BC-002 | `GET /api/v1/groups/{id}/invites/active` endpoint | ✅ Done |
+| BC-003 | Membership check on `GET /api/v1/groups/{id}` | ✅ Done |
+| BC-004 | Swagger description fix for `ReopenGroup` | ✅ Done |
 
 ## Environment setup
 
@@ -52,19 +50,21 @@ git checkout 003-group-management
 |------|--------|
 | `src/types/api.ts` | Add group types (see `data-model.md`) |
 | `src/types/forms.ts` | Add `CreateGroupFormData` |
-| `src/lib/auth.ts` | Extend `clearToken()` to also clear user |
+| `src/lib/auth.ts` | Extend `clearToken()` to also call `clearUser()` |
 | `src/lib/session.ts` | New file: `getUser`, `setUser`, `clearUser` |
 | `src/services/api/authService.ts` | Call `setUser()` after login + register |
 | `src/app/(protected)/layout.tsx` | Wrap with `ToastProvider` |
-| `src/app/theme.css` | Add CSS custom properties + `mg-*` classes for cards, badges, toast, flip |
+| `src/app/theme.css` | Add CSS custom properties + `mg-*` classes for invite card, status badges, toast, flip animation |
 
 ## Architecture reminders
 
 - **Every** new component and utility function needs a co-located `*.test.tsx` / `*.test.ts`
-- All new `app/` pages and feature components are `"use client"` (reasons in `plan.md`)
+- All new `app/` pages and feature components are `"use client"` (reasons documented in `plan.md`)
 - Never render `Group.matches` — use `GET /api/v1/groups/{id}/matches/user` for the individual reveal only
 - Status mapping: `OPEN` → "Aberto", `MATCHED` → "Sorteio realizado", `ARCHIVED` → "Arquivado"
 - All user-visible text in pt-BR; URL path segments in English (`/groups`, `/invite`)
+- Invite flow: `InviteSection` calls `GET /api/v1/groups/{id}/invites/active` for all members; owner sees "Gerar link" on 404, non-owner sees placeholder
+- Groups list: use `?status=OPEN&status=MATCHED` (multi-value, via `params.append('status', ...)`) — sem filtro client-side
 
 ## Task generation
 
