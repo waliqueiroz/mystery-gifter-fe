@@ -12,6 +12,17 @@
   --mg-text-muted: #a0aec0;
   --mg-error: #fc8181;
   --mg-transition: 200ms ease-in-out;
+
+  /* Group status badge colours */
+  --mg-badge-open-bg: #276749;
+  --mg-badge-open-text: #9ae6b4;
+  --mg-badge-matched-bg: #44337a;
+  --mg-badge-matched-text: #d6bcfa;
+  --mg-badge-archived-bg: #2d3748;
+  --mg-badge-archived-text: #a0aec0;
+
+  /* Toast colours */
+  --mg-toast-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 /* =====================================================================
@@ -199,4 +210,113 @@ label {
 }
 .content-wrapper {
   background-color: var(--mg-bg-secondary) !important;
+}
+
+/* =====================================================================
+   GROUP STATUS BADGES
+   ===================================================================== */
+
+.mg-badge-open {
+  background-color: var(--mg-badge-open-bg);
+  color: var(--mg-badge-open-text);
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.mg-badge-matched {
+  background-color: var(--mg-badge-matched-bg);
+  color: var(--mg-badge-matched-text);
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.mg-badge-archived {
+  background-color: var(--mg-badge-archived-bg);
+  color: var(--mg-badge-archived-text);
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* =====================================================================
+   INVITE CARD
+   ===================================================================== */
+
+.mg-invite-card {
+  background: linear-gradient(to bottom, var(--mg-bg-card), var(--mg-bg-secondary));
+  border: 1px solid rgba(107, 70, 193, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+}
+
+/* =====================================================================
+   RESULT REVEAL — CSS 3D card flip
+   ===================================================================== */
+
+.mg-result-card {
+  perspective: 1000px;
+}
+
+.mg-result-card-inner {
+  position: relative;
+  width: 100%;
+  transition: transform 400ms ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.mg-result-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.mg-result-card-front,
+.mg-result-card-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.mg-result-card-back {
+  transform: rotateY(180deg);
+}
+
+/* =====================================================================
+   TOAST
+   ===================================================================== */
+
+.mg-toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 360px;
+  width: 100%;
+}
+
+.mg-toast {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--mg-toast-shadow);
+  animation: mg-toast-in var(--mg-transition) ease-out;
+}
+
+@keyframes mg-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
