@@ -10,3 +10,9 @@ export interface RegisterFormData {
   password: string
   passwordConfirm: string
 }
+
+/** Used by the CreateGroupModal form */
+export interface CreateGroupFormData {
+  name: string
+  description: string
+}
