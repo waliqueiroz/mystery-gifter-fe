@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import FormField from '@/components/ui/FormField/FormField'
 import Button from '@/components/ui/Button/Button'
@@ -11,6 +11,7 @@ import type { LoginFormData } from '@/types/forms'
 
 export default function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [form, setForm] = useState<LoginFormData>({ email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,7 +33,8 @@ export default function LoginForm() {
     try {
       const session = await login({ email: form.email, password: form.password })
       setToken(session.access_token)
-      router.push('/dashboard')
+      const returnUrl = searchParams.get('returnUrl')
+      router.push(returnUrl ?? '/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.')
     } finally {
