@@ -1,3 +1,5 @@
+import { clearUser } from './session'
+
 export const TOKEN_KEY = 'mystery_gifter_token'
 
 export function getToken(): string | null {
@@ -11,6 +13,7 @@ export function setToken(token: string): void {
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY)
+  clearUser()
 }
 
 export function isAuthenticated(): boolean {
