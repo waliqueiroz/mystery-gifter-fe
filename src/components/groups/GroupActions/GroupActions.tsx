@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { Group } from '@/types/api'
 import { reopenGroup, archiveGroup } from '@/services/api/groupService'
 import { ConfirmModal } from '@/components/ui/ConfirmModal/ConfirmModal'
+import { useToast } from '@/components/ui/Toast/useToast'
 
 type ModalState = 'none' | 'reopen' | 'archive'
 
@@ -13,6 +14,7 @@ interface GroupActionsProps {
 }
 
 export function GroupActions({ group, onGroupUpdate }: GroupActionsProps) {
+  const { showToast } = useToast()
   const [modal, setModal] = useState<ModalState>('none')
   const [loading, setLoading] = useState(false)
 
@@ -23,6 +25,11 @@ export function GroupActions({ group, onGroupUpdate }: GroupActionsProps) {
         modal === 'reopen' ? await reopenGroup(group.id) : await archiveGroup(group.id)
       onGroupUpdate(updated)
       setModal('none')
+    } catch (err) {
+      showToast({
+        message: err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.',
+        type: 'error',
+      })
     } finally {
       setLoading(false)
     }

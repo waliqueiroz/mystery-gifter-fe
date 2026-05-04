@@ -9,6 +9,11 @@ jest.mock('@/services/api/groupService', () => ({
   archiveGroup: jest.fn(),
 }))
 
+const mockShowToast = jest.fn()
+jest.mock('@/components/ui/Toast/useToast', () => ({
+  useToast: () => ({ showToast: mockShowToast }),
+}))
+
 const mockReopenGroup = groupService.reopenGroup as jest.Mock
 const mockArchiveGroup = groupService.archiveGroup as jest.Mock
 
@@ -84,6 +89,28 @@ describe('GroupActions', () => {
     it('shows no action buttons', () => {
       render(<GroupActions group={makeGroup('ARCHIVED')} onGroupUpdate={() => {}} />)
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('error handling', () => {
+    it('shows error toast when reopen fails', async () => {
+      mockReopenGroup.mockRejectedValue(new Error('Falha ao reabrir.'))
+      render(<GroupActions group={makeGroup('MATCHED')} onGroupUpdate={() => {}} />)
+      await userEvent.click(screen.getByRole('button', { name: /reabrir grupo/i }))
+      await userEvent.click(screen.getByRole('button', { name: /^reabrir$/i }))
+      await waitFor(() =>
+        expect(mockShowToast).toHaveBeenCalledWith({ message: 'Falha ao reabrir.', type: 'error' }),
+      )
+    })
+
+    it('shows error toast when archive fails', async () => {
+      mockArchiveGroup.mockRejectedValue(new Error('Falha ao arquivar.'))
+      render(<GroupActions group={makeGroup('OPEN')} onGroupUpdate={() => {}} />)
+      await userEvent.click(screen.getByRole('button', { name: /arquivar grupo/i }))
+      await userEvent.click(screen.getByRole('button', { name: /^arquivar$/i }))
+      await waitFor(() =>
+        expect(mockShowToast).toHaveBeenCalledWith({ message: 'Falha ao arquivar.', type: 'error' }),
+      )
     })
   })
 })
