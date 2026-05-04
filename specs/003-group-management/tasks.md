@@ -106,7 +106,7 @@ No new project scaffolding required — the Next.js project is already bootstrap
 **Independent Test**: After a draw, log in as a member, open the group detail page, click "Ver quem você presenteia", confirm the card flips to reveal only your own recipient's name; revisit the page and confirm the revealed recipient is shown without the animation.
 
 - [ ] T024 [US5] Create `src/components/groups/ResultReveal/ResultReveal.tsx` (CSS 3D card flip using `.mg-result-card-*` classes from `theme.css`: front face shows mystery icon + "Ver quem você presenteia" button; back face shows recipient name + icon; calls `inviteService.getUserMatch(groupId)` on first click; flipped state persisted in component state) and `ResultReveal.test.tsx` (depends on T009)
-- [ ] T025 [US5] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `ResultReveal` when `group.status === 'MATCHED'` (depends on T023, T024)
+- [x] T025 [US5] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `ResultReveal` when `group.status === 'MATCHED'` (depends on T023, T024)
 
 **Checkpoint**: US5 functional — each member can reveal and re-view their assigned recipient.
 
@@ -120,7 +120,7 @@ No new project scaffolding required — the Next.js project is already bootstrap
 **Independent Test — US7**: Open any active group as owner, click "Arquivar grupo", confirm the modal, verify the group disappears from the active list and no restore option exists anywhere.
 
 - [ ] T026 [US6] [US7] Create `src/components/groups/GroupActions/GroupActions.tsx` ("Reabrir grupo" button when `status === 'MATCHED'`; "Arquivar grupo" button when `status !== 'ARCHIVED'`; both owner-only; each opens `ConfirmModal` before calling `groupService.reopenGroup()` / `groupService.archiveGroup()` respectively; invokes `onGroupUpdate` on success) and `GroupActions.test.tsx` (depends on T006, T008)
-- [ ] T027 [US6] [US7] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `GroupActions` in the owner-only actions area (depends on T025, T026)
+- [x] T027 [US6] [US7] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `GroupActions` in the owner-only actions area (depends on T025, T026)
 
 **Checkpoint**: US6 + US7 fully functional — owner can reopen or permanently archive a group from the detail page.
 
