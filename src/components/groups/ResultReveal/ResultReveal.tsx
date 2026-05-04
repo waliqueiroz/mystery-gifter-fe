@@ -32,17 +32,11 @@ export function ResultReveal({ groupId }: ResultRevealProps) {
 
   return (
     <div className="mg-result-card" style={{ maxWidth: 340, margin: '0 auto' }}>
-      <div className={`mg-result-card-inner${flipped ? ' flipped' : ''}`} style={{ minHeight: 200 }}>
+      <div className={`mg-result-card-inner${flipped ? ' flipped' : ''}`}>
         {/* Front face */}
         <div
           className="mg-result-card-front d-flex flex-column align-items-center justify-content-center text-center p-4"
-          style={{
-            backgroundColor: 'var(--mg-bg-card)',
-            border: '1px solid rgba(107,70,193,0.3)',
-            borderRadius: 12,
-            position: flipped ? 'absolute' : 'relative',
-            width: '100%',
-          }}
+          style={{ position: flipped ? 'absolute' : 'relative' }}
         >
           <i
             className="fas fa-gift fa-3x mb-3"
@@ -64,18 +58,7 @@ export function ResultReveal({ groupId }: ResultRevealProps) {
 
         {/* Back face */}
         {recipient && (
-          <div
-            className="mg-result-card-back d-flex flex-column align-items-center justify-content-center text-center p-4"
-            style={{
-              backgroundColor: 'var(--mg-bg-card)',
-              border: '1px solid rgba(107,70,193,0.5)',
-              borderRadius: 12,
-              position: 'absolute',
-              top: 0,
-              width: '100%',
-              minHeight: 200,
-            }}
-          >
+          <div className="mg-result-card-back d-flex flex-column align-items-center justify-content-center text-center p-4">
             <i
               className="fas fa-user-circle fa-3x mb-3"
               style={{ color: 'var(--mg-primary-hover)' }}
