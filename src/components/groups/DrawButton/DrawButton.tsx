@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { Group } from '@/types/api'
 import { generateDraw } from '@/services/api/groupService'
 import Button from '@/components/ui/Button/Button'
+import { useToast } from '@/components/ui/Toast/useToast'
 
 interface DrawButtonProps {
   group: Group
@@ -13,6 +14,7 @@ interface DrawButtonProps {
 const MIN_MEMBERS = 3
 
 export function DrawButton({ group, onGroupUpdate }: DrawButtonProps) {
+  const { showToast } = useToast()
   const [loading, setLoading] = useState(false)
 
   const hasEnoughMembers = group.users.length >= MIN_MEMBERS
@@ -25,6 +27,11 @@ export function DrawButton({ group, onGroupUpdate }: DrawButtonProps) {
     try {
       const updated = await generateDraw(group.id)
       onGroupUpdate(updated)
+    } catch (err) {
+      showToast({
+        message: err instanceof Error ? err.message : 'Erro ao realizar sorteio.',
+        type: 'error',
+      })
     } finally {
       setLoading(false)
     }
