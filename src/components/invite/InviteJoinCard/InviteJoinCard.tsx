@@ -9,32 +9,38 @@ interface InviteJoinCardProps {
   token: string
 }
 
-type JoinStatus = 'idle' | 'loading' | 'draw_completed' | 'invalid' | 'error'
+enum JoinStatus {
+  Idle = 'idle',
+  Loading = 'loading',
+  DrawCompleted = 'draw_completed',
+  Invalid = 'invalid',
+  Error = 'error',
+}
 
 const STATUS_MESSAGES: Partial<Record<JoinStatus, string>> = {
-  draw_completed:
+  [JoinStatus.DrawCompleted]:
     'O sorteio deste grupo já foi realizado. Peça ao dono para reabrir o grupo antes de entrar.',
-  invalid: 'Este link de convite é inválido ou expirou.',
-  error: 'Ocorreu um erro ao entrar no grupo. Tente novamente.',
+  [JoinStatus.Invalid]: 'Este link de convite é inválido ou expirou.',
+  [JoinStatus.Error]: 'Ocorreu um erro ao entrar no grupo. Tente novamente.',
 }
 
 export function InviteJoinCard({ token }: InviteJoinCardProps) {
   const router = useRouter()
-  const [status, setStatus] = useState<JoinStatus>('idle')
+  const [status, setStatus] = useState<JoinStatus>(JoinStatus.Idle)
 
   async function handleJoin() {
-    setStatus('loading')
+    setStatus(JoinStatus.Loading)
     try {
       const group = await joinGroup(token)
       router.push(`/groups/${group.id}`)
     } catch (err) {
       const message = err instanceof Error ? err.message : ''
       if (message.toLowerCase().includes('draw') || message.toLowerCase().includes('matched')) {
-        setStatus('draw_completed')
+        setStatus(JoinStatus.DrawCompleted)
       } else if (message.toLowerCase().includes('invalid') || message.toLowerCase().includes('expired') || message.toLowerCase().includes('not found')) {
-        setStatus('invalid')
+        setStatus(JoinStatus.Invalid)
       } else {
-        setStatus('error')
+        setStatus(JoinStatus.Error)
       }
     }
   }
@@ -62,12 +68,12 @@ export function InviteJoinCard({ token }: InviteJoinCardProps) {
           </div>
         )}
 
-        {status !== 'draw_completed' && status !== 'invalid' && (
+        {status !== JoinStatus.DrawCompleted && status !== JoinStatus.Invalid && (
           <Button
             type="button"
-            loading={status === 'loading'}
+            loading={status === JoinStatus.Loading}
             onClick={handleJoin}
-            disabled={status === 'loading'}
+            disabled={status === JoinStatus.Loading}
           >
             Entrar no grupo
           </Button>
