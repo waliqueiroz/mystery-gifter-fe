@@ -6,6 +6,7 @@ import type { CreateGroupFormData } from '@/types/forms'
 import { createGroup } from '@/services/api/groupService'
 import FormField from '@/components/ui/FormField/FormField'
 import Button from '@/components/ui/Button/Button'
+import { useToast } from '@/components/ui/Toast/useToast'
 
 interface CreateGroupModalProps {
   isOpen: boolean
@@ -16,6 +17,7 @@ interface CreateGroupModalProps {
 const EMPTY_FORM: CreateGroupFormData = { name: '', description: '' }
 
 export function CreateGroupModal({ isOpen, onClose, onSuccess }: CreateGroupModalProps) {
+  const { showToast } = useToast()
   const [form, setForm] = useState<CreateGroupFormData>(EMPTY_FORM)
   const [nameError, setNameError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -50,7 +52,10 @@ export function CreateGroupModal({ isOpen, onClose, onSuccess }: CreateGroupModa
       onSuccess(group)
       onClose()
     } catch (err) {
-      setNameError(err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.')
+      showToast({
+        message: err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.',
+        type: 'error',
+      })
     } finally {
       setLoading(false)
     }

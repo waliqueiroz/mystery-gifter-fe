@@ -6,6 +6,11 @@ import type { Group } from '@/types/api'
 
 jest.mock('@/services/api/groupService', () => ({ createGroup: jest.fn() }))
 
+const mockShowToast = jest.fn()
+jest.mock('@/components/ui/Toast/useToast', () => ({
+  useToast: () => ({ showToast: mockShowToast }),
+}))
+
 const mockCreateGroup = groupService.createGroup as jest.Mock
 
 const mockGroup: Group = {
@@ -70,12 +75,14 @@ describe('CreateGroupModal', () => {
     expect(onClose).toHaveBeenCalled()
   })
 
-  it('shows API error message inline on failure', async () => {
+  it('shows toast error on API failure', async () => {
     mockCreateGroup.mockRejectedValue(new Error('Erro no servidor.'))
     render(<CreateGroupModal {...defaultProps} />)
     await userEvent.type(screen.getByLabelText('Nome do grupo'), 'Grupo')
     await userEvent.click(screen.getByRole('button', { name: /criar grupo/i }))
-    expect(await screen.findByText('Erro no servidor.')).toBeInTheDocument()
+    await waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith({ message: 'Erro no servidor.', type: 'error' }),
+    )
   })
 
   it('calls onClose when cancel button is clicked', async () => {
