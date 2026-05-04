@@ -59,6 +59,27 @@ All new screens and components MUST follow these rules — see constitution for 
   `aria-hidden="true"` on purely decorative elements
 - **Gradients**: `to bottom` for backgrounds, `to right` for text gradient effects
 
+## Async Code Style
+
+- **Always use `async/await` with `try/catch/finally`** inside `useEffect` and event handlers — never `.then().catch().finally()` chains
+- Pattern for `useEffect` with async: define an inner `async function` and call it immediately
+
+```typescript
+useEffect(() => {
+  async function load() {
+    try {
+      const data = await fetchSomething()
+      setState(data)
+    } catch (err) {
+      showToast({ message: err instanceof Error ? err.message : 'Erro.', type: 'error' })
+    } finally {
+      setLoading(false)
+    }
+  }
+  load()
+}, [deps])
+```
+
 ## Key Rules (from Constitution v1.2.0)
 
 - Every React component and utility function MUST have a unit test — no exceptions

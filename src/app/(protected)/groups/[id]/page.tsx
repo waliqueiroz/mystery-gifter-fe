@@ -21,16 +21,21 @@ function GroupDetailContent() {
   const isOwner = !!currentUser && group?.owner_id === currentUser.id
 
   useEffect(() => {
-    getGroup(id)
-      .then(setGroup)
-      .catch((err: Error) => {
+    async function load() {
+      try {
+        const data = await getGroup(id)
+        setGroup(data)
+      } catch (err) {
         showToast({
-          message: err.message ?? 'Grupo não encontrado.',
+          message: err instanceof Error ? err.message : 'Grupo não encontrado.',
           type: 'error',
         })
         router.push('/groups')
-      })
-      .finally(() => setLoading(false))
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
   }, [id, router, showToast])
 
   if (loading) {
