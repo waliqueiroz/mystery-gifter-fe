@@ -120,7 +120,7 @@ No new project scaffolding required — the Next.js project is already bootstrap
 **Independent Test — US7**: Open any active group as owner, click "Arquivar grupo", confirm the modal, verify the group disappears from the active list and no restore option exists anywhere.
 
 - [ ] T026 [US6] [US7] Create `src/components/groups/GroupActions/GroupActions.tsx` ("Reabrir grupo" button when `status === 'MATCHED'`; "Arquivar grupo" button when `status !== 'ARCHIVED'`; both owner-only; each opens `ConfirmModal` before calling `groupService.reopenGroup()` / `groupService.archiveGroup()` respectively; invokes `onGroupUpdate` on success) and `GroupActions.test.tsx` (depends on T006, T008)
-- [ ] T027 [US6] [US7] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `GroupActions` in the owner-only actions area (depends on T025, T026)
+- [x] T027 [US6] [US7] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `GroupActions` in the owner-only actions area (depends on T025, T026)
 
 **Checkpoint**: US6 + US7 fully functional — owner can reopen or permanently archive a group from the detail page.
 

@@ -37,6 +37,10 @@ jest.mock('@/components/groups/ResultReveal/ResultReveal', () => ({
   ),
 }))
 
+jest.mock('@/components/groups/GroupActions/GroupActions', () => ({
+  GroupActions: () => <div data-testid="group-actions" />,
+}))
+
 jest.mock('@/services/api/groupService', () => ({ getGroup: jest.fn() }))
 jest.mock('@/lib/session', () => ({ getUser: jest.fn() }))
 
@@ -151,5 +155,27 @@ describe('GroupDetailPage', () => {
     render(<GroupDetailPage />)
     await screen.findByText('Grupo Teste')
     expect(screen.queryByTestId('result-reveal')).not.toBeInTheDocument()
+  })
+
+  it('renders GroupActions for owner when group is not ARCHIVED', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1', status: 'OPEN' }))
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    expect(screen.getByTestId('group-actions')).toBeInTheDocument()
+  })
+
+  it('does not render GroupActions for non-owner', async () => {
+    mockGetUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
+    mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1', status: 'OPEN' }))
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    expect(screen.queryByTestId('group-actions')).not.toBeInTheDocument()
+  })
+
+  it('does not render GroupActions when group is ARCHIVED', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1', status: 'ARCHIVED' }))
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    expect(screen.queryByTestId('group-actions')).not.toBeInTheDocument()
   })
 })
