@@ -269,6 +269,7 @@ label {
 .mg-result-card-inner {
   position: relative;
   width: 100%;
+  min-height: 200px;
   transition: transform 400ms ease-in-out;
   transform-style: preserve-3d;
 }
@@ -281,10 +282,21 @@ label {
 .mg-result-card-back {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  background-color: var(--mg-bg-card);
+  border-radius: 12px;
+  width: 100%;
+}
+
+.mg-result-card-front {
+  border: 1px solid rgba(107, 70, 193, 0.3);
 }
 
 .mg-result-card-back {
   transform: rotateY(180deg);
+  border: 1px solid rgba(107, 70, 193, 0.5);
+  position: absolute;
+  top: 0;
+  min-height: 200px;
 }
 
 /* =====================================================================
