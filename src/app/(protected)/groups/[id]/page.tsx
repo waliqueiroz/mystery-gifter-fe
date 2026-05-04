@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import AuthGuard from '@/components/auth/AuthGuard'
 import { GroupStatusBadge } from '@/components/groups/GroupStatusBadge/GroupStatusBadge'
 import { InviteSection } from '@/components/groups/InviteSection/InviteSection'
+import { MemberList } from '@/components/groups/MemberList/MemberList'
 import { getGroup } from '@/services/api/groupService'
 import { getUser } from '@/lib/session'
 import { useToast } from '@/components/ui/Toast/useToast'
@@ -70,7 +71,7 @@ function GroupDetailContent() {
 
       <section className="content">
         <div className="container-fluid">
-          <div className="card" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
+          <div className="card mb-3" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
             <div className="card-body">
               <h6 className="mb-3" style={{ color: 'var(--mg-text-muted)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
                 Convite
@@ -79,6 +80,16 @@ function GroupDetailContent() {
                 groupId={group.id}
                 isOwner={isOwner}
                 groupStatus={group.status}
+              />
+            </div>
+          </div>
+
+          <div className="card" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
+            <div className="card-body">
+              <MemberList
+                group={group}
+                currentUserId={currentUser?.id ?? ''}
+                onGroupUpdate={setGroup}
               />
             </div>
           </div>

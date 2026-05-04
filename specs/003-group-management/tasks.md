@@ -80,7 +80,7 @@ No new project scaffolding required — the Next.js project is already bootstrap
 **Independent Test**: Open a group with members as owner; verify member list with remove buttons; remove a member and confirm the list updates; log in as non-owner and confirm remove buttons are absent.
 
 - [ ] T020 [US3] Create `src/components/groups/MemberList/MemberList.tsx` (table of members; remove button visible to owner only; button disabled with explanation when `group.status !== 'OPEN'`; calls `groupService.removeMember()` on click; updates group state via `onGroupUpdate` callback) and `MemberList.test.tsx` (depends on T008)
-- [ ] T021 [US3] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `MemberList` below the group header with `currentUser.id` and `onGroupUpdate` callback (depends on T019, T020)
+- [x] T021 [US3] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `MemberList` below the group header with `currentUser.id` and `onGroupUpdate` callback (depends on T019, T020)
 
 **Checkpoint**: US3 functional — full group detail page shows the member list with owner management controls.
 
