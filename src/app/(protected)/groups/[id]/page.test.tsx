@@ -21,6 +21,12 @@ jest.mock('@/components/groups/InviteSection/InviteSection', () => ({
   ),
 }))
 
+jest.mock('@/components/groups/MemberList/MemberList', () => ({
+  MemberList: ({ group, currentUserId }: { group: { id: string }; currentUserId: string }) => (
+    <div data-testid="member-list" data-group-id={group.id} data-current-user-id={currentUserId} />
+  ),
+}))
+
 jest.mock('@/services/api/groupService', () => ({ getGroup: jest.fn() }))
 jest.mock('@/lib/session', () => ({ getUser: jest.fn() }))
 
@@ -95,5 +101,14 @@ describe('GroupDetailPage', () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     render(<GroupDetailPage />)
     await waitFor(() => expect(mockGetGroup).toHaveBeenCalledWith('g1'))
+  })
+
+  it('renders MemberList with correct group and currentUserId', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup())
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    const memberList = screen.getByTestId('member-list')
+    expect(memberList).toHaveAttribute('data-group-id', 'g1')
+    expect(memberList).toHaveAttribute('data-current-user-id', 'u1')
   })
 })
