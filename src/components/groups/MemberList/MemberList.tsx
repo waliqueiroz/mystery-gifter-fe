@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Group, User } from '@/types/api'
 import { removeMember } from '@/services/api/groupService'
+import { useToast } from '@/components/ui/Toast/useToast'
 
 interface MemberListProps {
   group: Group
@@ -11,6 +12,7 @@ interface MemberListProps {
 }
 
 export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListProps) {
+  const { showToast } = useToast()
   const [removingId, setRemovingId] = useState<string | null>(null)
   const isOwner = currentUserId === group.owner_id
   const canRemove = group.status === 'OPEN'
@@ -20,6 +22,11 @@ export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListPr
     try {
       const updated = await removeMember(group.id, user.id)
       onGroupUpdate(updated)
+    } catch (err) {
+      showToast({
+        message: err instanceof Error ? err.message : 'Erro ao remover participante.',
+        type: 'error',
+      })
     } finally {
       setRemovingId(null)
     }
