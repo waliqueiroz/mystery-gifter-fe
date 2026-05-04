@@ -27,6 +27,10 @@ jest.mock('@/components/groups/MemberList/MemberList', () => ({
   ),
 }))
 
+jest.mock('@/components/groups/DrawButton/DrawButton', () => ({
+  DrawButton: () => <div data-testid="draw-button" />,
+}))
+
 jest.mock('@/services/api/groupService', () => ({ getGroup: jest.fn() }))
 jest.mock('@/lib/session', () => ({ getUser: jest.fn() }))
 
@@ -110,5 +114,20 @@ describe('GroupDetailPage', () => {
     const memberList = screen.getByTestId('member-list')
     expect(memberList).toHaveAttribute('data-group-id', 'g1')
     expect(memberList).toHaveAttribute('data-current-user-id', 'u1')
+  })
+
+  it('renders DrawButton for the group owner', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1' }))
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    expect(screen.getByTestId('draw-button')).toBeInTheDocument()
+  })
+
+  it('does not render DrawButton for non-owner', async () => {
+    mockGetUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
+    mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1' }))
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    expect(screen.queryByTestId('draw-button')).not.toBeInTheDocument()
   })
 })

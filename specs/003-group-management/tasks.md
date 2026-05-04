@@ -93,7 +93,7 @@ No new project scaffolding required — the Next.js project is already bootstrap
 **Independent Test**: Open a group with 2 members and verify the draw button is disabled with the inline message; add a third member and verify the button becomes enabled; trigger the draw and confirm group status changes to "Sorteio realizado" and the invite section hides.
 
 - [ ] T022 [US4] Create `src/components/groups/DrawButton/DrawButton.tsx` (always visible; disabled + tooltip "São necessários pelo menos 3 membros" when `group.users.length < 3`; disabled when `group.status !== 'OPEN'`; calls `groupService.generateDraw()`; on success invokes `onGroupUpdate(updatedGroup)` callback) and `DrawButton.test.tsx` (depends on T008)
-- [ ] T023 [US4] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `DrawButton` in the owner-only actions area (depends on T021, T022)
+- [x] T023 [US4] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `DrawButton` in the owner-only actions area (depends on T021, T022)
 
 **Checkpoint**: US4 functional — draw can be triggered; status transitions to "Sorteio realizado" and invite section hides.
 

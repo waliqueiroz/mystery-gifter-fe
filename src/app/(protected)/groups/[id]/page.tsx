@@ -6,6 +6,7 @@ import AuthGuard from '@/components/auth/AuthGuard'
 import { GroupStatusBadge } from '@/components/groups/GroupStatusBadge/GroupStatusBadge'
 import { InviteSection } from '@/components/groups/InviteSection/InviteSection'
 import { MemberList } from '@/components/groups/MemberList/MemberList'
+import { DrawButton } from '@/components/groups/DrawButton/DrawButton'
 import { getGroup } from '@/services/api/groupService'
 import { getUser } from '@/lib/session'
 import { useToast } from '@/components/ui/Toast/useToast'
@@ -84,7 +85,7 @@ function GroupDetailContent() {
             </div>
           </div>
 
-          <div className="card" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
+          <div className="card mb-3" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
             <div className="card-body">
               <MemberList
                 group={group}
@@ -93,6 +94,14 @@ function GroupDetailContent() {
               />
             </div>
           </div>
+
+          {isOwner && (
+            <div className="card" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
+              <div className="card-body">
+                <DrawButton group={group} onGroupUpdate={setGroup} />
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </>
