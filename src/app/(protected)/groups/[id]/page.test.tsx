@@ -31,6 +31,12 @@ jest.mock('@/components/groups/DrawButton/DrawButton', () => ({
   DrawButton: () => <div data-testid="draw-button" />,
 }))
 
+jest.mock('@/components/groups/ResultReveal/ResultReveal', () => ({
+  ResultReveal: ({ groupId }: { groupId: string }) => (
+    <div data-testid="result-reveal" data-group-id={groupId} />
+  ),
+}))
+
 jest.mock('@/services/api/groupService', () => ({ getGroup: jest.fn() }))
 jest.mock('@/lib/session', () => ({ getUser: jest.fn() }))
 
@@ -129,5 +135,21 @@ describe('GroupDetailPage', () => {
     render(<GroupDetailPage />)
     await screen.findByText('Grupo Teste')
     expect(screen.queryByTestId('draw-button')).not.toBeInTheDocument()
+  })
+
+  it('renders ResultReveal when group status is MATCHED', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup({ status: 'MATCHED' }))
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    const reveal = screen.getByTestId('result-reveal')
+    expect(reveal).toBeInTheDocument()
+    expect(reveal).toHaveAttribute('data-group-id', 'g1')
+  })
+
+  it('does not render ResultReveal when status is OPEN', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup({ status: 'OPEN' }))
+    render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    expect(screen.queryByTestId('result-reveal')).not.toBeInTheDocument()
   })
 })

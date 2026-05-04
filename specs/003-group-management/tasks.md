@@ -106,7 +106,7 @@ No new project scaffolding required — the Next.js project is already bootstrap
 **Independent Test**: After a draw, log in as a member, open the group detail page, click "Ver quem você presenteia", confirm the card flips to reveal only your own recipient's name; revisit the page and confirm the revealed recipient is shown without the animation.
 
 - [ ] T024 [US5] Create `src/components/groups/ResultReveal/ResultReveal.tsx` (CSS 3D card flip using `.mg-result-card-*` classes from `theme.css`: front face shows mystery icon + "Ver quem você presenteia" button; back face shows recipient name + icon; calls `inviteService.getUserMatch(groupId)` on first click; flipped state persisted in component state) and `ResultReveal.test.tsx` (depends on T009)
-- [ ] T025 [US5] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `ResultReveal` when `group.status === 'MATCHED'` (depends on T023, T024)
+- [x] T025 [US5] Extend `src/app/(protected)/groups/[id]/page.tsx` to render `ResultReveal` when `group.status === 'MATCHED'` (depends on T023, T024)
 
 **Checkpoint**: US5 functional — each member can reveal and re-view their assigned recipient.
 

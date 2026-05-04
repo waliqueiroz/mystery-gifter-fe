@@ -7,6 +7,7 @@ import { GroupStatusBadge } from '@/components/groups/GroupStatusBadge/GroupStat
 import { InviteSection } from '@/components/groups/InviteSection/InviteSection'
 import { MemberList } from '@/components/groups/MemberList/MemberList'
 import { DrawButton } from '@/components/groups/DrawButton/DrawButton'
+import { ResultReveal } from '@/components/groups/ResultReveal/ResultReveal'
 import { getGroup } from '@/services/api/groupService'
 import { getUser } from '@/lib/session'
 import { useToast } from '@/components/ui/Toast/useToast'
@@ -96,9 +97,17 @@ function GroupDetailContent() {
           </div>
 
           {isOwner && (
-            <div className="card" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
+            <div className="card mb-3" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
               <div className="card-body">
                 <DrawButton group={group} onGroupUpdate={setGroup} />
+              </div>
+            </div>
+          )}
+
+          {group.status === 'MATCHED' && (
+            <div className="card" style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)' }}>
+              <div className="card-body">
+                <ResultReveal groupId={group.id} />
               </div>
             </div>
           )}
