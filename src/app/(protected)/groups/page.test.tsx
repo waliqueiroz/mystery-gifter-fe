@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import GroupsPage from './page'
 import * as session from '@/lib/session'
 
@@ -22,17 +22,18 @@ const mockGetUser = session.getUser as jest.Mock
 beforeEach(() => jest.clearAllMocks())
 
 describe('GroupsPage', () => {
-  it('renders GroupList with the logged-in userId', () => {
+  it('renders GroupList with the logged-in userId after mount', async () => {
     mockGetUser.mockReturnValue({ id: 'u-42', name: 'Test', email: 't@t.com' })
     render(<GroupsPage />)
-    const list = screen.getByTestId('group-list')
+    const list = await screen.findByTestId('group-list')
     expect(list).toBeInTheDocument()
     expect(list).toHaveAttribute('data-user-id', 'u-42')
   })
 
-  it('does not render GroupList when session has no user', () => {
+  it('does not render GroupList when session has no user', async () => {
     mockGetUser.mockReturnValue(null)
     render(<GroupsPage />)
+    await waitFor(() => expect(mockGetUser).toHaveBeenCalled())
     expect(screen.queryByTestId('group-list')).not.toBeInTheDocument()
   })
 

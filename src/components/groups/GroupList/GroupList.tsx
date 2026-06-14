@@ -41,8 +41,15 @@ export function GroupList({ userId }: GroupListProps) {
   )
 
   useEffect(() => {
-    setLoadingInitial(true)
-    fetchGroups(0, false).finally(() => setLoadingInitial(false))
+    async function load() {
+      setLoadingInitial(true)
+      try {
+        await fetchGroups(0, false)
+      } finally {
+        setLoadingInitial(false)
+      }
+    }
+    load()
   }, [fetchGroups])
 
   async function handleLoadMore() {

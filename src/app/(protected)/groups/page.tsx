@@ -1,11 +1,17 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import AuthGuard from '@/components/auth/AuthGuard'
 import { GroupList } from '@/components/groups/GroupList/GroupList'
 import { getUser } from '@/lib/session'
+import type { User } from '@/types/api'
 
 export default function GroupsPage() {
-  const user = getUser()
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    setUser(getUser())
+  }, [])
 
   return (
     <AuthGuard>
