@@ -1,11 +1,8 @@
-'use client'
-
-import AuthGuard from '@/components/auth/AuthGuard'
 import { GroupList } from '@/components/groups/GroupList/GroupList'
 
 export default function GroupsPage() {
   return (
-    <AuthGuard>
+    <>
       <div className="content-header">
         <div className="container-fluid">
           <div className="row mb-2">
@@ -22,6 +19,6 @@ export default function GroupsPage() {
           <GroupList />
         </div>
       </section>
-    </AuthGuard>
+    </>
   )
 }

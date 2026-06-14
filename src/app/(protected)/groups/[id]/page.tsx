@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import AuthGuard from '@/components/auth/AuthGuard'
 import { GroupStatusBadge } from '@/components/groups/GroupStatusBadge/GroupStatusBadge'
 import { InviteSection } from '@/components/groups/InviteSection/InviteSection'
 import { MemberList } from '@/components/groups/MemberList/MemberList'
@@ -10,7 +9,7 @@ import { DrawButton } from '@/components/groups/DrawButton/DrawButton'
 import { ResultReveal } from '@/components/groups/ResultReveal/ResultReveal'
 import { GroupActions } from '@/components/groups/GroupActions/GroupActions'
 import { getGroup } from '@/services/api/groupService'
-import { getUser } from '@/lib/session'
+import { useUser } from '@/contexts/UserContext'
 import { useToast } from '@/components/ui/Toast/useToast'
 import type { Group } from '@/types/api'
 
@@ -21,7 +20,7 @@ function GroupDetailContent() {
   const [group, setGroup] = useState<Group | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const currentUser = getUser()
+  const currentUser = useUser()
   const isOwner = !!currentUser && group?.owner_id === currentUser.id
 
   useEffect(() => {
@@ -127,9 +126,5 @@ function GroupDetailContent() {
 }
 
 export default function GroupDetailPage() {
-  return (
-    <AuthGuard>
-      <GroupDetailContent />
-    </AuthGuard>
-  )
+  return <GroupDetailContent />
 }

@@ -18,6 +18,11 @@ jest.mock('@/lib/auth', () => ({
   isAuthenticated: jest.fn(),
 }))
 
+jest.mock('@/contexts/UserContext', () => ({
+  UserProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useUser: jest.fn(() => ({ id: 'u1', name: 'Test', surname: 'User', email: 't@t.com' })),
+}))
+
 const mockClearToken = auth.clearToken as jest.Mock
 
 beforeEach(() => {
