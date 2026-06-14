@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { User } from '@/types/api'
-import { isAuthenticated } from '@/lib/auth'
+import { isAuthenticated, clearToken } from '@/lib/auth'
 import { getUser } from '@/lib/session'
 
 const UserContext = createContext<User | null>(null)
@@ -20,6 +20,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
     const storedUser = getUser()
     if (!storedUser) {
+      clearToken()
       router.push('/login')
       return
     }

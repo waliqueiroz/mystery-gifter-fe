@@ -12,6 +12,7 @@ jest.mock('next/navigation', () => ({
 
 jest.mock('@/lib/auth', () => ({
   isAuthenticated: jest.fn(),
+  clearToken: jest.fn(),
 }))
 
 jest.mock('@/lib/session', () => ({
@@ -19,6 +20,7 @@ jest.mock('@/lib/session', () => ({
 }))
 
 const mockIsAuthenticated = auth.isAuthenticated as jest.Mock
+const mockClearToken = auth.clearToken as jest.Mock
 const mockGetUser = session.getUser as jest.Mock
 
 const mockUser: User = { id: 'u1', name: 'Ana', surname: 'Lima', email: 'a@a.com', created_at: '', updated_at: '' }
@@ -40,11 +42,12 @@ describe('UserProvider', () => {
     expect(screen.queryByText('conteúdo')).not.toBeInTheDocument()
   })
 
-  it('redirects to /login when token exists but user is absent from localStorage', async () => {
+  it('redirects to /login and clears token when token exists but user is absent from localStorage', async () => {
     mockIsAuthenticated.mockReturnValue(true)
     mockGetUser.mockReturnValue(null)
     render(<UserProvider><div>conteúdo</div></UserProvider>)
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/login'))
+    expect(mockClearToken).toHaveBeenCalledTimes(1)
     expect(screen.queryByText('conteúdo')).not.toBeInTheDocument()
   })
 
