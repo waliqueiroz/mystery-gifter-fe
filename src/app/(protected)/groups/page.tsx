@@ -2,11 +2,8 @@
 
 import AuthGuard from '@/components/auth/AuthGuard'
 import { GroupList } from '@/components/groups/GroupList/GroupList'
-import { getUser } from '@/lib/session'
 
 export default function GroupsPage() {
-  const user = getUser()
-
   return (
     <AuthGuard>
       <div className="content-header">
@@ -22,7 +19,7 @@ export default function GroupsPage() {
       </div>
       <section className="content">
         <div className="container-fluid">
-          {user && <GroupList userId={user.id} />}
+          <GroupList />
         </div>
       </section>
     </AuthGuard>

@@ -3,19 +3,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Group, GroupSummary, Paging } from '@/types/api'
 import { listGroups } from '@/services/api/groupService'
+import { getUser } from '@/lib/session'
 import { GroupCard } from '@/components/groups/GroupCard/GroupCard'
 import { GroupEmptyState } from '@/components/groups/GroupEmptyState/GroupEmptyState'
 import { CreateGroupModal } from '@/components/groups/CreateGroupModal/CreateGroupModal'
 import { useToast } from '@/components/ui/Toast/useToast'
 
-interface GroupListProps {
-  userId: string
-}
-
 const PAGE_SIZE = 15
 
-export function GroupList({ userId }: GroupListProps) {
+export function GroupList() {
   const { showToast } = useToast()
+  const [userId, setUserId] = useState<string | null>(null)
   const [groups, setGroups] = useState<GroupSummary[]>([])
   const [paging, setPaging] = useState<Paging>({ limit: PAGE_SIZE, offset: 0, total: 0 })
   const [loadingInitial, setLoadingInitial] = useState(true)
@@ -24,8 +22,13 @@ export function GroupList({ userId }: GroupListProps) {
 
   const hasMore = paging.offset + paging.limit < paging.total
 
+  useEffect(() => {
+    setUserId(getUser()?.id ?? null)
+  }, [])
+
   const fetchGroups = useCallback(
     async (offset: number, append: boolean) => {
+      if (!userId) return
       try {
         const result = await listGroups({ userId, offset, limit: PAGE_SIZE })
         setGroups((prev) => (append ? [...prev, ...result.result] : result.result))
@@ -41,9 +44,17 @@ export function GroupList({ userId }: GroupListProps) {
   )
 
   useEffect(() => {
-    setLoadingInitial(true)
-    fetchGroups(0, false).finally(() => setLoadingInitial(false))
-  }, [fetchGroups])
+    if (userId === null) return
+    async function load() {
+      setLoadingInitial(true)
+      try {
+        await fetchGroups(0, false)
+      } finally {
+        setLoadingInitial(false)
+      }
+    }
+    load()
+  }, [fetchGroups, userId])
 
   async function handleLoadMore() {
     const nextOffset = paging.offset + paging.limit

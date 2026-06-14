@@ -213,6 +213,43 @@ label {
 }
 
 /* =====================================================================
+   ADMINLTE SIDEBAR
+   ===================================================================== */
+
+.main-sidebar,
+.main-sidebar .sidebar {
+  background-color: var(--mg-bg-secondary) !important;
+}
+
+.sidebar-dark-primary .nav-sidebar .nav-link {
+  color: var(--mg-text-muted) !important;
+  transition: background-color var(--mg-transition), color var(--mg-transition);
+}
+
+.sidebar-dark-primary .nav-sidebar .nav-link:hover {
+  color: var(--mg-text) !important;
+  background-color: rgba(107, 70, 193, 0.15) !important;
+}
+
+.sidebar-dark-primary .nav-sidebar .nav-link.active {
+  background-color: var(--mg-primary) !important;
+  color: var(--mg-text) !important;
+}
+
+.sidebar-dark-primary .nav-sidebar .nav-icon {
+  color: inherit !important;
+}
+
+/* Dashboard quick-access card hover */
+.mg-dashboard-card {
+  transition: border-color var(--mg-transition), transform var(--mg-transition);
+}
+.mg-dashboard-card:hover {
+  border-color: rgba(107, 70, 193, 0.7) !important;
+  transform: translateY(-2px);
+}
+
+/* =====================================================================
    GROUP STATUS BADGES
    ===================================================================== */
 

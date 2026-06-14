@@ -2,12 +2,18 @@ import { render, screen } from '@testing-library/react'
 import DashboardContent from './DashboardContent'
 
 describe('DashboardContent', () => {
-  it('renders "O melhor está por vir"', () => {
+  it('renders Dashboard heading', () => {
     render(<DashboardContent />)
-    expect(screen.getByRole('heading', { name: 'O melhor está por vir' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument()
   })
 
-  it('renders supporting subtext', () => {
+  it('renders groups quick-access card linking to /groups', () => {
+    render(<DashboardContent />)
+    const link = screen.getByRole('link', { name: /grupos/i })
+    expect(link).toHaveAttribute('href', '/groups')
+  })
+
+  it('renders groups card description mentioning Amigo Secreto', () => {
     render(<DashboardContent />)
     expect(screen.getByText(/amigo secreto/i)).toBeInTheDocument()
   })
