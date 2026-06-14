@@ -1,12 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import GroupDetailPage from './page'
 import * as groupService from '@/services/api/groupService'
-import * as session from '@/lib/session'
+import * as userContext from '@/contexts/UserContext'
 import type { Group } from '@/types/api'
 
-jest.mock('@/components/auth/AuthGuard', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+jest.mock('@/contexts/UserContext', () => ({
+  useUser: jest.fn(),
 }))
 
 jest.mock('@/components/groups/GroupStatusBadge/GroupStatusBadge', () => ({
@@ -42,7 +41,6 @@ jest.mock('@/components/groups/GroupActions/GroupActions', () => ({
 }))
 
 jest.mock('@/services/api/groupService', () => ({ getGroup: jest.fn() }))
-jest.mock('@/lib/session', () => ({ getUser: jest.fn() }))
 
 const mockShowToast = jest.fn()
 const mockPush = jest.fn()
@@ -56,7 +54,7 @@ jest.mock('next/navigation', () => ({
 }))
 
 const mockGetGroup = groupService.getGroup as jest.Mock
-const mockGetUser = session.getUser as jest.Mock
+const mockUseUser = userContext.useUser as jest.Mock
 
 function makeGroup(overrides: Partial<Group> = {}): Group {
   return {
@@ -68,7 +66,7 @@ function makeGroup(overrides: Partial<Group> = {}): Group {
 
 beforeEach(() => {
   jest.clearAllMocks()
-  mockGetUser.mockReturnValue({ id: 'u1', name: 'Ana', surname: 'Lima', email: 'a@a.com' })
+  mockUseUser.mockReturnValue({ id: 'u1', name: 'Ana', surname: 'Lima', email: 'a@a.com' })
 })
 
 describe('GroupDetailPage', () => {
@@ -95,7 +93,7 @@ describe('GroupDetailPage', () => {
   })
 
   it('renders InviteSection with isOwner=false for non-owner', async () => {
-    mockGetUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
+    mockUseUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
     mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1' }))
     render(<GroupDetailPage />)
     await screen.findByText('Grupo Teste')
@@ -134,7 +132,7 @@ describe('GroupDetailPage', () => {
   })
 
   it('does not render DrawButton for non-owner', async () => {
-    mockGetUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
+    mockUseUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
     mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1' }))
     render(<GroupDetailPage />)
     await screen.findByText('Grupo Teste')
@@ -165,7 +163,7 @@ describe('GroupDetailPage', () => {
   })
 
   it('does not render GroupActions for non-owner', async () => {
-    mockGetUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
+    mockUseUser.mockReturnValue({ id: 'u2', name: 'Bruno', surname: 'Costa', email: 'b@b.com' })
     mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1', status: 'OPEN' }))
     render(<GroupDetailPage />)
     await screen.findByText('Grupo Teste')

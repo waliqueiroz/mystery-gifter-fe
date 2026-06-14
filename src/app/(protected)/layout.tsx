@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { clearToken } from '@/lib/auth'
 import { ToastProvider } from '@/components/ui/Toast/ToastProvider'
+import { UserProvider } from '@/contexts/UserContext'
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -16,6 +17,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <ToastProvider>
+      <UserProvider>
       <div className="wrapper">
         <nav className="main-header navbar navbar-expand navbar-dark">
           <ul className="navbar-nav">
@@ -63,6 +65,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
         <div className="content-wrapper">{children}</div>
       </div>
+      </UserProvider>
     </ToastProvider>
   )
 }

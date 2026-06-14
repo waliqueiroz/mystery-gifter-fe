@@ -2,11 +2,11 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GroupList } from './GroupList'
 import * as groupService from '@/services/api/groupService'
-import * as session from '@/lib/session'
+import * as userContext from '@/contexts/UserContext'
 import type { GroupSearchResult, GroupSummary } from '@/types/api'
 
 jest.mock('@/services/api/groupService', () => ({ listGroups: jest.fn() }))
-jest.mock('@/lib/session', () => ({ getUser: jest.fn() }))
+jest.mock('@/contexts/UserContext', () => ({ useUser: jest.fn() }))
 jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -19,7 +19,7 @@ jest.mock('@/components/ui/Toast/useToast', () => ({
 }))
 
 const mockListGroups = groupService.listGroups as jest.Mock
-const mockGetUser = session.getUser as jest.Mock
+const mockUseUser = userContext.useUser as jest.Mock
 
 function makeGroup(id: string): GroupSummary {
   return { id, name: `Grupo ${id}`, status: 'OPEN', owner_id: 'u1', user_count: 2, created_at: '', updated_at: '' }
@@ -31,7 +31,7 @@ function makeResult(groups: GroupSummary[], total?: number): GroupSearchResult {
 
 beforeEach(() => {
   jest.clearAllMocks()
-  mockGetUser.mockReturnValue({ id: 'u1', name: 'Test', surname: 'User', email: 't@t.com' })
+  mockUseUser.mockReturnValue({ id: 'u1', name: 'Test', surname: 'User', email: 't@t.com' })
 })
 
 describe('GroupList', () => {
@@ -86,8 +86,8 @@ describe('GroupList', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
-  it('calls listGroups with the userId from session', async () => {
-    mockGetUser.mockReturnValue({ id: 'user-42', name: 'Test', surname: 'User', email: 't@t.com' })
+  it('calls listGroups with the userId from context', async () => {
+    mockUseUser.mockReturnValue({ id: 'user-42', name: 'Test', surname: 'User', email: 't@t.com' })
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)
     await waitFor(() =>
@@ -95,10 +95,10 @@ describe('GroupList', () => {
     )
   })
 
-  it('does not call listGroups when there is no session user', async () => {
-    mockGetUser.mockReturnValue(null)
+  it('does not call listGroups when context user is null', async () => {
+    mockUseUser.mockReturnValue(null)
     render(<GroupList />)
-    await waitFor(() => expect(mockGetUser).toHaveBeenCalled())
+    await waitFor(() => expect(mockUseUser).toHaveBeenCalled())
     expect(mockListGroups).not.toHaveBeenCalled()
   })
 })

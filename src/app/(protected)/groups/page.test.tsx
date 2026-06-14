@@ -1,11 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import GroupsPage from './page'
 
-jest.mock('@/components/auth/AuthGuard', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}))
-
 jest.mock('@/components/groups/GroupList/GroupList', () => ({
   GroupList: () => <div data-testid="group-list" />,
 }))

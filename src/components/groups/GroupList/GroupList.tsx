@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Group, GroupSummary, Paging } from '@/types/api'
 import { listGroups } from '@/services/api/groupService'
-import { getUser } from '@/lib/session'
+import { useUser } from '@/contexts/UserContext'
 import { GroupCard } from '@/components/groups/GroupCard/GroupCard'
 import { GroupEmptyState } from '@/components/groups/GroupEmptyState/GroupEmptyState'
 import { CreateGroupModal } from '@/components/groups/CreateGroupModal/CreateGroupModal'
@@ -12,8 +12,9 @@ import { useToast } from '@/components/ui/Toast/useToast'
 const PAGE_SIZE = 15
 
 export function GroupList() {
+  const user = useUser()
+  const userId = user?.id ?? null
   const { showToast } = useToast()
-  const [userId, setUserId] = useState<string | null>(null)
   const [groups, setGroups] = useState<GroupSummary[]>([])
   const [paging, setPaging] = useState<Paging>({ limit: PAGE_SIZE, offset: 0, total: 0 })
   const [loadingInitial, setLoadingInitial] = useState(true)
@@ -21,10 +22,6 @@ export function GroupList() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const hasMore = paging.offset + paging.limit < paging.total
-
-  useEffect(() => {
-    setUserId(getUser()?.id ?? null)
-  }, [])
 
   const fetchGroups = useCallback(
     async (offset: number, append: boolean) => {
@@ -44,7 +41,7 @@ export function GroupList() {
   )
 
   useEffect(() => {
-    if (userId === null) return
+    if (!userId) return
     async function load() {
       setLoadingInitial(true)
       try {
