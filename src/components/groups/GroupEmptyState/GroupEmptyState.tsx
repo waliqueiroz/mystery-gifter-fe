@@ -16,7 +16,7 @@ export function GroupEmptyState({ onCreateClick }: GroupEmptyStateProps) {
         Nenhum grupo ainda
       </h4>
       <p className="mb-4" style={{ color: 'var(--mg-text-muted)' }}>
-        Crie seu primeiro grupo de Amigo Secreto e comece a sorteios!
+        Crie seu primeiro grupo de Amigo Secreto e comece a sortear!
       </p>
       <button type="button" className="btn btn-primary" onClick={onCreateClick}>
         <i className="fas fa-plus mr-2" aria-hidden="true" />
