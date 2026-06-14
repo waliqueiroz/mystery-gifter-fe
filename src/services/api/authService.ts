@@ -1,4 +1,5 @@
 import type { AuthSession, LoginCredentials, CreateUserPayload } from '@/types/api'
+import { setUser } from '@/lib/session'
 
 const ERROR_MESSAGES: Record<number, string> = {
   401: 'E-mail ou senha inválidos.',
@@ -20,7 +21,9 @@ export async function login(credentials: LoginCredentials): Promise<AuthSession>
     throw new Error(getErrorMessage(response.status))
   }
 
-  return response.json() as Promise<AuthSession>
+  const session = (await response.json()) as AuthSession
+  setUser(session.user)
+  return session
 }
 
 export async function register(payload: CreateUserPayload): Promise<AuthSession> {

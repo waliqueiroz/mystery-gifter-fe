@@ -1,4 +1,5 @@
 import { TOKEN_KEY, getToken, setToken, clearToken, isAuthenticated } from './auth'
+import { USER_KEY } from './session'
 
 describe('auth helpers', () => {
   beforeEach(() => {
@@ -36,6 +37,13 @@ describe('auth helpers', () => {
       localStorage.setItem(TOKEN_KEY, 'test-token')
       clearToken()
       expect(localStorage.getItem(TOKEN_KEY)).toBeNull()
+    })
+
+    it('also clears the stored user', () => {
+      localStorage.setItem(TOKEN_KEY, 'test-token')
+      localStorage.setItem(USER_KEY, JSON.stringify({ id: 'u1' }))
+      clearToken()
+      expect(localStorage.getItem(USER_KEY)).toBeNull()
     })
   })
 

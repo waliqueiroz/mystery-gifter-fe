@@ -59,6 +59,27 @@ All new screens and components MUST follow these rules — see constitution for 
   `aria-hidden="true"` on purely decorative elements
 - **Gradients**: `to bottom` for backgrounds, `to right` for text gradient effects
 
+## Async Code Style
+
+- **Always use `async/await` with `try/catch/finally`** inside `useEffect` and event handlers — never `.then().catch().finally()` chains
+- Pattern for `useEffect` with async: define an inner `async function` and call it immediately
+
+```typescript
+useEffect(() => {
+  async function load() {
+    try {
+      const data = await fetchSomething()
+      setState(data)
+    } catch (err) {
+      showToast({ message: err instanceof Error ? err.message : 'Erro.', type: 'error' })
+    } finally {
+      setLoading(false)
+    }
+  }
+  load()
+}, [deps])
+```
+
 ## Key Rules (from Constitution v1.2.0)
 
 - Every React component and utility function MUST have a unit test — no exceptions
@@ -126,10 +147,10 @@ git branch | grep task/001
 ```
 
 ## Recent Changes
-- 002-dark-theme-redesign: Added TypeScript 5+, Node.js LTS + Next.js 15.5.4, Bootstrap 4.6, AdminLTE 3.2, Font Awesome Free
+- 003-group-management: Added TypeScript 5+, Node.js LTS
+- 003-group-management: Added TypeScript 5+, Node.js LTS
+- 003-group-management: Added TypeScript 5+, Node.js LTS
 
-- 001-initial-screens: Initial screens MVP — landing, login, register, dashboard
 
 <!-- MANUAL ADDITIONS START -->
-- Always answer in Brazilian Portuguese (pt-BR)
 <!-- MANUAL ADDITIONS END -->

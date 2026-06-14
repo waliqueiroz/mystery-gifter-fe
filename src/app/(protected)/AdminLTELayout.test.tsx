@@ -4,9 +4,11 @@ import ProtectedLayout from './layout'
 import * as auth from '@/lib/auth'
 
 const mockPush = jest.fn()
+const mockPathname = jest.fn(() => '/dashboard')
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
+  usePathname: () => mockPathname(),
 }))
 
 jest.mock('@/lib/auth', () => ({
@@ -21,6 +23,7 @@ const mockClearToken = auth.clearToken as jest.Mock
 beforeEach(() => {
   mockPush.mockReset()
   mockClearToken.mockReset()
+  mockPathname.mockReturnValue('/dashboard')
 })
 
 describe('ProtectedLayout', () => {
@@ -65,5 +68,48 @@ describe('ProtectedLayout', () => {
     expect(nav).toHaveClass('navbar-dark')
     expect(nav).not.toHaveClass('navbar-white')
     expect(nav).not.toHaveClass('navbar-light')
+  })
+
+  it('renders sidebar with Dashboard and Grupos navigation links', () => {
+    render(
+      <ProtectedLayout>
+        <div>conteúdo</div>
+      </ProtectedLayout>,
+    )
+    expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /grupos/i })).toBeInTheDocument()
+  })
+
+  it('marks Dashboard link as active when pathname is /dashboard', () => {
+    mockPathname.mockReturnValue('/dashboard')
+    render(
+      <ProtectedLayout>
+        <div>conteúdo</div>
+      </ProtectedLayout>,
+    )
+    const dashLink = screen.getAllByRole('link', { name: /dashboard/i }).find(
+      (el) => el.classList.contains('nav-link'),
+    )
+    expect(dashLink).toHaveClass('active')
+  })
+
+  it('marks Grupos link as active when pathname starts with /groups', () => {
+    mockPathname.mockReturnValue('/groups')
+    render(
+      <ProtectedLayout>
+        <div>conteúdo</div>
+      </ProtectedLayout>,
+    )
+    expect(screen.getByRole('link', { name: /grupos/i })).toHaveClass('active')
+  })
+
+  it('does not mark Grupos link as active on /dashboard', () => {
+    mockPathname.mockReturnValue('/dashboard')
+    render(
+      <ProtectedLayout>
+        <div>conteúdo</div>
+      </ProtectedLayout>,
+    )
+    expect(screen.getByRole('link', { name: /grupos/i })).not.toHaveClass('active')
   })
 })

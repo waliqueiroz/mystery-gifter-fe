@@ -5,9 +5,11 @@ import * as authService from '@/services/api/authService'
 import * as auth from '@/lib/auth'
 
 const mockPush = jest.fn()
+const mockGet = jest.fn().mockReturnValue(null)
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
+  useSearchParams: () => ({ get: mockGet }),
 }))
 
 jest.mock('next/link', () => ({
@@ -34,6 +36,7 @@ beforeEach(() => {
   mockPush.mockReset()
   mockLogin.mockReset()
   mockSetToken.mockReset()
+  mockGet.mockReturnValue(null)
 })
 
 describe('LoginForm', () => {
@@ -50,7 +53,7 @@ describe('LoginForm', () => {
     expect(mockLogin).not.toHaveBeenCalled()
   })
 
-  it('calls login and redirects to /dashboard on success', async () => {
+  it('calls login and redirects to /dashboard on success when no returnUrl', async () => {
     mockLogin.mockResolvedValue(mockSession)
     render(<LoginForm />)
     await userEvent.type(screen.getByLabelText('E-mail'), 'joao@example.com')
@@ -59,6 +62,16 @@ describe('LoginForm', () => {
     await waitFor(() => expect(mockLogin).toHaveBeenCalledTimes(1))
     expect(mockSetToken).toHaveBeenCalledWith('jwt-token')
     expect(mockPush).toHaveBeenCalledWith('/dashboard')
+  })
+
+  it('redirects to returnUrl after login when present', async () => {
+    mockLogin.mockResolvedValue(mockSession)
+    mockGet.mockReturnValue('/invite/abc123')
+    render(<LoginForm />)
+    await userEvent.type(screen.getByLabelText('E-mail'), 'joao@example.com')
+    await userEvent.type(screen.getByLabelText('Senha'), 'senha123')
+    await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/invite/abc123'))
   })
 
   it('shows "E-mail ou senha inválidos." on 401', async () => {
