@@ -130,7 +130,7 @@ No new project scaffolding required — the Next.js project is already bootstrap
 
 **Purpose**: Final quality pass across all user stories.
 
-- [ ] T028 [P] Verify and fix responsive layout (320px–1440px) across `src/app/(protected)/groups/page.tsx`, `src/app/(protected)/groups/[id]/page.tsx`, and `src/app/invite/[token]/page.tsx` per SC-007 and FR-023
+- [x] T028 [P] Verify and fix responsive layout (320px–1440px) across `src/app/(protected)/groups/page.tsx`, `src/app/(protected)/groups/[id]/page.tsx`, and `src/app/invite/[token]/page.tsx` per SC-007 and FR-023
 - [x] T029 [P] Review all pt-BR UI strings across new components for accuracy and consistency with the project style guide
 
 ---

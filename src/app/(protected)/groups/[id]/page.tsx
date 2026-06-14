@@ -63,7 +63,7 @@ function GroupDetailContent() {
         <div className="container-fluid">
           <div className="row mb-2 align-items-center">
             <div className="col">
-              <h1 className="m-0 d-flex align-items-center gap-2" style={{ color: 'var(--mg-text)' }}>
+              <h1 className="m-0 d-flex align-items-center flex-wrap gap-2" style={{ color: 'var(--mg-text)' }}>
                 {group.name}
                 <GroupStatusBadge status={group.status} />
               </h1>

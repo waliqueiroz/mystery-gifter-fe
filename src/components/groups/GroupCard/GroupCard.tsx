@@ -20,16 +20,18 @@ export function GroupCard({ group }: GroupCardProps) {
           cursor: 'pointer',
         }}
       >
-        <div className="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <h5 className="mb-1" style={{ color: 'var(--mg-text)' }}>
+        <div className="card-body d-flex align-items-center justify-content-between gap-2">
+          <div style={{ minWidth: 0 }}>
+            <h5 className="mb-1 text-truncate" style={{ color: 'var(--mg-text)' }}>
               {group.name}
             </h5>
             <small style={{ color: 'var(--mg-text-muted)' }}>
               {group.user_count} {group.user_count === 1 ? 'participante' : 'participantes'}
             </small>
           </div>
-          <GroupStatusBadge status={group.status} />
+          <div style={{ flexShrink: 0 }}>
+            <GroupStatusBadge status={group.status} />
+          </div>
         </div>
       </div>
     </Link>
