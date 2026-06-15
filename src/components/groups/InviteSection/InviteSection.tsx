@@ -24,17 +24,21 @@ export function InviteSection({ groupId, isOwner, groupStatus }: InviteSectionPr
       return
     }
 
-    getActiveInvite(groupId)
-      .then((data) => {
+    async function load() {
+      try {
+        const data = await getActiveInvite(groupId)
         setInvite(data)
         setHasInvite(true)
-      })
-      .catch((err: Error) => {
-        if (err.message.includes('404') || err.message.toLowerCase().includes('not found')) {
+      } catch (err) {
+        const message = err instanceof Error ? err.message : ''
+        if (message.includes('404') || message.toLowerCase().includes('not found')) {
           setHasInvite(false)
         }
-      })
-      .finally(() => setLoading(false))
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
   }, [groupId, groupStatus])
 
   if (groupStatus === 'MATCHED' || groupStatus === 'ARCHIVED') {
