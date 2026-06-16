@@ -1,6 +1,7 @@
 import type {
   Group,
   GroupSearchResult,
+  GroupStatus,
   CreateGroupPayload,
 } from '@/types/api'
 import { getToken } from '@/lib/auth'
@@ -40,22 +41,28 @@ export interface ListGroupsParams {
   userId: string
   offset?: number
   limit?: number
+  name?: string
+  statuses?: GroupStatus[]
+  sortDirection?: 'ASC' | 'DESC'
 }
 
 export function listGroups({
   userId,
   offset = 0,
   limit = 15,
+  name,
+  statuses = ['OPEN', 'MATCHED'],
+  sortDirection = 'DESC',
 }: ListGroupsParams): Promise<GroupSearchResult> {
   const params = new URLSearchParams({
     user_id: userId,
     limit: String(limit),
     offset: String(offset),
     sort_by: 'created_at',
-    sort_direction: 'DESC',
+    sort_direction: sortDirection,
   })
-  params.append('status', 'OPEN')
-  params.append('status', 'MATCHED')
+  if (name) params.set('name', name)
+  statuses.forEach((s) => params.append('status', s))
   return apiFetch<GroupSearchResult>(`/api/v1/groups?${params.toString()}`)
 }
 
