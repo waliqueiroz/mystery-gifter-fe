@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { User } from '@/types/api'
 import { getUserById } from '@/services/api/userService'
+import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
 
 interface MemberProfileModalProps {
   userId: string | null
@@ -87,28 +88,22 @@ export function MemberProfileModal({ userId, onClose }: MemberProfileModalProps)
             </div>
           )}
           {error && !loading && (
-            <div>
-              <p style={{ color: 'var(--mg-error)' }}>{error}</p>
-              <button
-                type="button"
-                className="btn btn-outline-secondary btn-sm"
-                onClick={async () => {
-                  if (!userId) return
-                  setLoading(true)
-                  setError(null)
-                  try {
-                    const u = await getUserById(userId)
-                    setUserData(u)
-                  } catch (err) {
-                    setError(err instanceof Error ? err.message : 'Erro ao carregar perfil.')
-                  } finally {
-                    setLoading(false)
-                  }
-                }}
-              >
-                Tentar novamente
-              </button>
-            </div>
+            <ErrorAlert
+              message={error}
+              onRetry={async () => {
+                if (!userId) return
+                setLoading(true)
+                setError(null)
+                try {
+                  const u = await getUserById(userId)
+                  setUserData(u)
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : 'Erro ao carregar perfil.')
+                } finally {
+                  setLoading(false)
+                }
+              }}
+            />
           )}
           {userData && !loading && (
             <div>
