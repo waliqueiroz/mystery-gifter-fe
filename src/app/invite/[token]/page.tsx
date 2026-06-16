@@ -12,8 +12,7 @@ export default function InvitePage() {
 
   useEffect(() => {
     if (!isAuthenticated()) {
-      sessionStorage.setItem('returnUrl', `/invite/${token}`)
-      router.push('/login')
+      router.push(`/login?returnUrl=${encodeURIComponent(`/invite/${token}`)}`)
     } else {
       setAuthenticated(true)
     }

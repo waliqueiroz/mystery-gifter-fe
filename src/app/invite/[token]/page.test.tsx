@@ -13,7 +13,6 @@ jest.mock('@/lib/auth', () => ({
 }))
 
 const mockPush = jest.fn()
-const mockSetItem = jest.fn()
 
 jest.mock('next/navigation', () => ({
   useParams: () => ({ token: 'tok-abc' }),
@@ -24,10 +23,6 @@ const mockIsAuthenticated = auth.isAuthenticated as jest.Mock
 
 beforeEach(() => {
   jest.clearAllMocks()
-  Object.defineProperty(window, 'sessionStorage', {
-    value: { setItem: mockSetItem, getItem: jest.fn(), removeItem: jest.fn() },
-    writable: true,
-  })
 })
 
 describe('InvitePage', () => {
@@ -39,11 +34,10 @@ describe('InvitePage', () => {
     expect(card).toHaveAttribute('data-token', 'tok-abc')
   })
 
-  it('stores returnUrl in sessionStorage and redirects to /login when unauthenticated', () => {
+  it('redirects to /login with returnUrl query param when unauthenticated', () => {
     mockIsAuthenticated.mockReturnValue(false)
     render(<InvitePage />)
-    expect(mockSetItem).toHaveBeenCalledWith('returnUrl', '/invite/tok-abc')
-    expect(mockPush).toHaveBeenCalledWith('/login')
+    expect(mockPush).toHaveBeenCalledWith('/login?returnUrl=%2Finvite%2Ftok-abc')
   })
 
   it('does not render InviteJoinCard when unauthenticated', () => {
