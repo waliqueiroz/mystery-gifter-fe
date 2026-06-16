@@ -101,4 +101,12 @@ describe('GroupList', () => {
     await waitFor(() => expect(mockUseUser).toHaveBeenCalled())
     expect(mockListGroups).not.toHaveBeenCalled()
   })
+
+  it('passes currentUserId to GroupCard matching the context user id', async () => {
+    mockUseUser.mockReturnValue({ id: 'u1', name: 'Test', surname: 'User', email: 't@t.com' })
+    mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')]))
+    render(<GroupList />)
+    await screen.findByText('Grupo g1')
+    expect(screen.getByText('Dono')).toBeInTheDocument()
+  })
 })

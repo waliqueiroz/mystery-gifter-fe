@@ -96,7 +96,7 @@ export function GroupList() {
       ) : (
         <>
           {groups.map((group) => (
-            <GroupCard key={group.id} group={group} />
+            <GroupCard key={group.id} group={group} currentUserId={user?.id ?? undefined} />
           ))}
           {hasMore && (
             <div className="text-center mt-3">

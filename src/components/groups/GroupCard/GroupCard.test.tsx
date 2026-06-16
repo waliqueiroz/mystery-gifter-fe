@@ -49,4 +49,21 @@ describe('GroupCard', () => {
     render(<GroupCard group={{ ...mockGroup, status: 'MATCHED' }} />)
     expect(screen.getByText('Sorteio realizado')).toBeInTheDocument()
   })
+
+  describe('owner badge', () => {
+    it('renders "Dono" badge when currentUserId matches owner_id', () => {
+      render(<GroupCard group={mockGroup} currentUserId="u1" />)
+      expect(screen.getByText('Dono')).toBeInTheDocument()
+    })
+
+    it('does not render "Dono" badge when currentUserId differs from owner_id', () => {
+      render(<GroupCard group={mockGroup} currentUserId="u2" />)
+      expect(screen.queryByText('Dono')).not.toBeInTheDocument()
+    })
+
+    it('does not render "Dono" badge when currentUserId is undefined', () => {
+      render(<GroupCard group={mockGroup} />)
+      expect(screen.queryByText('Dono')).not.toBeInTheDocument()
+    })
+  })
 })
