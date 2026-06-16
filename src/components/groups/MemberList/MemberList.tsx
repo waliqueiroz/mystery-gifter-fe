@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { Group, User } from '@/types/api'
 import { removeMember } from '@/services/api/groupService'
 import { useToast } from '@/components/ui/Toast/useToast'
+import { MemberProfileModal } from '@/components/groups/MemberProfileModal/MemberProfileModal'
 
 interface MemberListProps {
   group: Group
@@ -14,6 +15,7 @@ interface MemberListProps {
 export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListProps) {
   const { showToast } = useToast()
   const [removingId, setRemovingId] = useState<string | null>(null)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const isOwner = currentUserId === group.owner_id
   const canRemove = group.status === 'OPEN'
 
@@ -46,14 +48,20 @@ export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListPr
           >
             <div className="d-flex align-items-center gap-2">
               <i className="fas fa-user-circle fa-lg" style={{ color: 'var(--mg-text-muted)' }} aria-hidden="true" />
-              <span>
+              <button
+                type="button"
+                className="btn btn-link p-0 mg-member-btn"
+                style={{ color: 'var(--mg-text)', textDecoration: 'none', cursor: 'pointer' }}
+                onClick={() => setSelectedUserId(user.id)}
+                aria-label={`Ver perfil de ${user.name} ${user.surname}`}
+              >
                 {user.name} {user.surname}
                 {user.id === group.owner_id && (
                   <span className="ml-2 badge badge-secondary" style={{ fontSize: '0.65rem' }}>
                     dono
                   </span>
                 )}
-              </span>
+              </button>
             </div>
             {isOwner && user.id !== currentUserId && (
               <button
@@ -74,6 +82,7 @@ export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListPr
           </li>
         ))}
       </ul>
+      <MemberProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
     </div>
   )
 }
