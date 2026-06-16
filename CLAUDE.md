@@ -5,6 +5,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-08
 ## Active Technologies
 - TypeScript 5+, Node.js LTS + Next.js 15.5.4, Bootstrap 4.6, AdminLTE 3.2, Font Awesome Free (002-dark-theme-redesign)
 - N/A (styling-only feature) (002-dark-theme-redesign)
+- TypeScript 5+, Node.js LTS + Next.js 15.5.4 (App Router), React 19, Bootstrap 4.6, AdminLTE 3.2, Jest + React Testing Library + ts-jes (004-groups-profile-features)
+- N/A — filter state lives in React component state; user session in `localStorage` via `lib/session.ts` (004-groups-profile-features)
 
 - **Framework**: Next.js 15.5.4, App Router, React 19, TypeScript 5+
 - **UI**: AdminLTE 3.2 (dashboard), Bootstrap 4.6 (public pages), Font Awesome (free)
@@ -147,7 +149,7 @@ git branch | grep task/001
 ```
 
 ## Recent Changes
-- 003-group-management: Added TypeScript 5+, Node.js LTS
+- 004-groups-profile-features: Added TypeScript 5+, Node.js LTS + Next.js 15.5.4 (App Router), React 19, Bootstrap 4.6, AdminLTE 3.2, Jest + React Testing Library + ts-jes
 - 003-group-management: Added TypeScript 5+, Node.js LTS
 - 003-group-management: Added TypeScript 5+, Node.js LTS
 
