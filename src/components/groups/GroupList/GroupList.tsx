@@ -9,6 +9,7 @@ import { GroupCard } from '@/components/groups/GroupCard/GroupCard'
 import { GroupEmptyState } from '@/components/groups/GroupEmptyState/GroupEmptyState'
 import { GroupFilters } from '@/components/groups/GroupFilters/GroupFilters'
 import { CreateGroupModal } from '@/components/groups/CreateGroupModal/CreateGroupModal'
+import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
 import { useToast } from '@/components/ui/Toast/useToast'
 
 const PAGE_SIZE = 15
@@ -133,33 +134,19 @@ export function GroupList() {
       <GroupFilters filters={filters} onChange={handleFilterChange} />
 
       {error ? (
-        <div
-          className="alert"
-          role="alert"
-          style={{
-            backgroundColor: 'rgba(252,129,129,0.1)',
-            border: '1px solid var(--mg-error)',
-            color: 'var(--mg-error)',
+        <ErrorAlert
+          message={error}
+          onRetry={() => {
+            setError(null)
+            fetchGroups(0, false, filters)
           }}
-        >
-          <p className="mb-2">{error}</p>
-          <button
-            type="button"
-            className="btn btn-sm btn-outline-danger"
-            onClick={() => {
-              setError(null)
-              fetchGroups(0, false, filters)
-            }}
-          >
-            Tentar novamente
-          </button>
-        </div>
+        />
       ) : groups.length === 0 ? (
         <GroupEmptyState onCreateClick={() => setIsModalOpen(true)} />
       ) : (
         <>
           {groups.map((group) => (
-            <GroupCard key={group.id} group={group} currentUserId={user?.id ?? undefined} />
+            <GroupCard key={group.id} group={group} />
           ))}
           {hasMore && (
             <div className="text-center mt-3">

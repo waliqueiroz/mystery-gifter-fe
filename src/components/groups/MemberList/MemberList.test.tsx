@@ -11,6 +11,15 @@ jest.mock('@/components/ui/Toast/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
+jest.mock('@/components/groups/MemberProfileModal/MemberProfileModal', () => ({
+  MemberProfileModal: ({ userId, onClose }: { userId: string | null; onClose: () => void }) =>
+    userId ? (
+      <div data-testid="member-profile-modal" data-userid={userId}>
+        <button onClick={onClose}>Fechar modal</button>
+      </div>
+    ) : null,
+}))
+
 const mockRemoveMember = groupService.removeMember as jest.Mock
 
 const owner: User = { id: 'u1', name: 'Ana', surname: 'Lima', email: 'ana@e.com', created_at: '', updated_at: '' }
@@ -69,5 +78,27 @@ describe('MemberList', () => {
     await waitFor(() =>
       expect(mockShowToast).toHaveBeenCalledWith({ message: 'Falha ao remover.', type: 'error' }),
     )
+  })
+
+  it('member name renders as a clickable button', () => {
+    render(<MemberList group={baseGroup} currentUserId="u1" onGroupUpdate={() => {}} />)
+    expect(screen.getByRole('button', { name: /ver perfil de Ana Lima/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /ver perfil de Bruno Costa/i })).toBeInTheDocument()
+  })
+
+  it('clicking a member button opens MemberProfileModal with correct userId', async () => {
+    render(<MemberList group={baseGroup} currentUserId="u1" onGroupUpdate={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: /ver perfil de Bruno Costa/i }))
+    const modal = screen.getByTestId('member-profile-modal')
+    expect(modal).toBeInTheDocument()
+    expect(modal).toHaveAttribute('data-userid', 'u2')
+  })
+
+  it('onClose callback resets selectedUserId so modal is hidden', async () => {
+    render(<MemberList group={baseGroup} currentUserId="u1" onGroupUpdate={() => {}} />)
+    await userEvent.click(screen.getByRole('button', { name: /ver perfil de Bruno Costa/i }))
+    expect(screen.getByTestId('member-profile-modal')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /fechar modal/i }))
+    expect(screen.queryByTestId('member-profile-modal')).not.toBeInTheDocument()
   })
 })

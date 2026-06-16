@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { GroupCard } from './GroupCard'
+import * as userContext from '@/contexts/UserContext'
 import type { GroupSummary } from '@/types/api'
 
 jest.mock('next/link', () => ({
@@ -8,6 +9,10 @@ jest.mock('next/link', () => ({
     <a href={href}>{children}</a>
   ),
 }))
+
+jest.mock('@/contexts/UserContext', () => ({ useUser: jest.fn() }))
+
+const mockUseUser = userContext.useUser as jest.Mock
 
 const mockGroup: GroupSummary = {
   id: 'g1',
@@ -18,6 +23,10 @@ const mockGroup: GroupSummary = {
   created_at: '2026-01-01T00:00:00Z',
   updated_at: '2026-01-01T00:00:00Z',
 }
+
+beforeEach(() => {
+  mockUseUser.mockReturnValue(null)
+})
 
 describe('GroupCard', () => {
   it('renders the group name', () => {
@@ -71,17 +80,20 @@ describe('GroupCard', () => {
   })
 
   describe('owner badge', () => {
-    it('renders "Dono" badge when currentUserId matches owner_id', () => {
-      render(<GroupCard group={mockGroup} currentUserId="u1" />)
+    it('renders "Dono" badge when logged-in user is the owner', () => {
+      mockUseUser.mockReturnValue({ id: 'u1' })
+      render(<GroupCard group={mockGroup} />)
       expect(screen.getByText('Dono')).toBeInTheDocument()
     })
 
-    it('does not render "Dono" badge when currentUserId differs from owner_id', () => {
-      render(<GroupCard group={mockGroup} currentUserId="u2" />)
+    it('does not render "Dono" badge when logged-in user is not the owner', () => {
+      mockUseUser.mockReturnValue({ id: 'u2' })
+      render(<GroupCard group={mockGroup} />)
       expect(screen.queryByText('Dono')).not.toBeInTheDocument()
     })
 
-    it('does not render "Dono" badge when currentUserId is undefined', () => {
+    it('does not render "Dono" badge when user is not logged in', () => {
+      mockUseUser.mockReturnValue(null)
       render(<GroupCard group={mockGroup} />)
       expect(screen.queryByText('Dono')).not.toBeInTheDocument()
     })
