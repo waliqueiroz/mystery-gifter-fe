@@ -111,7 +111,7 @@ describe('GroupList', () => {
     expect(mockListGroups).not.toHaveBeenCalled()
   })
 
-  it('passes currentUserId to GroupCard matching the context user id', async () => {
+  it('GroupCard shows owner badge when context user is the group owner', async () => {
     mockUseUser.mockReturnValue({ id: 'u1', name: 'Test', surname: 'User', email: 't@t.com' })
     mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')]))
     render(<GroupList />)

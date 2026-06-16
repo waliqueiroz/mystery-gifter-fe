@@ -3,14 +3,15 @@
 import Link from 'next/link'
 import type { GroupSummary } from '@/types/api'
 import { GroupStatusBadge } from '@/components/groups/GroupStatusBadge/GroupStatusBadge'
+import { useUser } from '@/contexts/UserContext'
 
 interface GroupCardProps {
   group: GroupSummary
-  currentUserId?: string
 }
 
-export function GroupCard({ group, currentUserId }: GroupCardProps) {
-  const isOwner = currentUserId !== undefined && currentUserId === group.owner_id
+export function GroupCard({ group }: GroupCardProps) {
+  const user = useUser()
+  const isOwner = user !== null && user.id === group.owner_id
 
   return (
     <Link href={`/groups/${group.id}`} className="text-decoration-none">
