@@ -21,6 +21,7 @@ export function GroupCard({ group, currentUserId }: GroupCardProps) {
           border: '1px solid rgba(107,70,193,0.2)',
           transition: 'border-color var(--mg-transition)',
           cursor: 'pointer',
+          opacity: group.status === 'ARCHIVED' ? 0.6 : 1,
         }}
       >
         <div className="card-body d-flex align-items-center justify-content-between gap-2">
