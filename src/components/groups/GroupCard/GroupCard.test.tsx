@@ -50,6 +50,26 @@ describe('GroupCard', () => {
     expect(screen.getByText('Sorteio realizado')).toBeInTheDocument()
   })
 
+  describe('archived visual distinction', () => {
+    it('renders with opacity 0.6 when status is ARCHIVED', () => {
+      const { container } = render(<GroupCard group={{ ...mockGroup, status: 'ARCHIVED' }} />)
+      const card = container.querySelector('.card') as HTMLElement
+      expect(card.style.opacity).toBe('0.6')
+    })
+
+    it('renders with opacity 1 when status is OPEN', () => {
+      const { container } = render(<GroupCard group={mockGroup} />)
+      const card = container.querySelector('.card') as HTMLElement
+      expect(card.style.opacity).toBe('1')
+    })
+
+    it('renders with opacity 1 when status is MATCHED', () => {
+      const { container } = render(<GroupCard group={{ ...mockGroup, status: 'MATCHED' }} />)
+      const card = container.querySelector('.card') as HTMLElement
+      expect(card.style.opacity).toBe('1')
+    })
+  })
+
   describe('owner badge', () => {
     it('renders "Dono" badge when currentUserId matches owner_id', () => {
       render(<GroupCard group={mockGroup} currentUserId="u1" />)
