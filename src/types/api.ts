@@ -118,3 +118,18 @@ export interface CreateGroupPayload {
   name: string
   description?: string
 }
+
+// ─── Group Filters ────────────────────────────────────────────────────────────
+
+/** Active filter/sort state for the groups list */
+export interface GroupFilterParams {
+  name: string
+  statuses: GroupStatus[]
+  sortDirection: 'ASC' | 'DESC'
+}
+
+export const DEFAULT_GROUP_FILTERS: GroupFilterParams = {
+  name: '',
+  statuses: ['OPEN', 'MATCHED'],
+  sortDirection: 'DESC',
+}

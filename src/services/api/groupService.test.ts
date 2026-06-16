@@ -46,7 +46,7 @@ function mockFetch(status: number, body: unknown) {
 
 describe('groupService', () => {
   describe('listGroups', () => {
-    it('calls GET /api/v1/groups with correct params', async () => {
+    it('calls GET /api/v1/groups with default params (OPEN + MATCHED, DESC)', async () => {
       mockFetch(200, mockSearchResult)
       await listGroups({ userId: 'u1', offset: 0, limit: 15 })
       const url = (global.fetch as jest.Mock).mock.calls[0][0] as string
@@ -54,12 +54,43 @@ describe('groupService', () => {
       expect(url).toContain('user_id=u1')
       expect(url).toContain('status=OPEN')
       expect(url).toContain('status=MATCHED')
+      expect(url).toContain('sort_direction=DESC')
     })
 
     it('returns GroupSearchResult on success', async () => {
       mockFetch(200, mockSearchResult)
       const result = await listGroups({ userId: 'u1' })
       expect(result).toEqual(mockSearchResult)
+    })
+
+    it('appends name param when provided', async () => {
+      mockFetch(200, mockSearchResult)
+      await listGroups({ userId: 'u1', name: 'natal' })
+      const url = (global.fetch as jest.Mock).mock.calls[0][0] as string
+      expect(url).toContain('name=natal')
+    })
+
+    it('sends no status params when statuses array is empty', async () => {
+      mockFetch(200, mockSearchResult)
+      await listGroups({ userId: 'u1', statuses: [] })
+      const url = (global.fetch as jest.Mock).mock.calls[0][0] as string
+      expect(url).not.toContain('status=')
+    })
+
+    it('sends only ARCHIVED when statuses contains only ARCHIVED', async () => {
+      mockFetch(200, mockSearchResult)
+      await listGroups({ userId: 'u1', statuses: ['ARCHIVED'] })
+      const url = (global.fetch as jest.Mock).mock.calls[0][0] as string
+      expect(url).toContain('status=ARCHIVED')
+      expect(url).not.toContain('status=OPEN')
+      expect(url).not.toContain('status=MATCHED')
+    })
+
+    it('sends sort_direction=ASC when specified', async () => {
+      mockFetch(200, mockSearchResult)
+      await listGroups({ userId: 'u1', sortDirection: 'ASC' })
+      const url = (global.fetch as jest.Mock).mock.calls[0][0] as string
+      expect(url).toContain('sort_direction=ASC')
     })
   })
 
