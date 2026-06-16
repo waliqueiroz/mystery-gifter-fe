@@ -6,9 +6,12 @@ import { GroupStatusBadge } from '@/components/groups/GroupStatusBadge/GroupStat
 
 interface GroupCardProps {
   group: GroupSummary
+  currentUserId?: string
 }
 
-export function GroupCard({ group }: GroupCardProps) {
+export function GroupCard({ group, currentUserId }: GroupCardProps) {
+  const isOwner = currentUserId !== undefined && currentUserId === group.owner_id
+
   return (
     <Link href={`/groups/${group.id}`} className="text-decoration-none">
       <div
@@ -24,6 +27,15 @@ export function GroupCard({ group }: GroupCardProps) {
           <div style={{ minWidth: 0 }}>
             <h5 className="mb-1 text-truncate" style={{ color: 'var(--mg-text)' }}>
               {group.name}
+              {isOwner && (
+                <span
+                  className="badge badge-primary mg-owner-badge ml-2"
+                  style={{ fontSize: '0.65rem', verticalAlign: 'middle' }}
+                  aria-label="Você é o dono deste grupo"
+                >
+                  Dono
+                </span>
+              )}
             </h5>
             <small style={{ color: 'var(--mg-text-muted)' }}>
               {group.user_count} {group.user_count === 1 ? 'participante' : 'participantes'}
