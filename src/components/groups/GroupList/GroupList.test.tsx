@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GroupList } from './GroupList'
 import * as groupService from '@/services/api/groupService'
@@ -127,16 +127,33 @@ describe('GroupList', () => {
       expect(screen.getByRole('textbox', { name: /buscar por nome/i })).toBeInTheDocument()
     })
 
-    it('re-fetches with name param when search changes', async () => {
+    it('re-fetches with name param after debounce when search changes', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
-      await userEvent.type(screen.getByRole('textbox', { name: /buscar por nome/i }), 'n')
+      jest.useFakeTimers()
+      fireEvent.change(
+        screen.getByRole('textbox', { name: /buscar por nome/i }),
+        { target: { value: 'n' } },
+      )
+      act(() => jest.advanceTimersByTime(400))
+      jest.useRealTimers()
       await waitFor(() =>
         expect(mockListGroups).toHaveBeenLastCalledWith(
           expect.objectContaining({ name: 'n' }),
         ),
       )
+    })
+
+    it('shows filter spinner instead of empty state while re-fetching', async () => {
+      mockListGroups
+        .mockResolvedValueOnce(makeResult([]))
+        .mockReturnValueOnce(new Promise(() => {}))
+      render(<GroupList />)
+      await screen.findByText('Nenhum grupo ainda')
+      await userEvent.click(screen.getByRole('checkbox', { name: 'Arquivado' }))
+      expect(screen.getByRole('status', { name: /filtrando grupos/i })).toBeInTheDocument()
+      expect(screen.queryByText('Nenhum grupo ainda')).not.toBeInTheDocument()
     })
 
     it('re-fetches with new statuses when status filter changes', async () => {

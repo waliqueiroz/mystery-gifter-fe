@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
 import type { GroupFilterParams, GroupStatus } from '@/types/api'
 
 interface GroupFiltersProps {
@@ -13,10 +14,31 @@ const STATUS_OPTIONS: { value: GroupStatus; label: string }[] = [
   { value: 'ARCHIVED', label: 'Arquivado' },
 ]
 
+const NAME_DEBOUNCE_MS = 400
+
 export function GroupFilters({ filters, onChange }: GroupFiltersProps) {
-  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
-    onChange({ ...filters, name: e.target.value })
-  }
+  const [nameValue, setNameValue] = useState(filters.name)
+  const latestFiltersRef = useRef(filters)
+
+  // Keep the ref current on every render so the debounce timer always
+  // reads the latest statuses/sortDirection when it fires.
+  useEffect(() => {
+    latestFiltersRef.current = filters
+  })
+
+  // If the parent resets filters.name externally, sync the input.
+  useEffect(() => {
+    setNameValue(filters.name)
+  }, [filters.name])
+
+  // Fire onChange only after the user stops typing for NAME_DEBOUNCE_MS.
+  useEffect(() => {
+    if (nameValue === latestFiltersRef.current.name) return
+    const timer = setTimeout(() => {
+      onChange({ ...latestFiltersRef.current, name: nameValue })
+    }, NAME_DEBOUNCE_MS)
+    return () => clearTimeout(timer)
+  }, [nameValue]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleStatusToggle(value: GroupStatus) {
     const next = filters.statuses.includes(value)
@@ -45,8 +67,8 @@ export function GroupFilters({ filters, onChange }: GroupFiltersProps) {
             type="text"
             className="form-control"
             placeholder="Nome do grupo..."
-            value={filters.name}
-            onChange={handleNameChange}
+            value={nameValue}
+            onChange={(e) => setNameValue(e.target.value)}
           />
         </div>
 

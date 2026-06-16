@@ -24,6 +24,7 @@ export function GroupList() {
   const [filters, setFilters] = useState<GroupFilterParams>(DEFAULT_GROUP_FILTERS)
   const [loadingInitial, setLoadingInitial] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [loadingFilter, setLoadingFilter] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -70,12 +71,12 @@ export function GroupList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchGroups, userId])
 
-  function handleFilterChange(next: GroupFilterParams) {
+  async function handleFilterChange(next: GroupFilterParams) {
     setFilters(next)
     setError(null)
-    setGroups([])
-    setPaging({ limit: PAGE_SIZE, offset: 0, total: 0 })
-    fetchGroups(0, false, next)
+    setLoadingFilter(true)
+    await fetchGroups(0, false, next)
+    setLoadingFilter(false)
   }
 
   async function handleLoadMore() {
@@ -141,6 +142,15 @@ export function GroupList() {
             fetchGroups(0, false, filters)
           }}
         />
+      ) : loadingFilter ? (
+        <div className="text-center py-4">
+          <span
+            className="spinner-border"
+            style={{ color: 'var(--mg-primary-hover)' }}
+            role="status"
+            aria-label="Filtrando grupos"
+          />
+        </div>
       ) : groups.length === 0 ? (
         <GroupEmptyState onCreateClick={() => setIsModalOpen(true)} />
       ) : (

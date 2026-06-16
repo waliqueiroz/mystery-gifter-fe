@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { GroupFilters } from './GroupFilters'
 import type { GroupFilterParams } from '@/types/api'
@@ -19,11 +20,43 @@ describe('GroupFilters', () => {
     expect(screen.getByRole('checkbox', { name: 'Arquivado' })).not.toBeChecked()
   })
 
-  it('calls onChange with updated name when user types', async () => {
-    const onChange = jest.fn()
-    render(<GroupFilters filters={defaultFilters} onChange={onChange} />)
-    await userEvent.type(screen.getByRole('textbox', { name: /buscar por nome/i }), 'n')
-    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ name: 'n' }))
+  describe('name input debounce', () => {
+    beforeEach(() => jest.useFakeTimers())
+    afterEach(() => {
+      act(() => jest.runOnlyPendingTimers())
+      jest.useRealTimers()
+    })
+
+    it('does not call onChange immediately when user types', () => {
+      const onChange = jest.fn()
+      render(<GroupFilters filters={defaultFilters} onChange={onChange} />)
+      fireEvent.change(screen.getByRole('textbox', { name: /buscar por nome/i }), {
+        target: { value: 'natal' },
+      })
+      expect(onChange).not.toHaveBeenCalled()
+    })
+
+    it('calls onChange with updated name after 400ms debounce', () => {
+      const onChange = jest.fn()
+      render(<GroupFilters filters={defaultFilters} onChange={onChange} />)
+      fireEvent.change(screen.getByRole('textbox', { name: /buscar por nome/i }), {
+        target: { value: 'natal' },
+      })
+      act(() => jest.advanceTimersByTime(400))
+      expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ name: 'natal' }))
+    })
+
+    it('cancels previous timer if user types again before 400ms', () => {
+      const onChange = jest.fn()
+      render(<GroupFilters filters={defaultFilters} onChange={onChange} />)
+      const input = screen.getByRole('textbox', { name: /buscar por nome/i })
+      fireEvent.change(input, { target: { value: 'a' } })
+      act(() => jest.advanceTimersByTime(200))
+      fireEvent.change(input, { target: { value: 'ab' } })
+      act(() => jest.advanceTimersByTime(400))
+      expect(onChange).toHaveBeenCalledTimes(1)
+      expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ name: 'ab' }))
+    })
   })
 
   it('calls onChange with ARCHIVED added when its checkbox is checked', async () => {
