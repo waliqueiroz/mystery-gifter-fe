@@ -58,6 +58,15 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
                     <p>Grupos</p>
                   </Link>
                 </li>
+                <li className="nav-item">
+                  <Link
+                    href="/profile"
+                    className={`nav-link${pathname?.startsWith('/profile') ? ' active' : ''}`}
+                  >
+                    <i className="nav-icon fas fa-user" aria-hidden="true" />
+                    <p>Perfil</p>
+                  </Link>
+                </li>
               </ul>
             </nav>
           </div>
