@@ -73,7 +73,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T016 [P] [US1] Reescrever `src/components/ui/FormField/FormField.tsx` com input pill, `shadow-mg-inset`, suporte a `error` com `border-mg-text-negative` e mensagem em `text-mg-text-negative`; atualizar `FormField.test.tsx`
 - [X] T017 [P] [US1] Reescrever `src/components/ui/Toast/Toast.tsx` (paleta escura, sem Bootstrap; mantém API atual) e atualizar `Toast.test.tsx`
 - [X] T018 [P] [US1] Reescrever `src/components/ui/ErrorAlert/ErrorAlert.tsx` usando `text-mg-text-negative` e estrutura do DESIGN.md, escopo restrito a **alertas inline em formulários** conforme `contracts/ui-primitives.md` §2b; atualizar `ErrorAlert.test.tsx`
-- [ ] T019 [US1] Reescrever `src/components/ui/ConfirmModal/ConfirmModal.tsx` em cima de `@radix-ui/react-dialog` com `shadow-mg-dialog`, props conforme `data-model.md` §2 (`destructive`, `isLoading`), `aria-*` herdados do Radix; atualizar `ConfirmModal.test.tsx` (depende de T013, T015)
+- [X] T019 [US1] Reescrever `src/components/ui/ConfirmModal/ConfirmModal.tsx` em cima de `@radix-ui/react-dialog` com `shadow-mg-dialog`, props conforme `data-model.md` §2 (`destructive`, `isLoading`), `aria-*` herdados do Radix; atualizar `ConfirmModal.test.tsx` (depende de T013, T015)
 - [ ] T020 [US1] Criar `src/components/ui/EmptyState/EmptyState.tsx` com props conforme `data-model.md` §2 (`variant`, `icon`, `title`, `description`, `cta`) e teste `EmptyState.test.tsx` cobrindo `variant='default'`, `variant='error'`, sem CTA e CTA como link, conforme `contracts/ui-primitives.md` §2b (depende de T013, T015)
 
 **Checkpoint**: ao final desta fase, todas as primitivas visuais novas estão prontas, testadas e exportadas.
