@@ -1,158 +1,167 @@
 <!--
-SYNC IMPACT REPORT
-==================
-Version change: 1.2.0 → 2.0.0  (MAJOR — backward-incompatible redefinition)
-Modified principles:
-  - Principle III (UX Consistency): Bootstrap 4 + AdminLTE 3.2 são REMOVIDOS como
-    base obrigatória; a base de design vigente passa a ser DESIGN.md + Tailwind CSS.
-Modified sections:
-  - Frontend Standards: reescrita para refletir a nova stack (Tailwind, sem
+RELATÓRIO DE IMPACTO DA SINCRONIZAÇÃO
+=====================================
+Mudança de versão: 1.2.0 → 2.0.0  (MAJOR — redefinição backward-incompatible)
+Princípios modificados:
+  - Princípio III (Consistência de UX): Bootstrap 4 + AdminLTE 3.2 são REMOVIDOS
+    como base obrigatória; a base de design vigente passa a ser DESIGN.md +
+    Tailwind CSS.
+Seções modificadas:
+  - Padrões de Frontend: reescrita para refletir a nova stack (Tailwind, sem
     Bootstrap/AdminLTE/jQuery; ícones via lucide-react; tokens via
     tailwind.config.ts).
-  - Style Guide: reescrita por completo — adota paleta near-black + verde
+  - Guia de Estilo: reescrita por completo — adota paleta near-black + verde
     Spotify, tipografia Manrope/Noto Sans via next/font/google, geometria pill/
     circular, regras de modais e skeletons.
-  - Development Workflow: nova regra de idioma — TODOS os artefatos speckit
+  - Fluxo de Desenvolvimento: nova regra de idioma — TODOS os artefatos speckit
     (specs, checklists, planos, tasks) DEVEM ser redigidos em pt-BR a partir
     desta versão.
-Added sections: N/A
-Removed sections:
-  - Style Guide §"Landing Page Hero" (mg-hero/mg-hero-title/mg-feature-card):
+Seções adicionadas: N/A
+Seções removidas:
+  - Guia de Estilo §"Landing Page Hero" (mg-hero/mg-hero-title/mg-feature-card):
     removido — pertencia ao tema roxo de glassmorphism que foi descontinuado.
-Templates updated:
+Templates atualizados:
   ✅ .specify/memory/constitution.md (este arquivo)
   ✅ plan-template.md — Constitution Check é genérico; sem mudança.
   ✅ tasks-template.md — sem mudança.
-Follow-up TODOs:
+TODOs de acompanhamento:
   - Os scripts de speckit ainda só pré-resolvem `###-...` (sem prefixo
-    Gitflow); decisão desta amenda é manter as branches de feature SEM o
+    Gitflow); decisão desta emenda é manter as branches de feature SEM o
     prefixo `feature/` (usar diretamente o nome da spec, ex.: `005-...`).
     A regra Gitflow para `fix/` e `hotfix/` permanece como antes.
 -->
 
-# Mystery Gifter Frontend Constitution
+# Constituição do Frontend Mystery Gifter
 
-## Core Principles
+## Princípios Fundamentais
 
-### I. Code Quality
+### I. Qualidade de Código
 
-All code in this project MUST be clean, readable, and maintainable.
-Specifically:
+Todo código deste projeto DEVE ser limpo, legível e manutenível. Em específico:
 
-- Every file and module MUST have a single, clear responsibility (Single Responsibility Principle).
-- Functions and components MUST be small and focused — prefer composing small pieces over large,
-  multi-purpose implementations.
-- Magic numbers and inline strings MUST be extracted into named constants.
-- Dead code, unused imports, and commented-out blocks MUST NOT be committed.
-- TypeScript MUST be used throughout; `any` types are forbidden unless explicitly justified with
-  an inline comment.
-- Linting and formatting rules (ESLint + Prettier) MUST pass on every commit — no exceptions.
+- Todo arquivo e módulo DEVE ter uma única responsabilidade clara (SRP).
+- Funções e componentes DEVEM ser pequenos e focados — preferir compor peças pequenas a
+  implementações grandes e multipropósito.
+- Magic numbers e strings inline DEVEM ser extraídos para constantes nomeadas.
+- Código morto, imports não utilizados e blocos comentados NÃO DEVEM ser commitados.
+- TypeScript DEVE ser usado em todos os arquivos; `any` é proibido salvo justificativa
+  explícita em comentário inline.
+- Linting e formatação (ESLint + Prettier) DEVEM passar em todo commit — sem exceção.
 
-**Rationale**: Consistent, high-quality code reduces onboarding friction, prevents subtle bugs,
-and ensures the codebase remains maintainable as the team and feature set grow.
+**Justificativa**: código consistente e de alta qualidade reduz fricção de onboarding,
+previne bugs sutis e mantém a base de código sustentável conforme o time e a feature set
+crescem.
 
-### II. Unit Testing (NON-NEGOTIABLE)
+### II. Testes Unitários (INEGOCIÁVEL)
 
-Every React component and every utility function in this project MUST have a corresponding
-unit test. This is a non-negotiable constraint that applies to all new and modified code.
+Todo componente React e toda função utilitária deste projeto DEVE ter um teste unitário
+correspondente. Restrição inegociável que se aplica a todo código novo ou modificado.
 
-- Tests MUST be co-located with source files in the same directory
-  (e.g., `Button.tsx` + `Button.test.tsx`); `__tests__` subdirectories MUST NOT be used.
-- Tests MUST use React Testing Library and Jest (or Vitest if configured).
-- Each component test MUST cover: render without crashing, primary interactive behavior,
-  and any conditional rendering branches.
-- Tests MUST be written before or alongside implementation (test-first preferred, test-alongside
-  acceptable; test-after is NOT acceptable).
-- A PR MUST NOT be merged if test coverage for modified components drops below the project
-  threshold (minimum 80% line coverage).
-- Tests MUST NOT use implementation details (no direct access to internal state or refs);
-  test behavior from the user's perspective.
+- Testes DEVEM ser co-localizados com o arquivo-fonte no mesmo diretório
+  (ex.: `Button.tsx` + `Button.test.tsx`); diretórios `__tests__` NÃO podem ser usados.
+- Testes DEVEM usar React Testing Library + Jest.
+- Cada teste de componente DEVE cobrir: render sem crash, comportamento interativo
+  principal e ramificações condicionais de render.
+- Testes DEVEM ser escritos antes ou junto da implementação (test-first preferido,
+  test-alongside aceitável; test-after NÃO é aceitável).
+- PR NÃO pode ser merged se a cobertura de teste dos componentes modificados cair abaixo
+  do limiar do projeto (mínimo 80% de cobertura de linhas).
+- Testes NÃO DEVEM apoiar-se em detalhes de implementação (sem acesso direto a state
+  interno ou refs); testar comportamento sob a ótica do usuário.
 
-**Rationale**: Unit tests are the primary safety net for refactoring and new feature development.
-Mandating them for every component prevents untested regressions and documents expected behavior.
+**Justificativa**: testes unitários são a principal rede de segurança para refatoração
+e novas features. Exigi-los para todo componente previne regressões não detectadas e
+documenta o comportamento esperado.
 
-### III. User Experience Consistency
+### III. Consistência de Experiência do Usuário
 
-The UI MUST present a coherent, predictable experience across all screens and states.
+A UI DEVE apresentar uma experiência coerente e previsível em todas as telas e estados.
 
-- The Style Guide defined in this constitution (see **Style Guide** section), em conjunto
-  com o `DESIGN.md` na raiz do repositório, são o **contrato visual obrigatório**. Conflitos
+- O Style Guide definido nesta constituição (ver seção **Style Guide**), em conjunto com
+  o `DESIGN.md` na raiz do repositório, são o **contrato visual obrigatório**. Conflitos
   entre os dois são resolvidos em favor do `DESIGN.md`.
-- O framework de estilos do projeto é **Tailwind CSS** (com tokens customizados sob namespace
-  `mg` em `tailwind.config.ts`). Bootstrap, AdminLTE, jQuery e qualquer outro framework CSS
-  legado **NÃO são permitidos** em novos componentes; sua remoção da feature 005 marca o fim
-  do suporte a essa stack.
-- Loading states MUST use **skeletons** (via `react-loading-skeleton`); spinners são proibidos
-  em qualquer tela, fluxo ou componente.
-- Empty states MUST use o componente compartilhado `EmptyState` (ícone + mensagem em pt-BR +
-  CTA contextual). Variações ad-hoc não são permitidas.
+- O framework de estilos do projeto é **Tailwind CSS** (com tokens customizados sob
+  namespace `mg` em `tailwind.config.ts`). Bootstrap, AdminLTE, jQuery e qualquer outro
+  framework CSS legado **NÃO são permitidos** em novos componentes; sua remoção na
+  feature 005 marca o fim do suporte a essa stack.
+- Estados de carregamento DEVEM usar **skeletons** (via `react-loading-skeleton`);
+  spinners são proibidos em qualquer tela, fluxo ou componente.
+- Estados vazios DEVEM usar o componente compartilhado `EmptyState` (ícone + mensagem
+  em pt-BR + CTA contextual). Variações ad-hoc não são permitidas.
 - Modais (overlays bloqueantes com backdrop) DEVEM ser usados **exclusivamente** para
   confirmar ações destrutivas/irreversíveis. Demais fluxos: rota dedicada (criação,
   edição, convite) ou bottom sheet (visualização rápida read-only).
-- Interactive elements (buttons, links, forms) MUST follow consistent feedback patterns:
-  disabled state during submission, visible error messages on failure, success confirmation.
-- Accessibility (a11y) MUST be considered: all interactive elements MUST be keyboard-navigable,
-  expor `:focus-visible` com anel verde, e ter `aria-label` ou `aria-current` adequados onde
-  semântica nativa não basta.
-- Responsive design é **mobile-first**; a estética app-like persiste em todas as larguras (em
-  desktop o conteúdo permanece centralizado dentro de `max-w-app`, não expande como painel).
+- Elementos interativos (botões, links, formulários) DEVEM seguir padrões consistentes
+  de feedback: estado desabilitado durante submissão, mensagens de erro visíveis em
+  falha, confirmação de sucesso.
+- Acessibilidade DEVE ser considerada: todo elemento interativo DEVE ser navegável por
+  teclado, expor `:focus-visible` com anel verde, e ter `aria-label` ou `aria-current`
+  adequados onde a semântica nativa não basta.
+- Design responsivo é **mobile-first**; a estética app-like persiste em todas as
+  larguras (em desktop o conteúdo permanece centralizado dentro de `max-w-app`, não
+  expande como painel).
 
-**Rationale**: A consistent UX builds user trust and reduces support burden. Mover a base de
-Bootstrap+AdminLTE para Tailwind+DESIGN.md (Mystery Gifter v2 — feature 005) eliminou ~600 KB
-de CSS legado, permitiu modal/skeleton/empty primitives unificados e desbloqueou um visual
-moderno coerente com a posição de produto.
+**Justificativa**: UX consistente constrói confiança do usuário e reduz carga de
+suporte. Mover a base de Bootstrap+AdminLTE para Tailwind+DESIGN.md (Mystery Gifter v2
+— feature 005) eliminou ~600 KB de CSS legado, permitiu primitivas unificadas de
+modal/skeleton/empty e desbloqueou um visual moderno coerente com a posição de produto.
 
-### IV. Performance Standards
+### IV. Padrões de Performance
 
-The application MUST meet the following performance targets, measured against Lighthouse or
-Core Web Vitals in CI:
+A aplicação DEVE atingir os seguintes alvos de performance, medidos por Lighthouse ou
+Core Web Vitals em CI:
 
-- **LCP (Largest Contentful Paint)**: ≤ 2.5 s on desktop, ≤ 4.0 s on mobile (3G simulated).
-- **CLS (Cumulative Layout Shift)**: ≤ 0.1 across all pages.
-- **INP (Interaction to Next Paint)**: ≤ 200 ms for primary interactions.
-- Images MUST use Next.js `<Image>` with explicit `width`, `height`, and appropriate `priority`
-  flags — raw `<img>` tags are forbidden.
-- JavaScript bundles MUST be code-split by route; no feature's code MUST be bundled into the
-  initial payload unless it is required for the initial render.
-- Third-party scripts MUST be loaded with `next/script` using an appropriate `strategy`
-  (`lazyOnload` by default).
+- **LCP (Largest Contentful Paint)**: ≤ 2.5 s em desktop, ≤ 4.0 s em mobile (3G simulado).
+- **CLS (Cumulative Layout Shift)**: ≤ 0.1 em todas as páginas.
+- **INP (Interaction to Next Paint)**: ≤ 200 ms para interações principais.
+- Imagens DEVEM usar o `<Image>` do Next.js com `width`, `height` e `priority`
+  apropriados — tags `<img>` cruas são proibidas.
+- Bundles JavaScript DEVEM ser code-split por rota; código de feature NÃO DEVE entrar
+  no payload inicial salvo se necessário ao primeiro render.
+- Scripts de terceiros DEVEM ser carregados com `next/script` usando uma `strategy`
+  apropriada (`lazyOnload` por padrão).
 
-**Rationale**: Frontend performance directly impacts user retention and SEO. Explicit, measurable
-targets prevent performance regressions from going unnoticed during feature development.
+**Justificativa**: performance de frontend impacta diretamente retenção de usuário e
+SEO. Alvos explícitos e mensuráveis previnem que regressões passem despercebidas
+durante o desenvolvimento de features.
 
-### V. Next.js Best Practices & Simplicity
+### V. Boas Práticas do Next.js & Simplicidade
 
-This project MUST follow the official Next.js App Router conventions and community-established
-patterns. Complexity MUST be justified — the simplest solution that meets requirements is
-always preferred (YAGNI).
+Este projeto DEVE seguir as convenções oficiais do App Router do Next.js e padrões
+estabelecidos pela comunidade. Complexidade DEVE ser justificada — a solução mais
+simples que atende aos requisitos é sempre preferida (YAGNI).
 
-- Use the App Router (`app/`) directory for all routing; the Pages Router MUST NOT be used.
-- Route segments (directory names under `app/`) MUST be in English — e.g., `/register`, not
-  `/registro`. UI text and labels remain in pt-BR; only the URL path is English.
-- Server Components MUST be the default; add `"use client"` only when interactivity,
-  browser APIs, or hooks require it — and document why at the top of the file.
-- Data fetching MUST use Server Components + `fetch` with appropriate caching options,
-  or Server Actions for mutations; client-side `useEffect` for data fetching is forbidden
-  unless no server-side alternative exists.
-- Route handlers (`app/api/`) MUST be used only for endpoints that genuinely require server
-  logic; avoid creating API routes that simply proxy an existing backend.
-- Global state MUST be minimized; prefer URL state, server state (React Query / SWR), or
-  React context scoped to a subtree over a global store.
-- Dependencies MUST be evaluated for bundle size impact before adoption; prefer native
-  browser/Next.js capabilities over third-party libraries for standard tasks.
+- Usar o App Router (`app/`) para todo roteamento; o Pages Router NÃO pode ser usado.
+- Segmentos de rota (nomes de diretório sob `app/`) DEVEM estar em inglês — ex.:
+  `/register`, não `/registro`. Texto e rótulos de UI permanecem em pt-BR; só o caminho
+  URL é em inglês.
+- Server Components DEVEM ser o padrão; adicionar `"use client"` apenas quando
+  interatividade, APIs do browser ou hooks exigirem — e documentar o motivo no topo
+  do arquivo.
+- Data fetching DEVE usar Server Components + `fetch` com opções de cache apropriadas,
+  ou Server Actions para mutações; `useEffect` para data fetching no cliente é proibido
+  salvo quando não houver alternativa server-side.
+- Route handlers (`app/api/`) DEVEM ser usados apenas para endpoints que realmente
+  exigem lógica server-side; evite criar rotas que apenas fazem proxy de um backend
+  existente.
+- Estado global DEVE ser minimizado; prefira URL state, server state
+  (React Query / SWR) ou React context com escopo de subárvore a um store global.
+- Dependências DEVEM ser avaliadas quanto a impacto de bundle antes da adoção; prefira
+  capacidades nativas do browser/Next.js a libs de terceiros para tarefas padrão.
 
-**Rationale**: Following the framework's intended patterns ensures compatibility with future
-Next.js versions, benefits from built-in optimizations, and keeps the codebase approachable
-for developers already familiar with the Next.js ecosystem.
+**Justificativa**: seguir os padrões pretendidos pelo framework garante compatibilidade
+com versões futuras do Next.js, beneficia-se das otimizações nativas e mantém a base
+acessível para devs já familiarizados com o ecossistema Next.js.
 
-## Frontend Standards
+## Padrões de Frontend
 
-**Language & Runtime**: TypeScript 5+, Node.js LTS
+**Linguagem & Runtime**: TypeScript 5+, Node.js LTS
 **Framework**: Next.js 15+ (App Router) + React 19
-**Styling**: **Tailwind CSS** com tokens customizados em `tailwind.config.ts` (theme.extend,
-  namespace `mg`). Bootstrap, AdminLTE, jQuery, popper.js e Font Awesome **NÃO** são
-  permitidos. Classes de utilitárias do projeto que não vêm do Tailwind DEVEM ser prefixadas
-  com `mg-` (`mg-app-shell`, `mg-shimmer`, etc.). Sem `style` props para valores estáticos.
+**Estilização**: **Tailwind CSS** com tokens customizados em `tailwind.config.ts`
+  (theme.extend, namespace `mg`). Bootstrap, AdminLTE, jQuery, popper.js e Font Awesome
+  **NÃO** são permitidos. Classes utilitárias do projeto que não vêm do Tailwind DEVEM ser
+  prefixadas com `mg-` (`mg-app-shell`, `mg-shimmer`, etc.). Sem `style` props para
+  valores estáticos.
 **Configuração de tema**: `tailwind.config.ts` (theme.extend) é fonte primária; CSS custom
   properties em `src/app/globals.css` espelham os mesmos tokens para usos pontuais
   (gradientes, inset shadows). Hardcode de cor/raio/sombra/tipografia fora desses dois
@@ -160,7 +169,7 @@ for developers already familiar with the Next.js ecosystem.
 **Tipografia**: Manrope (família principal) + Noto Sans (scripts globais) carregadas via
   `next/font/google`. Pesos permitidos: 400, 600, 700.
 **Ícones**: `lucide-react` (tree-shakeable, React-first). Outras bibliotecas exigem
-  amenda à constituição.
+  emenda à constituição.
 **Componentes**: biblioteca compartilhada em `src/components/ui/` — todas as primitivas
   têm teste unitário co-localizado (`<Name>/<Name>.tsx` + `<Name>.test.tsx`).
 **Diálogos sobrepostos**: única primitiva permitida é `ConfirmModal` (sobre
@@ -168,26 +177,26 @@ for developers already familiar with the Next.js ecosystem.
 **Estados de carregamento**: `react-loading-skeleton` envolvido em `<SkeletonProvider>`
   global. Spinners proibidos.
 **Estados vazios**: componente compartilhado `EmptyState` com variants `default | error`.
-**Testing stack**: Jest + jest-environment-jsdom + React Testing Library + ts-jest (unit).
-  Playwright/Cypress (E2E) são opcionais por feature.
-**Linting & formatting**: ESLint (next/core-web-vitals ruleset) + Prettier — enforced via
-  pre-commit hook e CI.
-**CI gate**: All tests MUST pass, linting MUST be clean, and build MUST succeed before any
-  PR is merged.
+**Stack de testes**: Jest + jest-environment-jsdom + React Testing Library + ts-jest
+  (unitários). Playwright/Cypress (E2E) são opcionais por feature.
+**Linting & formatação**: ESLint (ruleset next/core-web-vitals) + Prettier — aplicados
+  via pre-commit hook e CI.
+**Gate de CI**: todos os testes DEVEM passar, linting DEVE estar limpo e o build DEVE ser
+  bem-sucedido antes de qualquer PR ser merged.
 
-## Style Guide
+## Guia de Estilo
 
 A identidade visual completa do produto está em [`DESIGN.md`](../../DESIGN.md), na raiz do
 repositório. Esta seção da constituição **referencia** e **resume** as regras invioláveis;
 sempre que houver discrepância, o `DESIGN.md` é a autoridade final.
 
-### Dark Theme (NON-NEGOTIABLE)
+### Modo Escuro (INEGOCIÁVEL)
 
 - A aplicação opera em **modo escuro obrigatório** em todas as larguras.
 - Não há modo claro — `prefers-color-scheme: light` é intencionalmente ignorado.
 - O `body` resolve sempre para `var(--mg-bg)` (`#121212`).
 
-### Design Tokens
+### Tokens de Design
 
 Tokens vivem em **dois arquivos espelhados**:
 
@@ -250,10 +259,10 @@ Para novos elementos visuais:
 5. **Spec the change**: mudanças que afetam mais de um componente são documentadas na spec
    da feature (FR section).
 
-## Development Workflow
+## Fluxo de Desenvolvimento
 
-1. **Branch naming (NON-NEGOTIABLE)**: nomes de branches DEVEM seguir os padrões abaixo.
-   Branches que não conformam NÃO podem ser merged.
+1. **Nomenclatura de branches (INEGOCIÁVEL)**: nomes de branches DEVEM seguir os padrões
+   abaixo. Branches que não conformam NÃO podem ser merged.
 
    | Branch type | Pattern | Propósito |
    |-------------|---------|-----------|
@@ -310,26 +319,26 @@ Para novos elementos visuais:
 
    Breaking changes têm `!` após o type (`feat!:`) e footer `BREAKING CHANGE: ...`.
 
-## Governance
+## Governança
 
-This constitution supersedes all other development practices, coding guidelines, and informal
-conventions in the mystery-gifter-fe project.
+Esta constituição supera quaisquer outras práticas de desenvolvimento, diretrizes de código
+e convenções informais no projeto mystery-gifter-fe.
 
-**Amendment procedure**:
-1. Propose the amendment in a PR that modifies this file.
-2. The PR description MUST explain the motivation, the version bump rationale, and list all
-   affected templates and docs.
-3. Amendment requires at least one approval from a project maintainer.
-4. On merge, `LAST_AMENDED_DATE` MUST be updated to the merge date and `CONSTITUTION_VERSION`
-   MUST be incremented per semantic versioning rules documented in the version line.
+**Procedimento de emenda**:
+1. Propor a emenda em um PR que modifique este arquivo.
+2. A descrição do PR DEVE explicar a motivação, a justificativa do bump de versão e listar
+   todos os templates e documentos afetados.
+3. A emenda exige ao menos uma aprovação de um mantenedor do projeto.
+4. No merge, `Last Amended` DEVE ser atualizado para a data do merge e `Version` DEVE
+   ser incrementado conforme a política de versionamento semântico documentada abaixo.
 
-**Versioning policy**:
-- MAJOR: removal or backward-incompatible redefinition of an existing principle.
-- MINOR: new principle or section added; material expansion of existing guidance.
-- PATCH: clarification, wording improvement, or typo fix with no semantic change.
+**Política de versionamento**:
+- MAJOR: remoção ou redefinição backward-incompatible de um princípio existente.
+- MINOR: novo princípio ou seção adicionada; expansão material de orientação existente.
+- PATCH: esclarecimento, melhoria de wording ou correção de typo sem mudança semântica.
 
-**Compliance review**: every PR review MUST include a constitution check. Violations require
-explicit justification documented in the Complexity Tracking table of the relevant plan.md
-before they may be merged.
+**Revisão de conformidade**: toda revisão de PR DEVE incluir um constitution check.
+Violações exigem justificativa explícita documentada na tabela Complexity Tracking do
+`plan.md` relevante antes do merge.
 
 **Version**: 2.0.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-06-17
