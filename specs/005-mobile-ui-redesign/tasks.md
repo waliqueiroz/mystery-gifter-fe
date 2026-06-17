@@ -44,7 +44,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 ### Foundation técnica
 
 - [X] T005 Reescrever `src/app/globals.css` com diretivas `@tailwind base/components/utilities`, custom properties de tokens (`--mg-bg`, `--mg-green`, `--mg-transition`, etc. sob namespace `mg`), regras globais (`color-scheme: dark`, `body { background: var(--mg-bg) }`), `:focus-visible` com anel verde e `@media (prefers-reduced-motion: reduce)`; **na mesma task**, remover `src/app/theme.css` e o import correspondente em qualquer arquivo (auditar `grep -rn "theme.css" src/` → 0 ocorrências)
-- [ ] T006 Modificar `src/app/layout.tsx` para carregar Manrope e Noto Sans via `next/font/google`, expor variáveis `--font-manrope` e `--font-noto-sans` em `<html>` e remover importações herdadas de Bootstrap/AdminLTE (depende de T005)
+- [X] T006 Modificar `src/app/layout.tsx` para carregar Manrope e Noto Sans via `next/font/google`, expor variáveis `--font-manrope` e `--font-noto-sans` em `<html>` e remover importações herdadas de Bootstrap/AdminLTE (depende de T005)
 - [ ] T007 [P] Criar `src/lib/cn.ts` exportando `cn(...inputs)` baseado em `clsx` + `tailwind-merge` e seu teste co-localizado `src/lib/cn.test.ts`
 - [ ] T008 [P] Criar `src/lib/useDelayedFlag.ts` (hook que retorna `true` somente após `delayMs` em que `value === true`, cancelando ao voltar para `false`) e seu teste `src/lib/useDelayedFlag.test.ts`
 - [ ] T009 [P] Criar wrapper `src/components/ui/Skeleton/SkeletonProvider.tsx` (envolve children em `<SkeletonTheme baseColor="#1f1f1f" highlightColor="#272727">` de `react-loading-skeleton`) e seu teste `SkeletonProvider.test.tsx`
