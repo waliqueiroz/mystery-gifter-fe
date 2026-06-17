@@ -33,6 +33,21 @@ Botões `rounded-md`, `rounded`, `rounded-lg` (Tailwind padrão) **não** são p
 
 ---
 
+## Contrato 2b — Separação entre `ErrorAlert` e `EmptyState variant='error'`
+
+Ambos os componentes existem com responsabilidades distintas. Confundi-los gera drift.
+
+| Caso de uso | Componente correto |
+|-------------|--------------------|
+| Erro inline em **formulário** (validação de campo, falha de submit) próximo do controle | `ErrorAlert` (banner pequeno, contextual ao formulário) |
+| Erro em mensagem flutuante temporária (sucesso/falha de uma ação) | `Toast` |
+| Falha ao **carregar uma seção inteira** (lista de grupos, detalhes, lista de membros) — substitui o conteúdo da área | `EmptyState variant='error'` com CTA "Tentar novamente" |
+| Seção sem dados (lista vazia, busca sem resultados) | `EmptyState` (variant default) |
+
+Regra prática: se o erro **substitui** o conteúdo de uma região de tela, use `EmptyState variant='error'`; se o erro **anota** uma ação ou um campo, use `ErrorAlert` ou `Toast`.
+
+---
+
 ## Contrato 3 — Carregamento (FR-024)
 
 Sequência canônica em todo fluxo que busca dados:
