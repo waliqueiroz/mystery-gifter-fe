@@ -1,8 +1,8 @@
-# mystery-gifter-fe Development Guidelines
+# Diretrizes de Desenvolvimento — mystery-gifter-fe
 
-Auto-generated from all feature plans. Last updated: 2026-06-17 (constitution v2.0.0)
+Gerado automaticamente a partir dos planos das features. Última atualização: 2026-06-17 (constituição v2.0.0)
 
-## Active Technologies
+## Tecnologias Ativas
 
 - **Language/Runtime**: TypeScript 5+, Node.js LTS
 - **Framework**: Next.js 15.5.4 (App Router), React 19
@@ -23,7 +23,7 @@ Auto-generated from all feature plans. Last updated: 2026-06-17 (constitution v2
 - jQuery, popper.js
 - `@fortawesome/fontawesome-free`
 
-## Project Structure
+## Estrutura do Projeto
 
 ```text
 tailwind.config.ts                # tokens do DESIGN.md sob namespace mg
@@ -64,17 +64,17 @@ src/
 └── types/                        # api.ts, forms.ts
 ```
 
-## Commands
+## Comandos
 
 ```bash
-npm run dev           # Dev server (porta 3000)
-npm test              # Jest unit tests
-npm run test:coverage # Coverage (mínimo 80% em arquivos modificados)
+npm run dev           # Servidor de dev (porta 3000)
+npm test              # Testes unitários Jest
+npm run test:coverage # Relatório de cobertura (mínimo 80% em arquivos modificados)
 npm run lint          # ESLint
-npm run build         # Production build (precisa passar antes do PR)
+npm run build         # Build de produção (precisa passar antes do PR)
 ```
 
-## Style Guide (Constitution v2.0.0 + DESIGN.md)
+## Guia de Estilo (Constituição v2.0.0 + DESIGN.md)
 
 A identidade visual completa está em `DESIGN.md` na raiz. Resumo do invariável:
 
@@ -99,7 +99,7 @@ A identidade visual completa está em `DESIGN.md` na raiz. Resumo do invariável
 - **A11y**: `:focus-visible` com anel verde global; `aria-hidden="true"` em decorativos;
   contraste mínimo 4.5:1 (WCAG AA).
 
-## Async Code Style
+## Estilo de Código Assíncrono
 
 - **Sempre `async/await` com `try/catch/finally`** em `useEffect` e event handlers — nunca
   cadeias `.then().catch().finally()`.
@@ -121,7 +121,7 @@ useEffect(() => {
 }, [deps])
 ```
 
-## Key Rules (Constitution v2.0.0)
+## Regras Essenciais (Constituição v2.0.0)
 
 - Todo componente React e função utilitária DEVE ter teste unitário co-localizado.
 - Toda string de UI DEVE estar em pt-BR. URLs em inglês (`/register`, não `/registro`).
@@ -136,12 +136,12 @@ useEffect(() => {
 - Auto-login pós-cadastro = duas chamadas: `POST /api/v1/users` → `POST /api/v1/login`.
 - Rota `/dashboard` foi eliminada — qualquer link interno para ela é violação.
 
-## Stacked Branches Workflow (NON-NEGOTIABLE)
+## Fluxo de Branches Empilhadas (INEGOCIÁVEL)
 
 Cada task ou fase tem sua branch empilhada na dependência direta. Mantém PRs pequenos
 (200–400 LOC alvo) e permite review em paralelo.
 
-### Branch naming
+### Nomenclatura de branches
 
 ```
 ###-short-description            ← branch base da feature (nome idêntico ao diretório specs/###-...)
@@ -180,7 +180,7 @@ git rebase --onto 005-mobile-ui-redesign task/005-phase-1-setup
 - Depois que todos os PRs de task mergeiam na base da feature, abre um PR único da
   base da feature → `develop`.
 
-## Recent Changes
+## Mudanças Recentes
 
 - **005-mobile-ui-redesign**: Adotado Tailwind CSS + react-loading-skeleton + lucide-react +
   @radix-ui/react-dialog; removidos Bootstrap 4.6, AdminLTE 3.2, jQuery, Font Awesome.
