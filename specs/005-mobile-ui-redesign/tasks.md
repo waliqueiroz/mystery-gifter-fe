@@ -27,7 +27,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 **Objetivo**: instalar dependências novas e configurar tooling. As dependências legadas só são removidas em T058 (após nenhum import remanescer).
 
 - [X] T001 Instalar dependências de estilização e UI base (Tailwind, PostCSS, autoprefixer, react-loading-skeleton, tailwind-merge, clsx, lucide-react, @radix-ui/react-dialog) atualizando `package.json` na raiz
-- [ ] T002 [P] Criar `tailwind.config.ts` na raiz com `content: ['./src/**/*.{ts,tsx}']`, `theme.extend` populado com TODOS os tokens do `DESIGN.md` sob o namespace `mg` conforme `specs/005-mobile-ui-redesign/research.md` §1 e `data-model.md` §1
+- [X] T002 [P] Criar `tailwind.config.ts` na raiz com `content: ['./src/**/*.{ts,tsx}']`, `theme.extend` populado com TODOS os tokens do `DESIGN.md` sob o namespace `mg` conforme `specs/005-mobile-ui-redesign/research.md` §1 e `data-model.md` §1
 - [ ] T003 [P] Criar `postcss.config.mjs` na raiz com plugins `tailwindcss` e `autoprefixer`
 - [ ] T004 [P] Criar mock `__mocks__/next/font/google.ts` retornando `{ className: '', style: {}, variable: '' }` para Manrope e Noto Sans (permite que Jest passe sem baixar fontes)
 
