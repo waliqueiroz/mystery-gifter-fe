@@ -1,11 +1,70 @@
-/* Bootstrap 4.6 */
-@import 'bootstrap/dist/css/bootstrap.min.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Font Awesome */
-@import '@fortawesome/fontawesome-free/css/all.min.css';
+/*
+ * Tokens espelhados como CSS custom properties para usos pontuais fora dos
+ * utilitários do Tailwind (gradientes, inset shadows complexos, animações
+ * nomeadas). Cores e dimensões hardcoded fora deste arquivo e do
+ * tailwind.config.ts são proibidas (FR-006).
+ */
+:root {
+  --mg-bg: #121212;
+  --mg-surface: #181818;
+  --mg-surface-2: #1f1f1f;
+  --mg-surface-3: #252525;
+  --mg-surface-4: #272727;
 
-/* AdminLTE 3.2 */
-@import 'admin-lte/dist/css/adminlte.min.css';
+  --mg-green: #1ed760;
+  --mg-green-border: #1db954;
 
-/* Mystery Gifter dark purple theme — must be last to cascade over frameworks */
-@import './theme.css';
+  --mg-text: #ffffff;
+  --mg-text-muted: #b3b3b3;
+  --mg-text-near-white: #cbcbcb;
+  --mg-text-light: #fdfdfd;
+  --mg-text-negative: #f3727f;
+  --mg-text-warning: #ffa42b;
+  --mg-text-announcement: #539df5;
+
+  --mg-border: #4d4d4d;
+  --mg-border-light: #7c7c7c;
+
+  --mg-transition: 200ms ease-in-out;
+}
+
+/* Modo escuro obrigatório (FR-012) — ignora preferência do sistema. */
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--mg-bg);
+  color: var(--mg-text);
+  font-family: theme('fontFamily.sans');
+  min-height: 100dvh;
+}
+
+/*
+ * Anel de foco visível obrigatório em todos os elementos interativos (FR-014).
+ * Usa o verde funcional como estado focal — é admissível porque foco é um
+ * estado funcional, não decorativo.
+ */
+:focus-visible {
+  outline: 2px solid var(--mg-green);
+  outline-offset: 2px;
+}
+
+/*
+ * Respeita prefers-reduced-motion (FR-013): suprime TODAS as animações e
+ * transições para usuários com essa preferência. Regra blanket — animações
+ * novas não precisam (e não devem) repetir esse override.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+  }
+}
