@@ -1,71 +1,109 @@
 # mystery-gifter-fe Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-03-08
+Auto-generated from all feature plans. Last updated: 2026-06-17 (constitution v2.0.0)
 
 ## Active Technologies
-- TypeScript 5+, Node.js LTS + Next.js 15.5.4, Bootstrap 4.6, AdminLTE 3.2, Font Awesome Free (002-dark-theme-redesign)
-- N/A (styling-only feature) (002-dark-theme-redesign)
-- TypeScript 5+, Node.js LTS + Next.js 15.5.4 (App Router), React 19, Bootstrap 4.6, AdminLTE 3.2, Jest + React Testing Library + ts-jes (004-groups-profile-features)
-- N/A — filter state lives in React component state; user session in `localStorage` via `lib/session.ts` (004-groups-profile-features)
-- N/A — mudança puramente visual; nenhum contrato de API é alterado; estado de UI (filtros, sheet aberta) permanece em React state; sessão segue em `localStorage` via `lib/session.ts` (005-mobile-ui-redesign)
 
-- **Framework**: Next.js 15.5.4, App Router, React 19, TypeScript 5+
-- **UI**: AdminLTE 3.2 (dashboard), Bootstrap 4.6 (public pages), Font Awesome (free)
-- **Auth**: JWT in `localStorage` (key: `mystery_gifter_token`); Bearer token for API calls
-- **Testing**: Jest + jest-environment-jsdom + React Testing Library + ts-jest
-- **Backend API**: `http://localhost:8080/api/v1` (proxied via Next.js rewrites in dev)
+- **Language/Runtime**: TypeScript 5+, Node.js LTS
+- **Framework**: Next.js 15.5.4 (App Router), React 19
+- **UI / Styling**: **Tailwind CSS** com tokens customizados em `tailwind.config.ts` (namespace `mg`)
+- **Componentes overlay**: `@radix-ui/react-dialog` (base de `ConfirmModal` e `BottomSheet`)
+- **Skeletons**: `react-loading-skeleton` (única fonte; spinners proibidos)
+- **Ícones**: `lucide-react` (tree-shakeable, React-first)
+- **Tipografia**: Manrope + Noto Sans via `next/font/google` (self-hospedadas em build time)
+- **Composição de classes**: `clsx` + `tailwind-merge` via helper `src/lib/cn.ts`
+- **Auth**: JWT em `localStorage` (key: `mystery_gifter_token`); Bearer token nas chamadas
+- **Testes**: Jest + jest-environment-jsdom + React Testing Library + ts-jest
+- **Backend API**: `http://localhost:8080/api/v1` (proxy via Next.js rewrites em dev)
+
+### Não usar (legado removido na feature 005)
+
+- Bootstrap 4.6
+- AdminLTE 3.2
+- jQuery, popper.js
+- `@fortawesome/fontawesome-free`
 
 ## Project Structure
 
 ```text
+tailwind.config.ts                # tokens do DESIGN.md sob namespace mg
+postcss.config.mjs
+
 src/
 ├── app/
-│   ├── (public)/            # Landing, login, register — Bootstrap 4 pages
-│   ├── (protected)/         # Dashboard — AdminLTE layout
-│   ├── layout.tsx            # Root layout, global CSS
-│   └── globals.css
+│   ├── (public)/                 # Landing, login, register
+│   ├── (protected)/              # Áreas autenticadas — envolvidas em <AppShell>
+│   │   ├── groups/
+│   │   │   ├── page.tsx          # Lista (tela inicial pós-login)
+│   │   │   ├── new/page.tsx      # Criar grupo — rota dedicada (substitui modal)
+│   │   │   └── [id]/
+│   │   │       ├── page.tsx      # Detalhe do grupo
+│   │   │       └── invite/page.tsx  # Convidar membro — rota dedicada
+│   │   └── profile/page.tsx      # Perfil + botão "Sair"
+│   ├── invite/[token]/page.tsx   # Aceite público de convite
+│   ├── layout.tsx                # Root: carrega Manrope + Noto Sans
+│   └── globals.css               # @tailwind + CSS vars dos tokens + reset + focus
 ├── components/
-│   ├── ui/                  # Shared primitives — ALL must have unit tests
-│   ├── auth/                # AuthGuard, GuestGuard ("use client")
-│   ├── landing/
-│   ├── login/
-│   ├── register/
-│   └── dashboard/
-├── services/api/            # API call functions
-├── lib/                     # auth.ts (getToken, setToken, clearToken)
-└── types/                   # api.ts, forms.ts
+│   ├── ui/                       # Primitivas compartilhadas (todas com teste)
+│   │   ├── AppShell/             # Container app-like com bottom tab bar
+│   │   ├── BottomTabBar/         # Grupos + Perfil (sem Sair)
+│   │   ├── BottomSheet/          # Visualização rápida read-only
+│   │   ├── ConfirmModal/         # ÚNICO modal permitido (confirmação)
+│   │   ├── Button/               # Variants pill/circular
+│   │   ├── FormField/            # Input pill com inset shadow
+│   │   ├── EmptyState/           # Vazio + erro (variant)
+│   │   ├── Skeleton/             # SkeletonProvider + SkeletonBox/Text/Circle
+│   │   ├── Icon/                 # Wrapper lucide-react
+│   │   ├── Toast/                # Mensagem flutuante
+│   │   └── ErrorAlert/           # Erro inline em formulários
+│   ├── auth/                     # AuthGuard, GuestGuard ("use client")
+│   ├── landing/, login/, register/
+│   ├── groups/, profile/, invite/
+├── services/api/                 # authService, groupService, inviteService, userService
+├── lib/                          # cn.ts, useDelayedFlag.ts, session.ts
+└── types/                        # api.ts, forms.ts
 ```
 
 ## Commands
 
 ```bash
-npm run dev          # Start dev server (port 3000)
-npm test             # Run Jest unit tests
-npm run test:coverage # Coverage report (must be ≥80% for modified components)
-npm run lint         # ESLint
-npm run build        # Production build (must succeed before PR)
+npm run dev           # Dev server (porta 3000)
+npm test              # Jest unit tests
+npm run test:coverage # Coverage (mínimo 80% em arquivos modificados)
+npm run lint          # ESLint
+npm run build         # Production build (precisa passar antes do PR)
 ```
 
-## Style Guide (from Constitution v1.2.0)
+## Style Guide (Constitution v2.0.0 + DESIGN.md)
 
-All new screens and components MUST follow these rules — see constitution for full detail.
+A identidade visual completa está em `DESIGN.md` na raiz. Resumo do invariável:
 
-- **Theme file**: all style changes go in `src/app/theme.css` only; no hardcoded colors elsewhere
-- **Design tokens**: use CSS custom properties — `--mg-primary` (#6B46C1), `--mg-primary-hover`
-  (#9F7AEA), `--mg-bg` (#0F0F0F), `--mg-bg-secondary` (#1A202C), `--mg-bg-card` (#2D3748),
-  `--mg-text` (#FFF), `--mg-text-muted` (#A0AEC0), `--mg-error` (#FC8181),
-  `--mg-transition` (200ms ease-in-out)
-- **Dark mode mandatory**: no light mode; `body` background is always `var(--mg-bg)`
-- **Custom classes**: project-specific classes MUST be prefixed `mg-` (e.g. `mg-hero`, `mg-feature-card`)
-- **No inline styles** for static values — use tokens or Bootstrap/AdminLTE classes
-- **Accessibility**: contrast ≥ 4.5:1; `:focus-visible` purple ring on all interactive elements;
-  `aria-hidden="true"` on purely decorative elements
-- **Gradients**: `to bottom` for backgrounds, `to right` for text gradient effects
+- **Modo escuro obrigatório**: `body` sempre `var(--mg-bg)` (`#121212`). Sem light mode.
+- **Tokens em dois arquivos**: `tailwind.config.ts` (theme.extend, namespace `mg`) e
+  `globals.css` (CSS vars `--mg-*`). Hardcode fora desses dois arquivos é violação.
+- **Verde funcional**: `mg.green` (`#1ed760`) só em CTAs primários, estado ativo de
+  navegação e botões de play/sortear. Decorativo é proibido.
+- **Geometria de botões**: pill (`rounded-pill` / `rounded-pill-lg`) ou circular
+  (`rounded-full`). Botões retangulares são proibidos.
+- **Rótulos de botão**: uppercase + `tracking-btn` (~ 0.1em).
+- **Carregamentos**: skeletons via `react-loading-skeleton` envolvidos em
+  `<SkeletonProvider>`. Use `useDelayedFlag(loading, 150)` para evitar flash.
+- **Estados vazios**: componente compartilhado `EmptyState` (variants `default | error`).
+  Variações ad-hoc proibidas.
+- **Modais**: apenas `ConfirmModal` para confirmar ações destrutivas/irreversíveis. Outros
+  fluxos vão para rota dedicada (formulários) ou `BottomSheet` (read-only).
+- **Navegação**: bottom tab bar persistente com apenas **Grupos** e **Perfil**. "Sair"
+  vive dentro de Perfil como botão.
+- **Composição de classes**: sempre `cn(...)` de `src/lib/cn.ts`. Proibido concatenar
+  classes com template strings + ternários.
+- **A11y**: `:focus-visible` com anel verde global; `aria-hidden="true"` em decorativos;
+  contraste mínimo 4.5:1 (WCAG AA).
 
 ## Async Code Style
 
-- **Always use `async/await` with `try/catch/finally`** inside `useEffect` and event handlers — never `.then().catch().finally()` chains
-- Pattern for `useEffect` with async: define an inner `async function` and call it immediately
+- **Sempre `async/await` com `try/catch/finally`** em `useEffect` e event handlers — nunca
+  cadeias `.then().catch().finally()`.
+- Padrão para `useEffect` assíncrono: inner `async function` chamada em seguida.
 
 ```typescript
 useEffect(() => {
@@ -83,77 +121,72 @@ useEffect(() => {
 }, [deps])
 ```
 
-## Key Rules (from Constitution v1.2.0)
+## Key Rules (Constitution v2.0.0)
 
-- Every React component and utility function MUST have a unit test — no exceptions
-- All UI text MUST be in Brazilian Portuguese (pt-BR)
-- Route segments (URL paths) MUST be in English — e.g., `/register` not `/registro`; only UI labels are pt-BR
-- Spec files, checklists, plans, and all speckit artifacts MUST be written in English — pt-BR applies only to UI text visible to end users
-- `"use client"` required for: auth guards, forms, and anything reading localStorage
-- Auth guard: read `localStorage.getItem('mystery_gifter_token')` on mount; redirect if absent
-- Guest guard: if token present → redirect to `/dashboard`
-- 401 from backend → clear token → redirect to `/login`
-- AdminLTE requires Bootstrap 4 (NOT Bootstrap 5)
-- API calls go through the Next.js rewrites proxy (`/api/v1/*` → backend)
-- Auto-login after registration = two calls: POST /api/v1/users → POST /api/v1/login
+- Todo componente React e função utilitária DEVE ter teste unitário co-localizado.
+- Toda string de UI DEVE estar em pt-BR. URLs em inglês (`/register`, não `/registro`).
+- **Todos os artefatos speckit (spec.md, plan.md, tasks.md, research.md, etc.) DEVEM ser
+  redigidos em pt-BR.**
+- `"use client"` é obrigatório para: auth guards, formulários, hooks de browser API e
+  qualquer componente que leia `localStorage`.
+- Auth guard: lê `localStorage.getItem('mystery_gifter_token')` no mount; redireciona se ausente.
+- Guest guard: se token presente → redirecionar para `/groups`.
+- 401 do backend → limpar token → redirecionar para `/login`.
+- API calls passam pelo proxy de rewrites do Next (`/api/v1/*` → backend).
+- Auto-login pós-cadastro = duas chamadas: `POST /api/v1/users` → `POST /api/v1/login`.
+- Rota `/dashboard` foi eliminada — qualquer link interno para ela é violação.
 
-## Stacked Branches Workflow (NON-NEGOTIABLE for all features)
+## Stacked Branches Workflow (NON-NEGOTIABLE)
 
-Every task gets its own branch stacked on its dependency. This keeps PRs small (200–400 LOC target) and enables parallel review.
+Cada task ou fase tem sua branch empilhada na dependência direta. Mantém PRs pequenos
+(200–400 LOC alvo) e permite review em paralelo.
 
 ### Branch naming
 
 ```
-feature/###-description          ← feature base branch (Gitflow)
-task/###-T001-description        ← task branch, stacked on base or another task
-task/###-T002-description        ← parallel task, also stacked on base
-task/###-T010-description        ← stacked on task/###-T005-description
+###-short-description            ← branch base da feature (nome idêntico ao diretório specs/###-...)
+task/###-phase-N-...             ← agrupa uma fase inteira (Setup, Foundation, Governance...)
+task/###-T###-description        ← granular, opcional para tasks isoladas dentro de uma fase
 ```
 
-### Creating a stack
+Branches `fix/`, `hotfix/` e `release/` mantêm seus prefixos Gitflow. Feature base **NÃO**
+usa prefixo `feature/` — o nome bate diretamente com o diretório `specs/###-...`.
+
+### Criando um stack
 
 ```bash
-# Stack on the feature base
-git checkout feature/001-initial-screens
-git checkout -b task/001-T001-ts-eslint-prettier
+git checkout 005-mobile-ui-redesign
+git checkout -b task/005-phase-1-setup
 
-# Stack on another task branch
-git checkout task/001-T005-types
-git checkout -b task/001-T010-auth-service
+# Outra branch stacked em cima:
+git checkout task/005-phase-1-setup
+git checkout -b task/005-phase-2-foundation
 ```
 
-### After a dependency PR merges into the feature branch
+### Depois que uma branch dependente é merged
 
 ```bash
-# Rebase dependent branch onto the updated base
-git checkout task/001-T010-auth-service
-git rebase --onto feature/001-initial-screens task/001-T005-types
+git checkout task/005-phase-2-foundation
+git rebase --onto 005-mobile-ui-redesign task/005-phase-1-setup
 ```
 
-### Rules
+### Regras
 
-- Each task branch touches only the files listed in its task .md spec
-- Parallel tasks (`[P]` marker in tasks/index.md) MUST NOT share files
-- PR title: `feat(T001): description` — Conventional Commits with task scope
-- Every PR targets its **parent branch**, not `develop` or `main`
-- Merge order follows the dependency graph in `specs/###/tasks/index.md`
-- After all task PRs merge into the feature branch, open one PR from `feature/` → `develop`
-
-### Checking stack
-
-```bash
-# See commits only in current task branch (vs its parent)
-git log --oneline feature/001-initial-screens..HEAD
-
-# See all task branches for a feature
-git branch | grep task/001
-```
+- Cada task branch toca SOMENTE os arquivos listados na task correspondente.
+- Tasks paralelas (`[P]` em `tasks.md`) NÃO compartilham arquivos.
+- Título do PR: `feat(T###): descrição` ou `feat(005-PhaseN): ...`.
+- Cada PR aponta para sua **parent branch**, não para `develop` ou `main`.
+- Ordem de merge segue o grafo de dependências em `specs/###/tasks.md`.
+- Depois que todos os PRs de task mergeiam na base da feature, abre um PR único da
+  base da feature → `develop`.
 
 ## Recent Changes
-- 005-mobile-ui-redesign: Added N/A — mudança puramente visual; nenhum contrato de API é alterado; estado de UI (filtros, sheet aberta) permanece em React state; sessão segue em `localStorage` via `lib/session.ts`
-- 004-groups-profile-features: Added TypeScript 5+, Node.js LTS + Next.js 15.5.4 (App Router), React 19, Bootstrap 4.6, AdminLTE 3.2, Jest + React Testing Library + ts-jes
-- 003-group-management: Added TypeScript 5+, Node.js LTS
 
+- **005-mobile-ui-redesign**: Adotado Tailwind CSS + react-loading-skeleton + lucide-react +
+  @radix-ui/react-dialog; removidos Bootstrap 4.6, AdminLTE 3.2, jQuery, Font Awesome.
+  Constituição → v2.0.0. Política de pt-BR para todos os artefatos speckit.
+- 004-groups-profile-features: GroupCard com badge owner, filtros multiselect, profile page.
+- 003-group-management: gestão completa de grupos.
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
