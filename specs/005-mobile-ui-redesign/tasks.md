@@ -53,7 +53,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 - [X] T010 [P] Atualizar `.specify/memory/constitution.md`: bump para **v2.0.0**; reescrever Princípio III removendo Bootstrap/AdminLTE como base e referenciando `DESIGN.md` + Tailwind; reescrever seções "Frontend Standards" e "Style Guide" para refletir Tailwind + DESIGN.md; adicionar regra explícita de idioma pt-BR para todos artefatos speckit; atualizar SYNC IMPACT REPORT; atualizar `Last Amended` para 2026-06-17
 - [X] T011 [P] Atualizar `CLAUDE.md` na raiz para refletir: stack (Tailwind + react-loading-skeleton + lucide-react + Radix Dialog), remoção de Bootstrap/AdminLTE, navegação AppShell + BottomTabBar, primitivas em `components/ui/`, política pt-BR para specs e remoção de trechos obsoletos do style guide antigo
-- [ ] T012 [P] Atualizar `DESIGN.md` na raiz registrando **Manrope + Noto Sans** como pilha oficial em substituição a SpotifyMixUI/CircularSp, mantendo as demais regras (cores, geometria, sombras, do/don't) intactas
+- [X] T012 [P] Atualizar `DESIGN.md` na raiz registrando **Manrope + Noto Sans** como pilha oficial em substituição a SpotifyMixUI/CircularSp, mantendo as demais regras (cores, geometria, sombras, do/don't) intactas
 
 **Checkpoint**: tema global, tipografia, helpers, provider de skeleton e governança (constituição v2.0.0) operacionais. Código novo passará a ser construído sob a constituição vigente.
 

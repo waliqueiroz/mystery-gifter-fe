@@ -1,5 +1,23 @@
 # Design System Inspired by Spotify
 
+> **Nota de implementação (atualizado 2026-06-17)**
+>
+> Este documento é a referência visual canônica do Mystery Gifter. As regras abaixo (cores,
+> geometria, sombras, tipografia, do/don't) são contrato vinculante para todo o produto.
+>
+> Algumas escolhas precisaram ser adaptadas para fontes/recursos livres:
+>
+> - **Tipografia (§3)**: as famílias proprietárias da Spotify (`SpotifyMixUITitle` /
+>   `SpotifyMixUI` / `CircularSp`) foram substituídas oficialmente por **Manrope** (Title +
+>   UI) + **Noto_Sans** (cobertura de scripts globais), carregadas via `next/font/google`.
+> - **Ícones**: como o produto não consome glifos da iconografia proprietária do Spotify,
+>   adota-se `lucide-react` — tree-shakeable e alinhado à estética line-art achromatic.
+> - **Stack de implementação**: Tailwind CSS com tokens espelhados em `tailwind.config.ts`
+>   (theme.extend, namespace `mg`) + CSS custom properties em `globals.css`.
+>
+> Todas as demais regras seguem inalteradas e são autoridade final em qualquer conflito
+> com `CLAUDE.md` ou com a constituição.
+
 ## 1. Visual Theme & Atmosphere
 
 Spotify's web interface is a dark, immersive music player that wraps listeners in a near-black cocoon (`#121212`, `#181818`, `#1f1f1f`) where album art and content become the primary source of color. The design philosophy is "content-first darkness" — the UI recedes into shadow so that music, podcasts, and playlists can glow. Every surface is a shade of charcoal, creating a theater-like environment where the only true color comes from the iconic Spotify Green (`#1ed760`) and the album artwork itself.
@@ -54,8 +72,29 @@ What distinguishes Spotify is its pill-and-circle geometry. Primary buttons use 
 ## 3. Typography Rules
 
 ### Font Families
-- **Title**: `SpotifyMixUITitle`, fallbacks: `CircularSp-Arab, CircularSp-Hebr, CircularSp-Cyrl, CircularSp-Grek, CircularSp-Deva, Helvetica Neue, helvetica, arial, Hiragino Sans, Hiragino Kaku Gothic ProN, Meiryo, MS Gothic`
-- **UI / Body**: `SpotifyMixUI`, same fallback stack
+
+A pilha original do Spotify usa famílias proprietárias (`SpotifyMixUITitle`/`SpotifyMixUI`
+sobre `CircularSp`) que não estão disponíveis para uso público. O Mystery Gifter adota como
+**pilha oficial** as seguintes substitutas livres (licença OFL), carregadas via
+`next/font/google` em build time:
+
+- **Title**: `Manrope` (variável, pesos 400/600/700) — herdeira espiritual da Circular;
+  geométrica, levemente humanista, terminais arredondados, voltada para UI.
+- **UI / Body**: `Manrope` (mesma família para reduzir variação de cadência e custo de
+  carregamento).
+- **Cobertura de scripts globais**: `Noto_Sans` (Latin + Cyrillic + Greek por padrão).
+  Para Arabic, Hebrew, Devanagari ou CJK, importar `Noto_Sans_Arabic`, `Noto_Sans_Hebrew`,
+  `Noto_Sans_Devanagari` e `Noto_Sans_SC` adicionalmente — todos via `next/font/google`,
+  cada um exposto como variável CSS própria.
+- **Fallback final**: `Helvetica Neue`, `Helvetica`, `Arial`, `sans-serif`.
+
+A pilha proprietária original permanece documentada abaixo como **referência de intenção
+visual**, mas não é usada em produção.
+
+#### Pilha de referência (proprietária — não utilizada)
+
+- **Title (referência)**: `SpotifyMixUITitle`, fallbacks: `CircularSp-Arab, CircularSp-Hebr, CircularSp-Cyrl, CircularSp-Grek, CircularSp-Deva, Helvetica Neue, helvetica, arial, Hiragino Sans, Hiragino Kaku Gothic ProN, Meiryo, MS Gothic`
+- **UI / Body (referência)**: `SpotifyMixUI`, mesma pilha de fallback
 
 ### Hierarchy
 
@@ -80,7 +119,7 @@ What distinguishes Spotify is its pill-and-circle geometry. Primary buttons use 
 - **Bold/regular binary**: Most text is either 700 (bold) or 400 (regular), with 600 used sparingly. This creates a clear visual hierarchy through weight contrast rather than size variation.
 - **Uppercase buttons as system**: Button labels use uppercase + wide letter-spacing (1.4px–2px), creating a systematic "label" voice distinct from content text.
 - **Compact sizing**: The range is 10px–24px — narrower than most systems. Spotify's type is compact and functional, designed for scanning playlists, not reading articles.
-- **Global script support**: The extensive fallback stack (Arabic, Hebrew, Cyrillic, Greek, Devanagari, CJK) reflects Spotify's 180+ market reach.
+- **Global script support**: A pilha original Spotify lista Arabic, Hebrew, Cyrillic, Greek, Devanagari e CJK. O Mystery Gifter implementa essa cobertura via `Noto_Sans` + variantes específicas conforme necessidade futura de internacionalização.
 
 ## 4. Component Stylings
 
