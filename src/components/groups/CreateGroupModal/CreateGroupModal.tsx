@@ -25,8 +25,8 @@ export function CreateGroupModal({ isOpen, onClose, onSuccess }: CreateGroupModa
   if (!isOpen) return null
 
   function handleChange(field: keyof CreateGroupFormData) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }))
+    return (value: string) => {
+      setForm((prev) => ({ ...prev, [field]: value }))
       if (field === 'name') setNameError('')
     }
   }
@@ -109,7 +109,7 @@ export function CreateGroupModal({ isOpen, onClose, onSuccess }: CreateGroupModa
                   rows={3}
                   maxLength={255}
                   value={form.description}
-                  onChange={handleChange('description')}
+                  onChange={(e) => handleChange('description')(e.target.value)}
                   placeholder="Descreva o tema ou regras do seu grupo"
                   style={{ backgroundColor: 'var(--mg-bg-secondary)', color: 'var(--mg-text)', border: '1px solid rgba(107,70,193,0.3)', resize: 'none' }}
                 />
