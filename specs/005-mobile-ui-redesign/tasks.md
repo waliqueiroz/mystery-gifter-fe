@@ -47,7 +47,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T006 Modificar `src/app/layout.tsx` para carregar Manrope e Noto Sans via `next/font/google`, expor variáveis `--font-manrope` e `--font-noto-sans` em `<html>` e remover importações herdadas de Bootstrap/AdminLTE (depende de T005)
 - [X] T007 [P] Criar `src/lib/cn.ts` exportando `cn(...inputs)` baseado em `clsx` + `tailwind-merge` e seu teste co-localizado `src/lib/cn.test.ts`
 - [X] T008 [P] Criar `src/lib/useDelayedFlag.ts` (hook que retorna `true` somente após `delayMs` em que `value === true`, cancelando ao voltar para `false`) e seu teste `src/lib/useDelayedFlag.test.ts`
-- [ ] T009 [P] Criar wrapper `src/components/ui/Skeleton/SkeletonProvider.tsx` (envolve children em `<SkeletonTheme baseColor="#1f1f1f" highlightColor="#272727">` de `react-loading-skeleton`) e seu teste `SkeletonProvider.test.tsx`
+- [X] T009 [P] Criar wrapper `src/components/ui/Skeleton/SkeletonProvider.tsx` (envolve children em `<SkeletonTheme baseColor="#1f1f1f" highlightColor="#272727">` de `react-loading-skeleton`) e seu teste `SkeletonProvider.test.tsx`
 
 ### Reconciliação da governança (NON-NEGOTIABLE antes da US1)
 
