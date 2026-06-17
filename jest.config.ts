@@ -16,6 +16,7 @@ const config: Config = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.ts',
+    '^next/font/google$': '<rootDir>/__mocks__/next/font/google.ts',
   },
   testMatch: ['**/*.test.ts', '**/*.test.tsx'],
   coverageThreshold: {
