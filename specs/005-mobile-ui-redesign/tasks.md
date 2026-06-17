@@ -67,7 +67,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 ### Implementação para US1
 
-- [ ] T013 [P] [US1] Criar `src/components/ui/Icon/Icon.tsx` (wrapper de `lucide-react` com defaults `size={20}`, `aria-hidden={true}`) e teste `Icon.test.tsx`
+- [X] T013 [P] [US1] Criar `src/components/ui/Icon/Icon.tsx` (wrapper de `lucide-react` com defaults `size={20}`, `aria-hidden={true}`) e teste `Icon.test.tsx`
 - [ ] T014 [P] [US1] Criar `src/components/ui/Skeleton/SkeletonBox.tsx`, `SkeletonText.tsx`, `SkeletonCircle.tsx` (wrappers de `react-loading-skeleton` padronizando tamanhos/raios) e os testes correspondentes co-localizados
 - [ ] T015 [P] [US1] Reescrever `src/components/ui/Button/Button.tsx` com variantes (`primary`, `secondary`, `outline`, `ghost`), shapes (`pill`, `pill-lg`, `circle`), `uppercase` default, suporte a `loading` (que troca conteúdo por SkeletonText, jamais spinner) e atualizar `Button.test.tsx` removendo asserções em classes Bootstrap e cobrindo todas as variantes + `aria-busy`
 - [ ] T016 [P] [US1] Reescrever `src/components/ui/FormField/FormField.tsx` com input pill, `shadow-mg-inset`, suporte a `error` com `border-mg-text-negative` e mensagem em `text-mg-text-negative`; atualizar `FormField.test.tsx`
