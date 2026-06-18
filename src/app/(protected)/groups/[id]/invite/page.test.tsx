@@ -76,6 +76,12 @@ function makeGroup(extra: Partial<Group> = {}): Group {
   }
 }
 
+function makeHttpError(status: number, message: string): Error {
+  const err = new Error(message)
+  ;(err as Error & { status: number }).status = status
+  return err
+}
+
 const mockInvite: GroupInvite = {
   id: 'token-abc',
   group_id: 'g1',
@@ -146,9 +152,18 @@ describe('InvitePage', () => {
   })
 
   describe('quando não há convite ativo (404)', () => {
-    it('dono vê CTA "Gerar link de convite"', async () => {
+    it('dono vê CTA "Gerar link de convite" — erro com status HTTP 404', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
-      mockGetActiveInvite.mockRejectedValue(new Error('404 not found'))
+      mockGetActiveInvite.mockRejectedValue(makeHttpError(404, 'no active invite'))
+      render(<InvitePage />)
+      expect(
+        await screen.findByRole('button', { name: /gerar link de convite/i }),
+      ).toBeInTheDocument()
+    })
+
+    it('dono vê CTA "Gerar link de convite" — erro com "not found" na mensagem (fallback)', async () => {
+      mockGetGroup.mockResolvedValue(makeGroup())
+      mockGetActiveInvite.mockRejectedValue(new Error('not found'))
       render(<InvitePage />)
       expect(
         await screen.findByRole('button', { name: /gerar link de convite/i }),
@@ -158,7 +173,7 @@ describe('InvitePage', () => {
     it('não-dono vê mensagem orientativa, sem CTA', async () => {
       mockUseUser.mockReturnValue(member)
       mockGetGroup.mockResolvedValue(makeGroup())
-      mockGetActiveInvite.mockRejectedValue(new Error('not found'))
+      mockGetActiveInvite.mockRejectedValue(makeHttpError(404, 'no active invite'))
       render(<InvitePage />)
       expect(
         await screen.findByText(/peça ao dono/i),
@@ -170,7 +185,7 @@ describe('InvitePage', () => {
 
     it('clique em "Gerar" cria invite e exibe o link', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
-      mockGetActiveInvite.mockRejectedValue(new Error('not found'))
+      mockGetActiveInvite.mockRejectedValue(makeHttpError(404, 'no active invite'))
       mockCreateInvite.mockResolvedValue(mockInvite)
       render(<InvitePage />)
       await userEvent.click(
