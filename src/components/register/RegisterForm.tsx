@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import FormField from '@/components/ui/FormField/FormField'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 import Button from '@/components/ui/Button/Button'
-import { register } from '@/services/api/authService'
+import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
+import FormField from '@/components/ui/FormField/FormField'
 import { setToken } from '@/lib/auth'
+import { register } from '@/services/api/authService'
 import type { RegisterFormData } from '@/types/forms'
 
 export default function RegisterForm() {
@@ -28,7 +30,13 @@ export default function RegisterForm() {
   }
 
   function validate(): string {
-    if (!form.name || !form.surname || !form.email || !form.password || !form.passwordConfirm) {
+    if (
+      !form.name ||
+      !form.surname ||
+      !form.email ||
+      !form.password ||
+      !form.passwordConfirm
+    ) {
       return 'Todos os campos são obrigatórios.'
     }
     if (form.password.length < 8) {
@@ -60,72 +68,89 @@ export default function RegisterForm() {
       setToken(session.access_token)
       router.push('/groups')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.')
+      setError(
+        err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.',
+      )
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100">
-      <div className="card" style={{ width: '100%', maxWidth: 480 }}>
-        <div className="card-body p-5">
-          <h1 className="text-center mb-4">Criar conta</h1>
-          <form onSubmit={handleSubmit} noValidate>
-            {error && <div className="alert alert-danger">{error}</div>}
-            <FormField
-              id="name"
-              label="Nome"
-              value={form.name}
-              onChange={handleChange('name')}
-              placeholder="Seu nome"
-              required
-            />
-            <FormField
-              id="surname"
-              label="Sobrenome"
-              value={form.surname}
-              onChange={handleChange('surname')}
-              placeholder="Seu sobrenome"
-              required
-            />
-            <FormField
-              id="email"
-              label="E-mail"
-              type="email"
-              value={form.email}
-              onChange={handleChange('email')}
-              placeholder="seu@email.com"
-              required
-            />
-            <FormField
-              id="password"
-              label="Senha"
-              type="password"
-              value={form.password}
-              onChange={handleChange('password')}
-              placeholder="Mínimo 8 caracteres"
-              required
-            />
-            <FormField
-              id="passwordConfirm"
-              label="Confirmação de senha"
-              type="password"
-              value={form.passwordConfirm}
-              onChange={handleChange('passwordConfirm')}
-              placeholder="Repita a senha"
-              required
-            />
-            <Button type="submit" loading={loading} className="btn-block mt-3">
-              Criar conta
-            </Button>
-          </form>
-          <p className="text-center mt-3 mb-0">
-            Já tem conta?{' '}
-            <Link href="/login">Entrar</Link>
-          </p>
-        </div>
+    <main className="flex min-h-dvh items-center justify-center bg-mg-bg px-4 py-12">
+      <div className="w-full max-w-md rounded-card bg-mg-surface p-8 shadow-mg-card">
+        <h1 className="text-2xl font-bold text-mg-text">Criar conta</h1>
+
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="mt-6 flex flex-col gap-4"
+        >
+          {error && <ErrorAlert message={error} />}
+
+          <FormField
+            id="name"
+            label="Nome"
+            value={form.name}
+            onChange={handleChange('name')}
+            placeholder="Seu nome"
+            autoComplete="given-name"
+            required
+          />
+          <FormField
+            id="surname"
+            label="Sobrenome"
+            value={form.surname}
+            onChange={handleChange('surname')}
+            placeholder="Seu sobrenome"
+            autoComplete="family-name"
+            required
+          />
+          <FormField
+            id="email"
+            label="E-mail"
+            type="email"
+            value={form.email}
+            onChange={handleChange('email')}
+            placeholder="seu@email.com"
+            autoComplete="email"
+            required
+          />
+          <FormField
+            id="password"
+            label="Senha"
+            type="password"
+            value={form.password}
+            onChange={handleChange('password')}
+            placeholder="Mínimo 8 caracteres"
+            autoComplete="new-password"
+            required
+          />
+          <FormField
+            id="passwordConfirm"
+            label="Confirmação de senha"
+            type="password"
+            value={form.passwordConfirm}
+            onChange={handleChange('passwordConfirm')}
+            placeholder="Repita a senha"
+            autoComplete="new-password"
+            required
+          />
+          <Button type="submit" loading={loading} className="mt-2">
+            Criar conta
+          </Button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-mg-text-muted">
+          Já tem conta?{' '}
+          <Link
+            href="/login"
+            className="font-semibold text-mg-green hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-mg-green focus-visible:outline-offset-2"
+          >
+            Entrar
+          </Link>
+        </p>
       </div>
-    </div>
+    </main>
   )
 }
