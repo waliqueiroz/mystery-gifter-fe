@@ -142,8 +142,8 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T046 [US4] Remover por completo o diretório `src/components/groups/MemberProfileModal/` após auditoria de que nenhum import remanesce (`grep -rn "MemberProfileModal" src/` → 0) (depende de T045)
 - [X] T047 [US4] Refatorar `src/components/groups/InviteSection/InviteSection.tsx` para navegar para a nova rota `/groups/[id]/invite` em vez de abrir overlay/modal; atualizar `InviteSection.test.tsx`
 - [X] T048 [US4] Criar nova rota `src/app/(protected)/groups/[id]/invite/page.tsx` com formulário de convite e fluxo completo preservado; teste `page.test.tsx`
-- [ ] T049 [US4] Modificar `src/app/(protected)/groups/page.tsx` (lista) e `page.test.tsx` consumindo `GroupList` + `GroupFilters` refeitos
-- [ ] T050 [US4] Modificar `src/app/(protected)/groups/[id]/page.tsx` (detalhe) e `page.test.tsx` consumindo componentes refeitos (cartão, ações, lista de membros via sheet, sorteio)
+- [X] T049 [US4] Modificar `src/app/(protected)/groups/page.tsx` (lista) e `page.test.tsx` consumindo `GroupList` + `GroupFilters` refeitos
+- [X] T050 [US4] Modificar `src/app/(protected)/groups/[id]/page.tsx` (detalhe) e `page.test.tsx` consumindo componentes refeitos (cartão, ações, lista de membros via sheet, sorteio)
 
 **Checkpoint**: lista, detalhe, criação, convite, lista de membros, sheet de detalhes e sorteio operam no novo padrão; nenhum modal não-confirmatório remanesce.
 
