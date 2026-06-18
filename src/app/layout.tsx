@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Manrope, Noto_Sans } from 'next/font/google'
+import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 
 /*
@@ -40,7 +41,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${manrope.variable} ${notoSans.variable}`}>
-      <body>{children}</body>
+      <body>
+        <NextTopLoader color="#1ed760" showSpinner={false} />
+        {children}
+      </body>
     </html>
   )
 }
