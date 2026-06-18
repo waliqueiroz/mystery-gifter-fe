@@ -1,6 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+
+import FormField from '@/components/ui/FormField/FormField'
+import { Icon } from '@/components/ui/Icon/Icon'
+import { cn } from '@/lib/cn'
 import type { GroupFilterParams, GroupStatus } from '@/types/api'
 
 interface GroupFiltersProps {
@@ -8,11 +12,11 @@ interface GroupFiltersProps {
   onChange: (filters: GroupFilterParams) => void
 }
 
-const STATUS_OPTIONS: { value: GroupStatus; label: string }[] = [
+const STATUS_OPTIONS: readonly { value: GroupStatus; label: string }[] = [
   { value: 'OPEN', label: 'Aberto' },
   { value: 'MATCHED', label: 'Sorteado' },
   { value: 'ARCHIVED', label: 'Arquivado' },
-]
+] as const
 
 const NAME_DEBOUNCE_MS = 400
 
@@ -20,108 +24,109 @@ export function GroupFilters({ filters, onChange }: GroupFiltersProps) {
   const [nameValue, setNameValue] = useState(filters.name)
   const latestFiltersRef = useRef(filters)
 
-  // Keep the ref current on every render so the debounce timer always
-  // reads the latest statuses/sortDirection when it fires.
+  // Mantém a ref sempre atualizada para o timer disparado pelo debounce
+  // sempre ler os statuses/sortDirection mais recentes.
   useEffect(() => {
     latestFiltersRef.current = filters
   })
 
-  // If the parent resets filters.name externally, sync the input.
+  // Sincroniza o input quando o pai zera filters.name externamente.
   useEffect(() => {
     setNameValue(filters.name)
   }, [filters.name])
 
-  // Fire onChange only after the user stops typing for NAME_DEBOUNCE_MS.
+  // Dispara onChange só depois do usuário parar de digitar por NAME_DEBOUNCE_MS.
   useEffect(() => {
     if (nameValue === latestFiltersRef.current.name) return
     const timer = setTimeout(() => {
       onChange({ ...latestFiltersRef.current, name: nameValue })
     }, NAME_DEBOUNCE_MS)
     return () => clearTimeout(timer)
-  }, [nameValue]) // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nameValue])
 
-  function handleStatusToggle(value: GroupStatus) {
+  function toggleStatus(value: GroupStatus) {
     const next = filters.statuses.includes(value)
       ? filters.statuses.filter((s) => s !== value)
       : [...filters.statuses, value]
     onChange({ ...filters, statuses: next })
   }
 
-  function handleSortChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    onChange({ ...filters, sortDirection: e.target.value as 'ASC' | 'DESC' })
+  function setSort(direction: 'ASC' | 'DESC') {
+    if (filters.sortDirection === direction) return
+    onChange({ ...filters, sortDirection: direction })
   }
 
   return (
-    <div className="mb-3">
-      <div className="row g-2 align-items-end">
-        <div className="col-12 col-md-5">
-          <label
-            htmlFor="group-search"
-            className="form-label"
-            style={{ color: 'var(--mg-text-muted)', fontSize: '0.8rem' }}
-          >
-            Buscar por nome
-          </label>
-          <input
-            id="group-search"
-            type="text"
-            className="form-control"
-            placeholder="Nome do grupo..."
-            value={nameValue}
-            onChange={(e) => setNameValue(e.target.value)}
-          />
-        </div>
+    <div className="flex flex-col gap-4">
+      <FormField
+        id="group-search"
+        label="Buscar por nome"
+        type="search"
+        value={nameValue}
+        onChange={setNameValue}
+        placeholder="Nome do grupo..."
+      />
 
-        <div className="col-12 col-md-4">
-          <fieldset>
-            <legend
-              className="form-label mb-1"
-              style={{ color: 'var(--mg-text-muted)', fontSize: '0.8rem' }}
-            >
-              Status
-            </legend>
-            <div className="d-flex gap-3 flex-wrap">
-              {STATUS_OPTIONS.map(({ value, label }) => (
-                <div key={value} className="form-check form-check-inline mb-0">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id={`status-${value}`}
-                    checked={filters.statuses.includes(value)}
-                    onChange={() => handleStatusToggle(value)}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor={`status-${value}`}
-                    style={{ color: 'var(--mg-text)', fontSize: '0.875rem' }}
-                  >
-                    {label}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </fieldset>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-xs font-semibold uppercase tracking-btn text-mg-text-muted">
+          Status
+        </legend>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filtro de status">
+          {STATUS_OPTIONS.map(({ value, label }) => {
+            const active = filters.statuses.includes(value)
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={active}
+                onClick={() => toggleStatus(value)}
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-pill px-3 py-1.5 text-xs font-semibold transition-colors',
+                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-mg-green focus-visible:outline-offset-2',
+                  active
+                    ? 'bg-mg-green/15 text-mg-green'
+                    : 'bg-mg-surface-2 text-mg-text-muted hover:text-mg-text',
+                )}
+              >
+                {active && <Icon name="Check" size={12} aria-hidden />}
+                {label}
+              </button>
+            )
+          })}
         </div>
+      </fieldset>
 
-        <div className="col-12 col-md-3">
-          <label
-            htmlFor="group-sort"
-            className="form-label"
-            style={{ color: 'var(--mg-text-muted)', fontSize: '0.8rem' }}
-          >
-            Ordenar por
-          </label>
-          <select
-            id="group-sort"
-            className="form-control"
-            value={filters.sortDirection}
-            onChange={handleSortChange}
-          >
-            <option value="DESC">Mais recentes</option>
-            <option value="ASC">Mais antigos</option>
-          </select>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-xs font-semibold uppercase tracking-btn text-mg-text-muted">
+          Ordenar por
+        </legend>
+        <div className="flex gap-2" role="group" aria-label="Ordenação">
+          {([
+            { value: 'DESC', label: 'Mais recentes' },
+            { value: 'ASC', label: 'Mais antigos' },
+          ] as const).map(({ value, label }) => {
+            const active = filters.sortDirection === value
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setSort(value)}
+                className={cn(
+                  'rounded-pill px-3 py-1.5 text-xs font-semibold transition-colors',
+                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-mg-green focus-visible:outline-offset-2',
+                  active
+                    ? 'bg-mg-green/15 text-mg-green'
+                    : 'bg-mg-surface-2 text-mg-text-muted hover:text-mg-text',
+                )}
+              >
+                {label}
+              </button>
+            )
+          })}
         </div>
-      </div>
+      </fieldset>
     </div>
   )
 }

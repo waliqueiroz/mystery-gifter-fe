@@ -1,27 +1,26 @@
 'use client'
 
+import { EmptyState } from '@/components/ui/EmptyState/EmptyState'
+import { Icon } from '@/components/ui/Icon/Icon'
+
 interface GroupEmptyStateProps {
   onCreateClick: () => void
 }
 
+/**
+ * Wrapper de domínio sobre `<EmptyState />` (FR-025) com a cópia específica
+ * da lista de grupos vazia. Mantém o callback do CTA por compatibilidade com
+ * o consumidor atual (`GroupList`); quando a rota `/groups/new` entrar em
+ * Phase 6B, este componente pode ser substituído por `<EmptyState />`
+ * inline na chamada com `cta={{ href: '/groups/new' }}`.
+ */
 export function GroupEmptyState({ onCreateClick }: GroupEmptyStateProps) {
   return (
-    <div className="text-center py-5">
-      <i
-        className="fas fa-gift fa-4x mb-4"
-        style={{ color: 'var(--mg-primary-hover)' }}
-        aria-hidden="true"
-      />
-      <h4 className="mb-2" style={{ color: 'var(--mg-text)' }}>
-        Nenhum grupo ainda
-      </h4>
-      <p className="mb-4" style={{ color: 'var(--mg-text-muted)' }}>
-        Crie seu primeiro grupo de Amigo Secreto e comece a sortear!
-      </p>
-      <button type="button" className="btn btn-primary" onClick={onCreateClick}>
-        <i className="fas fa-plus mr-2" aria-hidden="true" />
-        Criar grupo
-      </button>
-    </div>
+    <EmptyState
+      icon={<Icon name="Gift" size={28} />}
+      title="Nenhum grupo ainda"
+      description="Crie seu primeiro grupo de Amigo Secreto e comece a sortear!"
+      cta={{ label: 'Criar grupo', onClick: onCreateClick }}
+    />
   )
 }

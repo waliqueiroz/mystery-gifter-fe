@@ -126,10 +126,10 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 ### Implementação para US4
 
 - [X] T032 [US4] Criar `src/components/ui/BottomSheet/BottomSheet.tsx` em cima de `@radix-ui/react-dialog` (slide bottom-up, `shadow-mg-dialog`, props conforme `data-model.md` §2) e teste `BottomSheet.test.tsx`
-- [ ] T033 [P] [US4] Refazer `src/components/groups/GroupCard/GroupCard.tsx` em Tailwind (cartão `bg-mg-surface`, `rounded-card`, sombra `shadow-mg-card` em hover, contagem de membros e badge de propriedade preservados) e atualizar `GroupCard.test.tsx`
-- [ ] T034 [P] [US4] Refazer `src/components/groups/GroupStatusBadge/GroupStatusBadge.tsx` como pill compacto e atualizar teste
-- [ ] T035 [P] [US4] Refazer `src/components/groups/GroupFilters/GroupFilters.tsx` (input search pill, multiselect de status como chips/pills, sort toggle) preservando debounce; atualizar `GroupFilters.test.tsx`
-- [ ] T036 [P] [US4] Refazer `src/components/groups/GroupEmptyState/GroupEmptyState.tsx` reusando `<EmptyState />` (ou removendo o wrapper se redundante após a primitiva) e atualizar teste
+- [X] T033 [P] [US4] Refazer `src/components/groups/GroupCard/GroupCard.tsx` em Tailwind (cartão `bg-mg-surface`, `rounded-card`, sombra `shadow-mg-card` em hover, contagem de membros e badge de propriedade preservados) e atualizar `GroupCard.test.tsx`
+- [X] T034 [P] [US4] Refazer `src/components/groups/GroupStatusBadge/GroupStatusBadge.tsx` como pill compacto e atualizar teste
+- [X] T035 [P] [US4] Refazer `src/components/groups/GroupFilters/GroupFilters.tsx` (input search pill, multiselect de status como chips/pills, sort toggle) preservando debounce; atualizar `GroupFilters.test.tsx`
+- [X] T036 [P] [US4] Refazer `src/components/groups/GroupEmptyState/GroupEmptyState.tsx` reusando `<EmptyState />` (ou removendo o wrapper se redundante após a primitiva) e atualizar teste
 - [ ] T037 [US4] Refazer `src/components/groups/GroupList/GroupList.tsx` consumindo SkeletonCard durante carregamento (com `useDelayedFlag(loading, 150)`), `<EmptyState />` para vazios e `<EmptyState variant="error" />` para falhas (com botão "Tentar novamente"); atualizar `GroupList.test.tsx` (depende de T033, T034, T035, T036)
 - [ ] T038 [US4] Extrair formulário do `CreateGroupModal` para `src/components/groups/CreateGroupForm/CreateGroupForm.tsx` puro (sem modal) e criar teste `CreateGroupForm.test.tsx`
 - [ ] T039 [US4] Criar nova rota `src/app/(protected)/groups/new/page.tsx` consumindo `CreateGroupForm` e teste `page.test.tsx`; substituir todas as aberturas do modal por navegação para `/groups/new` (depende de T038)

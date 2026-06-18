@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import type { GroupSummary } from '@/types/api'
+
 import { GroupStatusBadge } from '@/components/groups/GroupStatusBadge/GroupStatusBadge'
 import { useUser } from '@/contexts/UserContext'
+import { cn } from '@/lib/cn'
+import type { GroupSummary } from '@/types/api'
 
 interface GroupCardProps {
   group: GroupSummary
@@ -12,41 +14,39 @@ interface GroupCardProps {
 export function GroupCard({ group }: GroupCardProps) {
   const user = useUser()
   const isOwner = user !== null && user.id === group.owner_id
+  const isArchived = group.status === 'ARCHIVED'
 
   return (
-    <Link href={`/groups/${group.id}`} className="text-decoration-none">
-      <div
-        className="card mb-3"
-        style={{
-          backgroundColor: 'var(--mg-bg-card)',
-          border: '1px solid rgba(107,70,193,0.2)',
-          transition: 'border-color var(--mg-transition)',
-          cursor: 'pointer',
-          opacity: group.status === 'ARCHIVED' ? 0.6 : 1,
-        }}
-      >
-        <div className="card-body d-flex align-items-center justify-content-between gap-2">
-          <div style={{ minWidth: 0 }}>
-            <h5 className="mb-1 text-truncate" style={{ color: 'var(--mg-text)' }}>
+    <Link
+      href={`/groups/${group.id}`}
+      data-testid="group-card"
+      className={cn(
+        'block rounded-card bg-mg-surface p-4 transition-colors hover:bg-mg-surface-2',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-mg-green focus-visible:outline-offset-2',
+        isArchived && 'opacity-60',
+      )}
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-grow">
+          <div className="flex items-center gap-2">
+            <h2 className="truncate text-base font-bold text-mg-text">
               {group.name}
-              {isOwner && (
-                <span
-                  className="badge badge-primary mg-owner-badge ml-2"
-                  style={{ fontSize: '0.65rem', verticalAlign: 'middle' }}
-                  aria-label="Você é o dono deste grupo"
-                >
-                  Dono
-                </span>
-              )}
-            </h5>
-            <small style={{ color: 'var(--mg-text-muted)' }}>
-              {group.user_count} {group.user_count === 1 ? 'participante' : 'participantes'}
-            </small>
+            </h2>
+            {isOwner && (
+              <span
+                aria-label="Você é o dono deste grupo"
+                className="shrink-0 rounded-pill bg-mg-green/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-btn text-mg-green"
+              >
+                Dono
+              </span>
+            )}
           </div>
-          <div style={{ flexShrink: 0 }}>
-            <GroupStatusBadge status={group.status} />
-          </div>
+          <p className="mt-1 text-xs text-mg-text-muted">
+            {group.user_count}{' '}
+            {group.user_count === 1 ? 'participante' : 'participantes'}
+          </p>
         </div>
+        <GroupStatusBadge status={group.status} />
       </div>
     </Link>
   )
