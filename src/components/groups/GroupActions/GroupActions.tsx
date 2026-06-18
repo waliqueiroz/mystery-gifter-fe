@@ -1,10 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import type { Group } from '@/types/api'
-import { reopenGroup, archiveGroup } from '@/services/api/groupService'
+
+import Button from '@/components/ui/Button/Button'
 import { ConfirmModal } from '@/components/ui/ConfirmModal/ConfirmModal'
+import { Icon } from '@/components/ui/Icon/Icon'
 import { useToast } from '@/components/ui/Toast/useToast'
+import { archiveGroup, reopenGroup } from '@/services/api/groupService'
+import type { Group } from '@/types/api'
 
 type ModalState = 'none' | 'reopen' | 'archive'
 
@@ -22,12 +25,17 @@ export function GroupActions({ group, onGroupUpdate }: GroupActionsProps) {
     setLoading(true)
     try {
       const updated =
-        modal === 'reopen' ? await reopenGroup(group.id) : await archiveGroup(group.id)
+        modal === 'reopen'
+          ? await reopenGroup(group.id)
+          : await archiveGroup(group.id)
       onGroupUpdate(updated)
       setModal('none')
     } catch (err) {
       showToast({
-        message: err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'Ocorreu um erro. Tente novamente.',
         type: 'error',
       })
     } finally {
@@ -37,28 +45,33 @@ export function GroupActions({ group, onGroupUpdate }: GroupActionsProps) {
 
   return (
     <>
-      <div className="d-flex gap-2 flex-wrap">
+      <div className="flex flex-wrap gap-2">
         {group.status === 'MATCHED' && (
-          <button
+          <Button
             type="button"
-            className="btn btn-outline-primary btn-sm"
+            variant="outline"
+            shape="pill"
+            size="sm"
             onClick={() => setModal('reopen')}
             disabled={loading}
+            iconLeft={<Icon name="RotateCcw" size={14} />}
           >
-            <i className="fas fa-redo mr-1" aria-hidden="true" />
             Reabrir grupo
-          </button>
+          </Button>
         )}
         {group.status !== 'ARCHIVED' && (
-          <button
+          <Button
             type="button"
-            className="btn btn-outline-danger btn-sm"
+            variant="outline"
+            shape="pill"
+            size="sm"
             onClick={() => setModal('archive')}
             disabled={loading}
+            iconLeft={<Icon name="Archive" size={14} />}
+            className="text-mg-text-negative border-mg-text-negative hover:border-mg-text-negative"
           >
-            <i className="fas fa-archive mr-1" aria-hidden="true" />
             Arquivar grupo
-          </button>
+          </Button>
         )}
       </div>
 

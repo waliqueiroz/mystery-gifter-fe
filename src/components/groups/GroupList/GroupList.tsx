@@ -1,8 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 
-import { CreateGroupModal } from '@/components/groups/CreateGroupModal/CreateGroupModal'
 import { GroupCard } from '@/components/groups/GroupCard/GroupCard'
 import { GroupEmptyState } from '@/components/groups/GroupEmptyState/GroupEmptyState'
 import { GroupFilters } from '@/components/groups/GroupFilters/GroupFilters'
@@ -14,12 +14,7 @@ import { useToast } from '@/components/ui/Toast/useToast'
 import { useUser } from '@/contexts/UserContext'
 import { useDelayedFlag } from '@/lib/useDelayedFlag'
 import { listGroups } from '@/services/api/groupService'
-import type {
-  Group,
-  GroupFilterParams,
-  GroupSummary,
-  Paging,
-} from '@/types/api'
+import type { GroupFilterParams, GroupSummary, Paging } from '@/types/api'
 import { DEFAULT_GROUP_FILTERS } from '@/types/api'
 
 const PAGE_SIZE = 15
@@ -53,7 +48,6 @@ export function GroupList() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [loadingFilter, setLoadingFilter] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const isLoadingForSkeleton = loadingInitial || loadingFilter
   const showSkeleton = useDelayedFlag(isLoadingForSkeleton, 150)
@@ -132,35 +126,19 @@ export function GroupList() {
     }
   }
 
-  function handleGroupCreated(group: Group) {
-    setGroups((prev) => [
-      {
-        id: group.id,
-        name: group.name,
-        status: group.status,
-        owner_id: group.owner_id,
-        user_count: group.users.length,
-        created_at: group.created_at,
-        updated_at: group.updated_at,
-      },
-      ...prev,
-    ])
-    setPaging((prev) => ({ ...prev, total: prev.total + 1 }))
-    showToast({ message: 'Grupo criado com sucesso!', type: 'success' })
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-mg-text">Meus grupos</h1>
-        <Button
-          shape="pill"
-          size="sm"
-          onClick={() => setIsModalOpen(true)}
-          iconLeft={<Icon name="Plus" size={14} />}
-        >
-          Novo grupo
-        </Button>
+        <Link href="/groups/new" className="contents">
+          <Button
+            shape="pill"
+            size="sm"
+            iconLeft={<Icon name="Plus" size={14} />}
+          >
+            Novo grupo
+          </Button>
+        </Link>
       </header>
 
       <GroupFilters filters={filters} onChange={handleFilterChange} />
@@ -176,7 +154,7 @@ export function GroupList() {
       ) : showSkeleton ? (
         <SkeletonList />
       ) : groups.length === 0 ? (
-        <GroupEmptyState onCreateClick={() => setIsModalOpen(true)} />
+        <GroupEmptyState />
       ) : (
         <>
           <div className="flex flex-col gap-3">
@@ -199,12 +177,6 @@ export function GroupList() {
           )}
         </>
       )}
-
-      <CreateGroupModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={handleGroupCreated}
-      />
     </div>
   )
 }

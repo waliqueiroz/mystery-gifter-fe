@@ -131,15 +131,15 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T035 [P] [US4] Refazer `src/components/groups/GroupFilters/GroupFilters.tsx` (input search pill, multiselect de status como chips/pills, sort toggle) preservando debounce; atualizar `GroupFilters.test.tsx`
 - [X] T036 [P] [US4] Refazer `src/components/groups/GroupEmptyState/GroupEmptyState.tsx` reusando `<EmptyState />` (ou removendo o wrapper se redundante após a primitiva) e atualizar teste
 - [X] T037 [US4] Refazer `src/components/groups/GroupList/GroupList.tsx` consumindo SkeletonCard durante carregamento (com `useDelayedFlag(loading, 150)`), `<EmptyState />` para vazios e `<EmptyState variant="error" />` para falhas (com botão "Tentar novamente"); atualizar `GroupList.test.tsx` (depende de T033, T034, T035, T036)
-- [ ] T038 [US4] Extrair formulário do `CreateGroupModal` para `src/components/groups/CreateGroupForm/CreateGroupForm.tsx` puro (sem modal) e criar teste `CreateGroupForm.test.tsx`
-- [ ] T039 [US4] Criar nova rota `src/app/(protected)/groups/new/page.tsx` consumindo `CreateGroupForm` e teste `page.test.tsx`; substituir todas as aberturas do modal por navegação para `/groups/new` (depende de T038)
-- [ ] T040 [US4] Remover por completo o diretório `src/components/groups/CreateGroupModal/` após auditoria de que nenhum import remanesce (`grep -rn "CreateGroupModal" src/` → 0)
-- [ ] T041 [P] [US4] Refazer `src/components/groups/DrawButton/DrawButton.tsx` como botão circular ou pill grande conforme DESIGN.md, com `ConfirmModal` mantido para confirmação; atualizar `DrawButton.test.tsx`
-- [ ] T042 [P] [US4] Refazer `src/components/groups/GroupActions/GroupActions.tsx` em Tailwind preservando comportamento; atualizar teste
-- [ ] T043 [P] [US4] Refazer `src/components/groups/ResultReveal/ResultReveal.tsx` em Tailwind; atualizar teste
-- [ ] T044 [US4] Criar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx` substituindo o modal antigo por `<BottomSheet>`; teste `MemberProfileSheet.test.tsx` cobrindo abertura via clique, fechamento por ESC/backdrop e a11y (depende de T032)
-- [ ] T045 [US4] Refazer `src/components/groups/MemberList/MemberList.tsx` para abrir `MemberProfileSheet` ao clicar em um membro (em vez do modal antigo); atualizar `MemberList.test.tsx` (depende de T044)
-- [ ] T046 [US4] Remover por completo o diretório `src/components/groups/MemberProfileModal/` após auditoria de que nenhum import remanesce (`grep -rn "MemberProfileModal" src/` → 0) (depende de T045)
+- [X] T038 [US4] Extrair formulário do `CreateGroupModal` para `src/components/groups/CreateGroupForm/CreateGroupForm.tsx` puro (sem modal) e criar teste `CreateGroupForm.test.tsx`
+- [X] T039 [US4] Criar nova rota `src/app/(protected)/groups/new/page.tsx` consumindo `CreateGroupForm` e teste `page.test.tsx`; substituir todas as aberturas do modal por navegação para `/groups/new` (depende de T038)
+- [X] T040 [US4] Remover por completo o diretório `src/components/groups/CreateGroupModal/` após auditoria de que nenhum import remanesce (`grep -rn "CreateGroupModal" src/` → 0)
+- [X] T041 [P] [US4] Refazer `src/components/groups/DrawButton/DrawButton.tsx` como botão circular ou pill grande conforme DESIGN.md, com `ConfirmModal` mantido para confirmação; atualizar `DrawButton.test.tsx`
+- [X] T042 [P] [US4] Refazer `src/components/groups/GroupActions/GroupActions.tsx` em Tailwind preservando comportamento; atualizar teste
+- [X] T043 [P] [US4] Refazer `src/components/groups/ResultReveal/ResultReveal.tsx` em Tailwind; atualizar teste
+- [X] T044 [US4] Criar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx` substituindo o modal antigo por `<BottomSheet>`; teste `MemberProfileSheet.test.tsx` cobrindo abertura via clique, fechamento por ESC/backdrop e a11y (depende de T032)
+- [X] T045 [US4] Refazer `src/components/groups/MemberList/MemberList.tsx` para abrir `MemberProfileSheet` ao clicar em um membro (em vez do modal antigo); atualizar `MemberList.test.tsx` (depende de T044)
+- [X] T046 [US4] Remover por completo o diretório `src/components/groups/MemberProfileModal/` após auditoria de que nenhum import remanesce (`grep -rn "MemberProfileModal" src/` → 0) (depende de T045)
 - [ ] T047 [US4] Refatorar `src/components/groups/InviteSection/InviteSection.tsx` para navegar para a nova rota `/groups/[id]/invite` em vez de abrir overlay/modal; atualizar `InviteSection.test.tsx`
 - [ ] T048 [US4] Criar nova rota `src/app/(protected)/groups/[id]/invite/page.tsx` com formulário de convite e fluxo completo preservado; teste `page.test.tsx`
 - [ ] T049 [US4] Modificar `src/app/(protected)/groups/page.tsx` (lista) e `page.test.tsx` consumindo `GroupList` + `GroupFilters` refeitos

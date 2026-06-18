@@ -11,7 +11,7 @@ export interface RegisterFormData {
   passwordConfirm: string
 }
 
-/** Used by the CreateGroupModal form */
+/** Used by the CreateGroupForm */
 export interface CreateGroupFormData {
   name: string
   description: string
