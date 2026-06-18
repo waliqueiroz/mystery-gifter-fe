@@ -11,7 +11,6 @@ interface InviteJoinCardProps {
 }
 
 enum JoinStatus {
-  Idle = 'idle',
   Loading = 'loading',
   DrawCompleted = 'draw_completed',
   Invalid = 'invalid',
@@ -27,7 +26,7 @@ const STATUS_MESSAGES: Partial<Record<JoinStatus, string>> = {
 
 export function InviteJoinCard({ token }: InviteJoinCardProps) {
   const router = useRouter()
-  const [status, setStatus] = useState<JoinStatus>(JoinStatus.Idle)
+  const [status, setStatus] = useState<JoinStatus | null>(null)
 
   async function handleJoin() {
     setStatus(JoinStatus.Loading)
@@ -45,7 +44,7 @@ export function InviteJoinCard({ token }: InviteJoinCardProps) {
     }
   }
 
-  const errorMessage = STATUS_MESSAGES[status]
+  const errorMessage = status !== null ? STATUS_MESSAGES[status] : undefined
 
   return (
     <div className="rounded-card bg-mg-surface p-8 text-center">

@@ -60,7 +60,7 @@ describe('apiFetch', () => {
 
   it('lança NotFoundError em 404 com a mensagem do backend', async () => {
     mockFetch(404, { code: 'not_found', message: 'recurso não encontrado' })
-    const err = await apiFetch('/api/test').catch((e) => e)
+    const err = await apiFetch('/api/test').catch((e) => e) as NotFoundError
     expect(err).toBeInstanceOf(NotFoundError)
     expect(err.message).toBe('recurso não encontrado')
     expect(err.status).toBe(404)
@@ -68,7 +68,7 @@ describe('apiFetch', () => {
 
   it('lança ForbiddenError em 403', async () => {
     mockFetch(403, { code: 'forbidden', message: 'acesso negado' })
-    const err = await apiFetch('/api/test').catch((e) => e)
+    const err = await apiFetch('/api/test').catch((e) => e) as ForbiddenError
     expect(err).toBeInstanceOf(ForbiddenError)
     expect(err.message).toBe('acesso negado')
     expect(err.status).toBe(403)
@@ -76,7 +76,7 @@ describe('apiFetch', () => {
 
   it('lança ApiRequestError genérico para outros status de erro', async () => {
     mockFetch(500, { code: 'internal_server_error', message: 'falha interna' })
-    const err = await apiFetch('/api/test').catch((e) => e)
+    const err = await apiFetch('/api/test').catch((e) => e) as ApiRequestError
     expect(err).toBeInstanceOf(ApiRequestError)
     expect(err.status).toBe(500)
     expect(err.code).toBe('internal_server_error')
@@ -84,7 +84,7 @@ describe('apiFetch', () => {
 
   it('usa mensagem fallback quando body.message está ausente', async () => {
     mockFetch(500, {})
-    const err = await apiFetch('/api/test').catch((e) => e)
+    const err = await apiFetch('/api/test').catch((e) => e) as ApiRequestError
     expect(err.message).toBe('Ocorreu um erro. Tente novamente.')
   })
 
