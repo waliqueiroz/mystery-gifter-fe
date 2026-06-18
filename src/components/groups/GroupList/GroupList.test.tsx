@@ -147,12 +147,23 @@ describe('GroupList', () => {
     expect(screen.getByText('Grupo g1')).toBeInTheDocument()
   })
 
-  it('abre CreateGroupModal ao clicar em "Novo grupo"', async () => {
+  it('botão "Novo grupo" é um link para /groups/new (FR-023 + Q2)', async () => {
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)
     await screen.findByText('Nenhum grupo ainda')
-    await userEvent.click(screen.getByRole('button', { name: /novo grupo/i }))
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /novo grupo/i })).toHaveAttribute(
+      'href',
+      '/groups/new',
+    )
+  })
+
+  it('CTA do empty state também aponta para /groups/new', async () => {
+    mockListGroups.mockResolvedValue(makeResult([]))
+    render(<GroupList />)
+    await screen.findByText('Nenhum grupo ainda')
+    expect(
+      screen.getByRole('link', { name: /criar grupo/i }),
+    ).toHaveAttribute('href', '/groups/new')
   })
 
   it('chama listGroups com o userId do contexto', async () => {

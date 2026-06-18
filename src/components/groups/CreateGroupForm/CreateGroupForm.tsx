@@ -28,9 +28,8 @@ const TEXTAREA_CLASSES = cn(
 )
 
 /**
- * Formulário de criação de grupo puro — sem chassi de modal, sem overlay. O
- * mesmo componente é consumido tanto pela rota dedicada `/groups/new` (T039)
- * quanto pelo `CreateGroupModal` legado durante a transição.
+ * Formulário de criação de grupo puro — sem chassi de modal, sem overlay.
+ * Consumido pela rota dedicada `/groups/new`.
  *
  * A migração da UI de modal para rota é exigência da clarificação Q2 + FR-023
  * (modais só para confirmação); a rota dedicada suporta back do navegador e

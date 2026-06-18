@@ -132,8 +132,8 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T036 [P] [US4] Refazer `src/components/groups/GroupEmptyState/GroupEmptyState.tsx` reusando `<EmptyState />` (ou removendo o wrapper se redundante após a primitiva) e atualizar teste
 - [X] T037 [US4] Refazer `src/components/groups/GroupList/GroupList.tsx` consumindo SkeletonCard durante carregamento (com `useDelayedFlag(loading, 150)`), `<EmptyState />` para vazios e `<EmptyState variant="error" />` para falhas (com botão "Tentar novamente"); atualizar `GroupList.test.tsx` (depende de T033, T034, T035, T036)
 - [X] T038 [US4] Extrair formulário do `CreateGroupModal` para `src/components/groups/CreateGroupForm/CreateGroupForm.tsx` puro (sem modal) e criar teste `CreateGroupForm.test.tsx`
-- [ ] T039 [US4] Criar nova rota `src/app/(protected)/groups/new/page.tsx` consumindo `CreateGroupForm` e teste `page.test.tsx`; substituir todas as aberturas do modal por navegação para `/groups/new` (depende de T038)
-- [ ] T040 [US4] Remover por completo o diretório `src/components/groups/CreateGroupModal/` após auditoria de que nenhum import remanesce (`grep -rn "CreateGroupModal" src/` → 0)
+- [X] T039 [US4] Criar nova rota `src/app/(protected)/groups/new/page.tsx` consumindo `CreateGroupForm` e teste `page.test.tsx`; substituir todas as aberturas do modal por navegação para `/groups/new` (depende de T038)
+- [X] T040 [US4] Remover por completo o diretório `src/components/groups/CreateGroupModal/` após auditoria de que nenhum import remanesce (`grep -rn "CreateGroupModal" src/` → 0)
 - [ ] T041 [P] [US4] Refazer `src/components/groups/DrawButton/DrawButton.tsx` como botão circular ou pill grande conforme DESIGN.md, com `ConfirmModal` mantido para confirmação; atualizar `DrawButton.test.tsx`
 - [ ] T042 [P] [US4] Refazer `src/components/groups/GroupActions/GroupActions.tsx` em Tailwind preservando comportamento; atualizar teste
 - [ ] T043 [P] [US4] Refazer `src/components/groups/ResultReveal/ResultReveal.tsx` em Tailwind; atualizar teste
