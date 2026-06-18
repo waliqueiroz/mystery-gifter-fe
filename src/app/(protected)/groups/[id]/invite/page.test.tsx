@@ -147,7 +147,7 @@ describe('InvitePage', () => {
   })
 
   describe('quando não há convite ativo (404)', () => {
-    it('dono vê CTA "Gerar link de convite" quando não há convite ativo (NotFoundError)', async () => {
+    it('owner sees "Gerar link de convite" CTA when there is no active invite (NotFoundError)', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
       mockGetActiveInvite.mockRejectedValue(new NotFoundError('no active invite found for this group'))
       render(<InvitePage />)
@@ -156,7 +156,7 @@ describe('InvitePage', () => {
       ).toBeInTheDocument()
     })
 
-    it('trata ApiRequestError não-404 como erro real, não como ausência de invite', async () => {
+    it('treats non-404 ApiRequestError as a real error, not as a missing invite', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
       mockGetActiveInvite.mockRejectedValue(new ApiRequestError('Erro de servidor.', 500, 'internal_server_error'))
       render(<InvitePage />)
