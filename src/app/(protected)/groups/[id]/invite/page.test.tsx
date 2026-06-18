@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import * as userContext from '@/contexts/UserContext'
 import * as groupService from '@/services/api/groupService'
 import * as inviteService from '@/services/api/inviteService'
+import { NotFoundError, ApiRequestError } from '@/lib/errors'
 import type { Group, GroupInvite } from '@/types/api'
 
 import InvitePage from './page'
@@ -76,12 +77,6 @@ function makeGroup(extra: Partial<Group> = {}): Group {
   }
 }
 
-function makeHttpError(status: number, message: string): Error {
-  const err = new Error(message)
-  ;(err as Error & { status: number }).status = status
-  return err
-}
-
 const mockInvite: GroupInvite = {
   id: 'token-abc',
   group_id: 'g1',
@@ -152,28 +147,28 @@ describe('InvitePage', () => {
   })
 
   describe('quando não há convite ativo (404)', () => {
-    it('dono vê CTA "Gerar link de convite" — erro com status HTTP 404', async () => {
+    it('dono vê CTA "Gerar link de convite" quando não há convite ativo (NotFoundError)', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
-      mockGetActiveInvite.mockRejectedValue(makeHttpError(404, 'no active invite'))
+      mockGetActiveInvite.mockRejectedValue(new NotFoundError('no active invite found for this group'))
       render(<InvitePage />)
       expect(
         await screen.findByRole('button', { name: /gerar link de convite/i }),
       ).toBeInTheDocument()
     })
 
-    it('dono vê CTA "Gerar link de convite" — erro com "not found" na mensagem (fallback)', async () => {
+    it('trata ApiRequestError não-404 como erro real, não como ausência de invite', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
-      mockGetActiveInvite.mockRejectedValue(new Error('not found'))
+      mockGetActiveInvite.mockRejectedValue(new ApiRequestError('Erro de servidor.', 500, 'internal_server_error'))
       render(<InvitePage />)
       expect(
-        await screen.findByRole('button', { name: /gerar link de convite/i }),
+        await screen.findByText('Não foi possível carregar'),
       ).toBeInTheDocument()
     })
 
     it('não-dono vê mensagem orientativa, sem CTA', async () => {
       mockUseUser.mockReturnValue(member)
       mockGetGroup.mockResolvedValue(makeGroup())
-      mockGetActiveInvite.mockRejectedValue(makeHttpError(404, 'no active invite'))
+      mockGetActiveInvite.mockRejectedValue(new NotFoundError('no active invite found for this group'))
       render(<InvitePage />)
       expect(
         await screen.findByText(/peça ao dono/i),
@@ -185,7 +180,7 @@ describe('InvitePage', () => {
 
     it('clique em "Gerar" cria invite e exibe o link', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
-      mockGetActiveInvite.mockRejectedValue(makeHttpError(404, 'no active invite'))
+      mockGetActiveInvite.mockRejectedValue(new NotFoundError('no active invite found for this group'))
       mockCreateInvite.mockResolvedValue(mockInvite)
       render(<InvitePage />)
       await userEvent.click(

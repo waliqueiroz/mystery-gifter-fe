@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { InviteJoinCard } from './InviteJoinCard'
 import * as inviteService from '@/services/api/inviteService'
+import { DrawCompletedError, InvalidInviteError, ApiRequestError } from '@/lib/errors'
 
 jest.mock('@/services/api/inviteService', () => ({ joinGroup: jest.fn() }))
 jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }))
@@ -28,16 +29,20 @@ describe('InviteJoinCard', () => {
     await waitFor(() => expect(mockJoinGroup).toHaveBeenCalledWith('abc123'))
   })
 
-  it('shows draw_completed message when group is matched', async () => {
-    mockJoinGroup.mockRejectedValue(new Error('group is already matched'))
+  it('shows draw_completed message when DrawCompletedError is thrown', async () => {
+    mockJoinGroup.mockRejectedValue(
+      new DrawCompletedError(
+        'group is not open for registration, contact the group owner to reopen the group',
+      ),
+    )
     render(<InviteJoinCard token="tok" />)
     await userEvent.click(screen.getByRole('button', { name: /entrar no grupo/i }))
     expect(await screen.findByText(/sorteio deste grupo já foi realizado/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /entrar/i })).not.toBeInTheDocument()
   })
 
-  it('shows invalid message when invite is not found', async () => {
-    mockJoinGroup.mockRejectedValue(new Error('invite not found'))
+  it('shows invalid message when InvalidInviteError is thrown', async () => {
+    mockJoinGroup.mockRejectedValue(new InvalidInviteError('group invite not found', 404))
     render(<InviteJoinCard token="tok" />)
     await userEvent.click(screen.getByRole('button', { name: /entrar no grupo/i }))
     expect(await screen.findByText(/inválido ou expirou/i)).toBeInTheDocument()
@@ -45,7 +50,7 @@ describe('InviteJoinCard', () => {
   })
 
   it('shows generic error message for unknown errors', async () => {
-    mockJoinGroup.mockRejectedValue(new Error('server error'))
+    mockJoinGroup.mockRejectedValue(new ApiRequestError('falha interna', 500, 'internal_server_error'))
     render(<InviteJoinCard token="tok" />)
     await userEvent.click(screen.getByRole('button', { name: /entrar no grupo/i }))
     expect(await screen.findByText(/ocorreu um erro/i)).toBeInTheDocument()

@@ -7,6 +7,7 @@ import {
   reopenGroup,
   archiveGroup,
 } from './groupService'
+import { SessionExpiredError, ForbiddenError } from '@/lib/errors'
 import type { Group, GroupSearchResult } from '@/types/api'
 
 const mockGroup: Group = {
@@ -167,14 +168,16 @@ describe('groupService', () => {
   })
 
   describe('error handling', () => {
-    it('throws with backend message on non-ok response', async () => {
+    it('throws ForbiddenError em 403 com mensagem do backend', async () => {
       mockFetch(403, { code: 'forbidden', message: 'Acesso negado.' })
-      await expect(getGroup('g1')).rejects.toThrow('Acesso negado.')
+      const err = await getGroup('g1').catch((e) => e)
+      expect(err).toBeInstanceOf(ForbiddenError)
+      expect(err.message).toBe('Acesso negado.')
     })
 
-    it('clears token and throws on 401', async () => {
+    it('throws SessionExpiredError e limpa o token em 401', async () => {
       mockFetch(401, {})
-      await expect(getGroup('g1')).rejects.toThrow('Sessão expirada.')
+      await expect(getGroup('g1')).rejects.toBeInstanceOf(SessionExpiredError)
       expect(localStorage.getItem('mystery_gifter_token')).toBeNull()
     })
   })
