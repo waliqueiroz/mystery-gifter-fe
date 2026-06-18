@@ -21,8 +21,8 @@ export default function InvitePage() {
   if (!authenticated) return null
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: 'var(--mg-bg)' }}>
-      <div style={{ width: '100%', maxWidth: 480, padding: '1rem' }}>
+    <div className="min-h-dvh flex items-center justify-center bg-mg-bg px-4">
+      <div className="w-full max-w-app">
         <InviteJoinCard token={token} />
       </div>
     </div>

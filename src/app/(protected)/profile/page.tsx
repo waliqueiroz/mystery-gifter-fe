@@ -1,20 +1,12 @@
+import { LogoutButton } from '@/components/profile/LogoutButton/LogoutButton'
 import { ProfileCard } from '@/components/profile/ProfileCard/ProfileCard'
 
 export default function ProfilePage() {
   return (
-    <section className="content">
-      <div className="container-fluid">
-        <div className="row mb-4">
-          <div className="col-12">
-            <h3 style={{ color: 'var(--mg-text)' }}>Meu perfil</h3>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12">
-            <ProfileCard />
-          </div>
-        </div>
-      </div>
-    </section>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold text-mg-text">Meu perfil</h1>
+      <ProfileCard />
+      <LogoutButton />
+    </div>
   )
 }
