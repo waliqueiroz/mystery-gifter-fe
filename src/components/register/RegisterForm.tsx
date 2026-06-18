@@ -22,8 +22,8 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false)
 
   function handleChange(field: keyof RegisterFormData) {
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }))
+    return (value: string) => {
+      setForm((prev) => ({ ...prev, [field]: value }))
     }
   }
 

@@ -17,8 +17,8 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false)
 
   function handleChange(field: keyof LoginFormData) {
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }))
+    return (value: string) => {
+      setForm((prev) => ({ ...prev, [field]: value }))
     }
   }
 
