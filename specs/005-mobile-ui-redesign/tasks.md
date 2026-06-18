@@ -125,7 +125,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 ### Implementação para US4
 
-- [ ] T032 [US4] Criar `src/components/ui/BottomSheet/BottomSheet.tsx` em cima de `@radix-ui/react-dialog` (slide bottom-up, `shadow-mg-dialog`, props conforme `data-model.md` §2) e teste `BottomSheet.test.tsx`
+- [X] T032 [US4] Criar `src/components/ui/BottomSheet/BottomSheet.tsx` em cima de `@radix-ui/react-dialog` (slide bottom-up, `shadow-mg-dialog`, props conforme `data-model.md` §2) e teste `BottomSheet.test.tsx`
 - [ ] T033 [P] [US4] Refazer `src/components/groups/GroupCard/GroupCard.tsx` em Tailwind (cartão `bg-mg-surface`, `rounded-card`, sombra `shadow-mg-card` em hover, contagem de membros e badge de propriedade preservados) e atualizar `GroupCard.test.tsx`
 - [ ] T034 [P] [US4] Refazer `src/components/groups/GroupStatusBadge/GroupStatusBadge.tsx` como pill compacto e atualizar teste
 - [ ] T035 [P] [US4] Refazer `src/components/groups/GroupFilters/GroupFilters.tsx` (input search pill, multiselect de status como chips/pills, sort toggle) preservando debounce; atualizar `GroupFilters.test.tsx`
