@@ -26,6 +26,7 @@ const mockGroup: Group = {
   status: 'OPEN',
   owner_id: 'u1',
   users: [],
+  matches: [],
   created_at: '',
   updated_at: '',
 }

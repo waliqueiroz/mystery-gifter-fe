@@ -79,8 +79,8 @@ function makeGroup(extra: Partial<Group> = {}): Group {
 const mockInvite: GroupInvite = {
   id: 'token-abc',
   group_id: 'g1',
+  expires_at: '',
   created_at: '',
-  updated_at: '',
 }
 
 // jsdom já fornece window.location com origin "http://localhost"; basta
