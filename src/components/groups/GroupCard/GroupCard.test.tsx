@@ -1,12 +1,26 @@
 import { render, screen } from '@testing-library/react'
-import { GroupCard } from './GroupCard'
+
 import * as userContext from '@/contexts/UserContext'
 import type { GroupSummary } from '@/types/api'
 
+import { GroupCard } from './GroupCard'
+
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+    'data-testid': testid,
+  }: {
+    href: string
+    children: React.ReactNode
+    className?: string
+    'data-testid'?: string
+  }) => (
+    <a href={href} className={className} data-testid={testid}>
+      {children}
+    </a>
   ),
 }))
 
@@ -29,73 +43,84 @@ beforeEach(() => {
 })
 
 describe('GroupCard', () => {
-  it('renders the group name', () => {
+  it('renderiza o nome do grupo', () => {
     render(<GroupCard group={mockGroup} />)
     expect(screen.getByText('Amigo Secreto 2026')).toBeInTheDocument()
   })
 
-  it('renders the member count in plural', () => {
+  it('renderiza a contagem de participantes (plural)', () => {
     render(<GroupCard group={mockGroup} />)
     expect(screen.getByText('4 participantes')).toBeInTheDocument()
   })
 
-  it('renders "participante" in singular when count is 1', () => {
+  it('renderiza "participante" no singular quando count=1', () => {
     render(<GroupCard group={{ ...mockGroup, user_count: 1 }} />)
     expect(screen.getByText('1 participante')).toBeInTheDocument()
   })
 
-  it('renders the status badge', () => {
+  it('renderiza o badge de status', () => {
     render(<GroupCard group={mockGroup} />)
     expect(screen.getByText('Aberto')).toBeInTheDocument()
   })
 
-  it('links to the group detail page', () => {
-    render(<GroupCard group={mockGroup} />)
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/groups/g1')
-  })
-
-  it('renders MATCHED status badge', () => {
+  it('renderiza badge MATCHED para grupo sorteado', () => {
     render(<GroupCard group={{ ...mockGroup, status: 'MATCHED' }} />)
     expect(screen.getByText('Sorteio realizado')).toBeInTheDocument()
   })
 
-  describe('archived visual distinction', () => {
-    it('renders with opacity 0.6 when status is ARCHIVED', () => {
-      const { container } = render(<GroupCard group={{ ...mockGroup, status: 'ARCHIVED' }} />)
-      const card = container.querySelector('.card') as HTMLElement
-      expect(card.style.opacity).toBe('0.6')
+  it('aponta para a página de detalhe via /groups/:id', () => {
+    render(<GroupCard group={mockGroup} />)
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/groups/g1')
+  })
+
+  it('aplica visual de cartão escuro com rounded-card e fundo de superfície', () => {
+    render(<GroupCard group={mockGroup} />)
+    const card = screen.getByTestId('group-card')
+    expect(card).toHaveClass('rounded-card')
+    expect(card).toHaveClass('bg-mg-surface')
+  })
+
+  describe('estado arquivado', () => {
+    it('aplica opacity-60 quando status=ARCHIVED', () => {
+      render(<GroupCard group={{ ...mockGroup, status: 'ARCHIVED' }} />)
+      expect(screen.getByTestId('group-card')).toHaveClass('opacity-60')
     })
 
-    it('renders with opacity 1 when status is OPEN', () => {
-      const { container } = render(<GroupCard group={mockGroup} />)
-      const card = container.querySelector('.card') as HTMLElement
-      expect(card.style.opacity).toBe('1')
+    it('NÃO aplica opacity-60 quando OPEN', () => {
+      render(<GroupCard group={mockGroup} />)
+      expect(screen.getByTestId('group-card')).not.toHaveClass('opacity-60')
     })
 
-    it('renders with opacity 1 when status is MATCHED', () => {
-      const { container } = render(<GroupCard group={{ ...mockGroup, status: 'MATCHED' }} />)
-      const card = container.querySelector('.card') as HTMLElement
-      expect(card.style.opacity).toBe('1')
+    it('NÃO aplica opacity-60 quando MATCHED', () => {
+      render(<GroupCard group={{ ...mockGroup, status: 'MATCHED' }} />)
+      expect(screen.getByTestId('group-card')).not.toHaveClass('opacity-60')
     })
   })
 
-  describe('owner badge', () => {
-    it('renders "Dono" badge when logged-in user is the owner', () => {
+  describe('badge "Dono"', () => {
+    it('renderiza quando o usuário logado é o dono', () => {
       mockUseUser.mockReturnValue({ id: 'u1' })
       render(<GroupCard group={mockGroup} />)
-      expect(screen.getByText('Dono')).toBeInTheDocument()
+      const badge = screen.getByText('Dono')
+      expect(badge).toBeInTheDocument()
+      expect(badge).toHaveAttribute(
+        'aria-label',
+        'Você é o dono deste grupo',
+      )
+      // Verde funcional aplicado ao badge (FR-008 — sinaliza propriedade)
+      expect(badge).toHaveClass('text-mg-green')
     })
 
-    it('does not render "Dono" badge when logged-in user is not the owner', () => {
+    it('NÃO renderiza quando outro usuário está logado', () => {
       mockUseUser.mockReturnValue({ id: 'u2' })
       render(<GroupCard group={mockGroup} />)
-      expect(screen.queryByText('Dono')).not.toBeInTheDocument()
+      expect(screen.queryByText('Dono')).toBeNull()
     })
 
-    it('does not render "Dono" badge when user is not logged in', () => {
+    it('NÃO renderiza quando ninguém está logado', () => {
       mockUseUser.mockReturnValue(null)
       render(<GroupCard group={mockGroup} />)
-      expect(screen.queryByText('Dono')).not.toBeInTheDocument()
+      expect(screen.queryByText('Dono')).toBeNull()
     })
   })
 })

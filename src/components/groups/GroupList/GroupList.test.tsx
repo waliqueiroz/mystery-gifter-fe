@@ -1,18 +1,39 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { GroupList } from './GroupList'
-import * as groupService from '@/services/api/groupService'
+
 import * as userContext from '@/contexts/UserContext'
+import * as groupService from '@/services/api/groupService'
 import type { GroupSearchResult, GroupSummary } from '@/types/api'
+
+import { GroupList } from './GroupList'
 
 jest.mock('@/services/api/groupService', () => ({ listGroups: jest.fn() }))
 jest.mock('@/contexts/UserContext', () => ({ useUser: jest.fn() }))
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+    'data-testid': testid,
+  }: {
+    href: string
+    children: React.ReactNode
+    className?: string
+    'data-testid'?: string
+  }) => (
+    <a href={href} className={className} data-testid={testid}>
+      {children}
+    </a>
   ),
 }))
+
 const mockShowToast = jest.fn()
 jest.mock('@/components/ui/Toast/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
@@ -21,7 +42,10 @@ jest.mock('@/components/ui/Toast/useToast', () => ({
 const mockListGroups = groupService.listGroups as jest.Mock
 const mockUseUser = userContext.useUser as jest.Mock
 
-function makeGroup(id: string, extra: Partial<GroupSummary> = {}): GroupSummary {
+function makeGroup(
+  id: string,
+  extra: Partial<GroupSummary> = {},
+): GroupSummary {
   return {
     id,
     name: `Grupo ${id}`,
@@ -34,108 +58,166 @@ function makeGroup(id: string, extra: Partial<GroupSummary> = {}): GroupSummary 
   }
 }
 
-function makeResult(groups: GroupSummary[], total?: number): GroupSearchResult {
-  return { result: groups, paging: { limit: 15, offset: 0, total: total ?? groups.length } }
+function makeResult(
+  groups: GroupSummary[],
+  total?: number,
+): GroupSearchResult {
+  return {
+    result: groups,
+    paging: { limit: 15, offset: 0, total: total ?? groups.length },
+  }
 }
 
 beforeEach(() => {
   jest.clearAllMocks()
-  mockUseUser.mockReturnValue({ id: 'u1', name: 'Test', surname: 'User', email: 't@t.com' })
+  mockUseUser.mockReturnValue({
+    id: 'u1',
+    name: 'Test',
+    surname: 'User',
+    email: 't@t.com',
+  })
 })
 
 describe('GroupList', () => {
-  it('shows loading spinner initially', () => {
-    mockListGroups.mockReturnValue(new Promise(() => {}))
-    render(<GroupList />)
-    expect(screen.getByRole('status', { name: /carregando grupos/i })).toBeInTheDocument()
+  describe('estados de carregamento (FR-024 — skeletons, sem spinners)', () => {
+    it('NÃO exibe spinner — exibe SkeletonList no carregamento inicial após o delay', async () => {
+      jest.useFakeTimers()
+      mockListGroups.mockReturnValue(new Promise(() => {}))
+      render(<GroupList />)
+      // antes do useDelayedFlag (150ms) — ainda nenhum skeleton
+      expect(screen.queryByTestId('group-list-skeleton')).toBeNull()
+      act(() => {
+        jest.advanceTimersByTime(160)
+      })
+      expect(screen.getByTestId('group-list-skeleton')).toBeInTheDocument()
+      // confirmar que NÃO há spinner em lugar algum
+      expect(screen.queryByRole('status', { name: /carregando/i })).toBeNull()
+      jest.useRealTimers()
+    })
   })
 
-  it('renders group cards after loading', async () => {
-    mockListGroups.mockResolvedValue(makeResult([makeGroup('g1'), makeGroup('g2')]))
+  it('renderiza GroupCards após o load', async () => {
+    mockListGroups.mockResolvedValue(
+      makeResult([makeGroup('g1'), makeGroup('g2')]),
+    )
     render(<GroupList />)
     expect(await screen.findByText('Grupo g1')).toBeInTheDocument()
     expect(screen.getByText('Grupo g2')).toBeInTheDocument()
   })
 
-  it('shows empty state when no groups', async () => {
+  it('exibe empty state quando não há grupos', async () => {
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)
     expect(await screen.findByText('Nenhum grupo ainda')).toBeInTheDocument()
   })
 
-  it('shows "Carregar mais" button when there are more pages', async () => {
+  it('exibe "Carregar mais" quando há mais páginas', async () => {
     mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')], 30))
     render(<GroupList />)
-    expect(await screen.findByRole('button', { name: /carregar mais/i })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /carregar mais/i }),
+    ).toBeInTheDocument()
   })
 
-  it('hides "Carregar mais" when all groups are loaded', async () => {
+  it('esconde "Carregar mais" quando todos os grupos foram carregados', async () => {
     mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')], 1))
     render(<GroupList />)
     await screen.findByText('Grupo g1')
-    expect(screen.queryByRole('button', { name: /carregar mais/i })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /carregar mais/i }),
+    ).toBeNull()
   })
 
-  it('appends next page when "Carregar mais" is clicked', async () => {
+  it('anexa próxima página ao clicar em "Carregar mais"', async () => {
     mockListGroups
-      .mockResolvedValueOnce({ result: [makeGroup('g1')], paging: { limit: 15, offset: 0, total: 16 } })
-      .mockResolvedValueOnce({ result: [makeGroup('g2')], paging: { limit: 15, offset: 15, total: 16 } })
+      .mockResolvedValueOnce({
+        result: [makeGroup('g1')],
+        paging: { limit: 15, offset: 0, total: 16 },
+      })
+      .mockResolvedValueOnce({
+        result: [makeGroup('g2')],
+        paging: { limit: 15, offset: 15, total: 16 },
+      })
     render(<GroupList />)
     await screen.findByText('Grupo g1')
-    await userEvent.click(screen.getByRole('button', { name: /carregar mais/i }))
+    await userEvent.click(
+      screen.getByRole('button', { name: /carregar mais/i }),
+    )
     expect(await screen.findByText('Grupo g2')).toBeInTheDocument()
     expect(screen.getByText('Grupo g1')).toBeInTheDocument()
   })
 
-  it('opens CreateGroupModal when "Novo grupo" is clicked', async () => {
+  it('botão "Novo grupo" é um link para /groups/new (FR-023 + Q2)', async () => {
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)
     await screen.findByText('Nenhum grupo ainda')
-    await userEvent.click(screen.getByRole('button', { name: /novo grupo/i }))
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
-  })
-
-  it('calls listGroups with the userId from context', async () => {
-    mockUseUser.mockReturnValue({ id: 'user-42', name: 'Test', surname: 'User', email: 't@t.com' })
-    mockListGroups.mockResolvedValue(makeResult([]))
-    render(<GroupList />)
-    await waitFor(() =>
-      expect(mockListGroups).toHaveBeenCalledWith(expect.objectContaining({ userId: 'user-42' })),
+    expect(screen.getByRole('link', { name: /novo grupo/i })).toHaveAttribute(
+      'href',
+      '/groups/new',
     )
   })
 
-  it('does not call listGroups when context user is null', async () => {
+  it('CTA do empty state também aponta para /groups/new', async () => {
+    mockListGroups.mockResolvedValue(makeResult([]))
+    render(<GroupList />)
+    await screen.findByText('Nenhum grupo ainda')
+    expect(
+      screen.getByRole('link', { name: /criar grupo/i }),
+    ).toHaveAttribute('href', '/groups/new')
+  })
+
+  it('chama listGroups com o userId do contexto', async () => {
+    mockUseUser.mockReturnValue({
+      id: 'user-42',
+      name: 'Test',
+      surname: 'User',
+      email: 't@t.com',
+    })
+    mockListGroups.mockResolvedValue(makeResult([]))
+    render(<GroupList />)
+    await waitFor(() =>
+      expect(mockListGroups).toHaveBeenCalledWith(
+        expect.objectContaining({ userId: 'user-42' }),
+      ),
+    )
+  })
+
+  it('NÃO chama listGroups quando o usuário do contexto é null', async () => {
     mockUseUser.mockReturnValue(null)
     render(<GroupList />)
     await waitFor(() => expect(mockUseUser).toHaveBeenCalled())
     expect(mockListGroups).not.toHaveBeenCalled()
   })
 
-  it('GroupCard shows owner badge when context user is the group owner', async () => {
-    mockUseUser.mockReturnValue({ id: 'u1', name: 'Test', surname: 'User', email: 't@t.com' })
+  it('GroupCard exibe o badge "Dono" quando o usuário é o dono', async () => {
+    mockUseUser.mockReturnValue({
+      id: 'u1',
+      name: 'Test',
+      surname: 'User',
+      email: 't@t.com',
+    })
     mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')]))
     render(<GroupList />)
     await screen.findByText('Grupo g1')
     expect(screen.getByText('Dono')).toBeInTheDocument()
   })
 
-  describe('filter state', () => {
-    it('renders GroupFilters component', async () => {
+  describe('filtros', () => {
+    it('renderiza o componente GroupFilters', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
-      expect(screen.getByRole('textbox', { name: /buscar por nome/i })).toBeInTheDocument()
+      expect(screen.getByLabelText(/buscar por nome/i)).toBeInTheDocument()
     })
 
-    it('re-fetches with name param after debounce when search changes', async () => {
+    it('re-busca com o param "name" após o debounce', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
       jest.useFakeTimers()
-      fireEvent.change(
-        screen.getByRole('textbox', { name: /buscar por nome/i }),
-        { target: { value: 'n' } },
-      )
+      fireEvent.change(screen.getByLabelText(/buscar por nome/i), {
+        target: { value: 'n' },
+      })
       act(() => jest.advanceTimersByTime(400))
       jest.useRealTimers()
       await waitFor(() =>
@@ -145,35 +227,26 @@ describe('GroupList', () => {
       )
     })
 
-    it('shows filter spinner instead of empty state while re-fetching', async () => {
-      mockListGroups
-        .mockResolvedValueOnce(makeResult([]))
-        .mockReturnValueOnce(new Promise(() => {}))
-      render(<GroupList />)
-      await screen.findByText('Nenhum grupo ainda')
-      await userEvent.click(screen.getByRole('checkbox', { name: 'Arquivado' }))
-      expect(screen.getByRole('status', { name: /filtrando grupos/i })).toBeInTheDocument()
-      expect(screen.queryByText('Nenhum grupo ainda')).not.toBeInTheDocument()
-    })
-
-    it('re-fetches with new statuses when status filter changes', async () => {
+    it('re-busca com novos statuses ao mudar o filtro de status', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
-      await userEvent.click(screen.getByRole('checkbox', { name: 'Arquivado' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Arquivado' }))
       await waitFor(() =>
         expect(mockListGroups).toHaveBeenLastCalledWith(
-          expect.objectContaining({ statuses: expect.arrayContaining(['ARCHIVED']) }),
+          expect.objectContaining({
+            statuses: expect.arrayContaining(['ARCHIVED']),
+          }),
         ),
       )
     })
 
-    it('re-fetches without status params when all statuses are deselected', async () => {
+    it('re-busca sem status quando todos são desmarcados', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
-      await userEvent.click(screen.getByRole('checkbox', { name: 'Aberto' }))
-      await userEvent.click(screen.getByRole('checkbox', { name: 'Sorteado' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Aberto' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Sorteado' }))
       await waitFor(() =>
         expect(mockListGroups).toHaveBeenLastCalledWith(
           expect.objectContaining({ statuses: [] }),
@@ -182,29 +255,35 @@ describe('GroupList', () => {
     })
   })
 
-  describe('error state', () => {
-    it('shows inline error message when initial fetch fails', async () => {
+  describe('estado de erro (EmptyState variant="error")', () => {
+    it('exibe EmptyState de erro quando a busca inicial falha', async () => {
       mockListGroups.mockRejectedValue(new Error('Falha na conexão.'))
       render(<GroupList />)
-      expect(await screen.findByRole('alert')).toBeInTheDocument()
+      expect(
+        await screen.findByText('Erro ao carregar grupos'),
+      ).toBeInTheDocument()
       expect(screen.getByText('Falha na conexão.')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /tentar novamente/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /tentar novamente/i }),
+      ).toBeInTheDocument()
     })
 
-    it('does not call showToast on initial fetch failure', async () => {
+    it('NÃO dispara toast quando a busca inicial falha', async () => {
       mockListGroups.mockRejectedValue(new Error('Erro.'))
       render(<GroupList />)
-      await screen.findByRole('alert')
+      await screen.findByText('Erro ao carregar grupos')
       expect(mockShowToast).not.toHaveBeenCalled()
     })
 
-    it('retries fetch when "Tentar novamente" is clicked', async () => {
+    it('refaz a busca ao clicar em "Tentar novamente"', async () => {
       mockListGroups
         .mockRejectedValueOnce(new Error('Erro.'))
         .mockResolvedValueOnce(makeResult([makeGroup('g1')]))
       render(<GroupList />)
-      await screen.findByRole('alert')
-      await userEvent.click(screen.getByRole('button', { name: /tentar novamente/i }))
+      await screen.findByText('Erro ao carregar grupos')
+      await userEvent.click(
+        screen.getByRole('button', { name: /tentar novamente/i }),
+      )
       expect(await screen.findByText('Grupo g1')).toBeInTheDocument()
     })
   })

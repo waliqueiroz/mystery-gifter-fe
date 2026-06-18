@@ -1,78 +1,81 @@
 'use client'
 
 import { useState } from 'react'
-import type { User } from '@/types/api'
-import { getUserMatch } from '@/services/api/inviteService'
+
 import Button from '@/components/ui/Button/Button'
+import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
+import { Icon } from '@/components/ui/Icon/Icon'
+import { getUserMatch } from '@/services/api/inviteService'
+import type { User } from '@/types/api'
 
 interface ResultRevealProps {
   groupId: string
 }
 
 export function ResultReveal({ groupId }: ResultRevealProps) {
-  const [flipped, setFlipped] = useState(false)
   const [recipient, setRecipient] = useState<User | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const revealed = recipient !== null
+
   async function handleReveal() {
-    if (flipped) return
+    if (revealed) return
     setLoading(true)
     setError('')
     try {
       const user = await getUserMatch(groupId)
       setRecipient(user)
-      setFlipped(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.')
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Ocorreu um erro. Tente novamente.',
+      )
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="mg-result-card" style={{ maxWidth: 340, margin: '0 auto' }}>
-      <div className={`mg-result-card-inner${flipped ? ' flipped' : ''}`}>
-        {/* Front face */}
-        <div
-          className="mg-result-card-front d-flex flex-column align-items-center justify-content-center text-center p-4"
-          style={{ position: flipped ? 'absolute' : 'relative' }}
-        >
-          <i
-            className="fas fa-gift fa-3x mb-3"
-            style={{ color: 'var(--mg-primary-hover)' }}
+    <div className="mx-auto w-full max-w-sm rounded-card bg-mg-surface p-6 text-center">
+      {revealed ? (
+        <div className="flex flex-col items-center gap-3">
+          <div
             aria-hidden="true"
-          />
-          <p className="mb-3" style={{ color: 'var(--mg-text-muted)' }}>
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-mg-green/10 text-mg-green"
+          >
+            <Icon name="Gift" size={32} />
+          </div>
+          <p className="text-xs uppercase tracking-btn text-mg-text-muted">
+            Você presenteia
+          </p>
+          <h3 className="text-xl font-bold text-mg-text">
+            {recipient!.name} {recipient!.surname}
+          </h3>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-4">
+          <div
+            aria-hidden="true"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-mg-surface-2 text-mg-text-muted"
+          >
+            <Icon name="Gift" size={32} />
+          </div>
+          <p className="text-sm text-mg-text-muted">
             Você já tem um presenteado!
           </p>
-          {error && (
-            <div className="alert alert-danger mb-3 w-100" role="alert">
-              {error}
-            </div>
-          )}
-          <Button type="button" loading={loading} onClick={handleReveal}>
+          {error && <ErrorAlert message={error} className="w-full" />}
+          <Button
+            type="button"
+            shape="pill-lg"
+            loading={loading}
+            onClick={handleReveal}
+          >
             Ver quem você presenteia
           </Button>
         </div>
-
-        {/* Back face */}
-        {recipient && (
-          <div className="mg-result-card-back d-flex flex-column align-items-center justify-content-center text-center p-4">
-            <i
-              className="fas fa-user-circle fa-3x mb-3"
-              style={{ color: 'var(--mg-primary-hover)' }}
-              aria-hidden="true"
-            />
-            <p className="mb-1" style={{ color: 'var(--mg-text-muted)', fontSize: '0.85rem' }}>
-              Você presenteia
-            </p>
-            <h4 style={{ color: 'var(--mg-text)' }}>
-              {recipient.name} {recipient.surname}
-            </h4>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   )
 }

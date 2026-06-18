@@ -1,3 +1,4 @@
+import { cn } from '@/lib/cn'
 import type { GroupStatus } from '@/types/api'
 
 const LABELS: Record<GroupStatus, string> = {
@@ -6,10 +7,15 @@ const LABELS: Record<GroupStatus, string> = {
   ARCHIVED: 'Arquivado',
 }
 
-const CLASS_NAMES: Record<GroupStatus, string> = {
-  OPEN: 'mg-badge-open',
-  MATCHED: 'mg-badge-matched',
-  ARCHIVED: 'mg-badge-archived',
+/**
+ * Cores semânticas dos badges. O verde é aplicado a OPEN (sinaliza grupo
+ * ativo aceitando entradas — uso funcional, FR-008). MATCHED é neutro
+ * (apenas estado), ARCHIVED é muted (passivo).
+ */
+const VARIANT: Record<GroupStatus, string> = {
+  OPEN: 'bg-mg-green/10 text-mg-green',
+  MATCHED: 'bg-mg-surface-2 text-mg-text',
+  ARCHIVED: 'bg-mg-surface-2 text-mg-text-muted',
 }
 
 interface GroupStatusBadgeProps {
@@ -18,7 +24,12 @@ interface GroupStatusBadgeProps {
 
 export function GroupStatusBadge({ status }: GroupStatusBadgeProps) {
   return (
-    <span className={CLASS_NAMES[status]}>
+    <span
+      className={cn(
+        'shrink-0 rounded-pill px-3 py-1 text-[10px] font-bold uppercase tracking-btn',
+        VARIANT[status],
+      )}
+    >
       {LABELS[status]}
     </span>
   )

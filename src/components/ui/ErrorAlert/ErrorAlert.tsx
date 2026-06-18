@@ -1,23 +1,49 @@
+import { Icon } from '@/components/ui/Icon/Icon'
+import { cn } from '@/lib/cn'
+
 interface ErrorAlertProps {
   message: string
-  onRetry: () => void
+  /**
+   * Quando presente, renderiza um botão "Tentar novamente" inline ao alerta.
+   *
+   * Nota de contrato (ver `contracts/ui-primitives.md` §2b): o uso canônico
+   * de ErrorAlert é **erro inline em formulário** (falha de submit, mensagem
+   * de validação contextual). Para "falha ao carregar uma seção inteira",
+   * a primitiva correta é `<EmptyState variant="error" cta={{...}} />`. O
+   * `onRetry` permanece opcional para suportar casos onde o componente cabe
+   * no fluxo (raros após a migração para EmptyState em todas as seções).
+   */
+  onRetry?: () => void
+  className?: string
 }
 
-export function ErrorAlert({ message, onRetry }: ErrorAlertProps) {
+export function ErrorAlert({ message, onRetry, className }: ErrorAlertProps) {
   return (
     <div
-      className="alert"
       role="alert"
-      style={{
-        backgroundColor: 'rgba(252,129,129,0.1)',
-        border: '1px solid var(--mg-error)',
-        color: 'var(--mg-error)',
-      }}
+      className={cn(
+        'flex flex-col gap-2 rounded-card border border-mg-text-negative',
+        'bg-mg-text-negative/10 px-4 py-3 text-mg-text-negative',
+        className,
+      )}
     >
-      <p className="mb-2">{message}</p>
-      <button type="button" className="btn btn-sm btn-outline-danger" onClick={onRetry}>
-        Tentar novamente
-      </button>
+      <div className="flex items-start gap-2">
+        <Icon name="CircleAlert" size={18} className="mt-0.5 shrink-0" />
+        <p className="flex-grow text-sm">{message}</p>
+      </div>
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className={cn(
+            'self-start rounded-pill border border-mg-text-negative px-3 py-1 text-xs font-semibold uppercase tracking-btn',
+            'hover:bg-mg-text-negative/20',
+            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-mg-green focus-visible:outline-offset-2',
+          )}
+        >
+          Tentar novamente
+        </button>
+      )}
     </div>
   )
 }

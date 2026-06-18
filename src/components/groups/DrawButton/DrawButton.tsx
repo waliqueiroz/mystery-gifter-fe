@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import type { Group } from '@/types/api'
-import { generateDraw } from '@/services/api/groupService'
+
 import Button from '@/components/ui/Button/Button'
+import { Icon } from '@/components/ui/Icon/Icon'
 import { useToast } from '@/components/ui/Toast/useToast'
+import { generateDraw } from '@/services/api/groupService'
+import type { Group } from '@/types/api'
 
 interface DrawButtonProps {
   group: Group
@@ -29,7 +31,8 @@ export function DrawButton({ group, onGroupUpdate }: DrawButtonProps) {
       onGroupUpdate(updated)
     } catch (err) {
       showToast({
-        message: err instanceof Error ? err.message : 'Erro ao realizar sorteio.',
+        message:
+          err instanceof Error ? err.message : 'Erro ao realizar sorteio.',
         type: 'error',
       })
     } finally {
@@ -38,19 +41,22 @@ export function DrawButton({ group, onGroupUpdate }: DrawButtonProps) {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <Button
         type="button"
+        shape="pill-lg"
+        size="lg"
         loading={loading}
         disabled={isDisabled}
         onClick={handleDraw}
+        iconLeft={<Icon name="Shuffle" size={18} />}
       >
-        <i className="fas fa-random mr-2" aria-hidden="true" />
         Realizar sorteio
       </Button>
       {!hasEnoughMembers && isOpen && (
-        <p className="mt-2 mb-0 small" style={{ color: 'var(--mg-text-muted)' }}>
-          São necessários pelo menos {MIN_MEMBERS} participantes para realizar o sorteio.
+        <p className="text-xs text-mg-text-muted">
+          São necessários pelo menos {MIN_MEMBERS} participantes para
+          realizar o sorteio.
         </p>
       )}
     </div>

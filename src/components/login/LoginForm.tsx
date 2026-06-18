@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import FormField from '@/components/ui/FormField/FormField'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+
 import Button from '@/components/ui/Button/Button'
-import { login } from '@/services/api/authService'
+import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
+import FormField from '@/components/ui/FormField/FormField'
 import { setToken } from '@/lib/auth'
+import { login } from '@/services/api/authService'
 import type { LoginFormData } from '@/types/forms'
 
 export default function LoginForm() {
@@ -17,8 +19,8 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false)
 
   function handleChange(field: keyof LoginFormData) {
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }))
+    return (value: string) => {
+      setForm((prev) => ({ ...prev, [field]: value }))
     }
   }
 
@@ -31,52 +33,65 @@ export default function LoginForm() {
     setLoading(true)
     setError('')
     try {
-      const session = await login({ email: form.email, password: form.password })
+      const session = await login({
+        email: form.email,
+        password: form.password,
+      })
       setToken(session.access_token)
       const returnUrl = searchParams.get('returnUrl')
-      router.push(returnUrl ?? '/dashboard')
+      router.push(returnUrl ?? '/groups')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.')
+      setError(
+        err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.',
+      )
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100">
-      <div className="card" style={{ width: '100%', maxWidth: 420 }}>
-        <div className="card-body p-5">
-          <h1 className="text-center mb-4">Entrar</h1>
-          <form onSubmit={handleSubmit} noValidate>
-            {error && <div className="alert alert-danger">{error}</div>}
-            <FormField
-              id="email"
-              label="E-mail"
-              type="email"
-              value={form.email}
-              onChange={handleChange('email')}
-              placeholder="seu@email.com"
-              required
-            />
-            <FormField
-              id="password"
-              label="Senha"
-              type="password"
-              value={form.password}
-              onChange={handleChange('password')}
-              placeholder="Sua senha"
-              required
-            />
-            <Button type="submit" loading={loading} className="btn-block mt-3">
-              Entrar
-            </Button>
-          </form>
-          <p className="text-center mt-3 mb-0">
-            Não tem conta?{' '}
-            <Link href="/register">Criar conta</Link>
-          </p>
-        </div>
+    <main className="flex min-h-dvh items-center justify-center bg-mg-bg px-4 py-12">
+      <div className="w-full max-w-md rounded-card bg-mg-surface p-8 shadow-mg-card">
+        <h1 className="text-2xl font-bold text-mg-text">Entrar</h1>
+
+        <form onSubmit={handleSubmit} noValidate className="mt-6 flex flex-col gap-4">
+          {error && <ErrorAlert message={error} />}
+
+          <FormField
+            id="email"
+            label="E-mail"
+            type="email"
+            value={form.email}
+            onChange={handleChange('email')}
+            placeholder="seu@email.com"
+            autoComplete="email"
+            required
+          />
+          <FormField
+            id="password"
+            label="Senha"
+            type="password"
+            value={form.password}
+            onChange={handleChange('password')}
+            placeholder="Sua senha"
+            autoComplete="current-password"
+            required
+          />
+          <Button type="submit" loading={loading} className="mt-2">
+            Entrar
+          </Button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-mg-text-muted">
+          Não tem conta?{' '}
+          <Link
+            href="/register"
+            className="font-semibold text-mg-green hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-mg-green focus-visible:outline-offset-2"
+          >
+            Criar conta
+          </Link>
+        </p>
       </div>
-    </div>
+    </main>
   )
 }
