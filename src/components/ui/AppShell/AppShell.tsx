@@ -1,4 +1,5 @@
 import { BottomTabBar } from '@/components/ui/BottomTabBar/BottomTabBar'
+import { NavigationProgress } from '@/components/ui/NavigationProgress/NavigationProgress'
 import { SkeletonProvider } from '@/components/ui/Skeleton/SkeletonProvider'
 import { cn } from '@/lib/cn'
 
@@ -26,6 +27,7 @@ export function AppShell({ children, className }: AppShellProps) {
   return (
     <SkeletonProvider>
       <div className={cn('min-h-dvh bg-mg-bg text-mg-text', className)}>
+        <NavigationProgress />
         <main
           className={cn(
             'mx-auto max-w-app px-4 pt-6',
