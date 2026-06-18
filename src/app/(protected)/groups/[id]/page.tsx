@@ -80,7 +80,6 @@ function GroupDetailContent() {
               </h6>
               <InviteSection
                 groupId={group.id}
-                isOwner={isOwner}
                 groupStatus={group.status}
               />
             </div>
