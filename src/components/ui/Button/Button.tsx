@@ -28,6 +28,7 @@ interface ButtonProps {
   iconRight?: React.ReactNode
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   className?: string
+  title?: string
   'aria-label'?: string
 }
 
@@ -78,6 +79,7 @@ export default function Button({
   iconRight,
   onClick,
   className,
+  title,
   'aria-label': ariaLabel,
 }: ButtonProps) {
   const isCircle = shape === 'circle'
@@ -90,6 +92,7 @@ export default function Button({
       disabled={isInactive}
       aria-busy={loading || undefined}
       aria-label={ariaLabel}
+      title={title}
       className={cn(
         'inline-flex items-center justify-center gap-2 font-semibold transition-colors',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mg-green',
