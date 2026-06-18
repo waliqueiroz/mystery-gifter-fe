@@ -1,18 +1,39 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import type { Group, GroupFilterParams, GroupSummary, Paging } from '@/types/api'
-import { DEFAULT_GROUP_FILTERS } from '@/types/api'
-import { listGroups } from '@/services/api/groupService'
-import { useUser } from '@/contexts/UserContext'
+
+import { CreateGroupModal } from '@/components/groups/CreateGroupModal/CreateGroupModal'
 import { GroupCard } from '@/components/groups/GroupCard/GroupCard'
 import { GroupEmptyState } from '@/components/groups/GroupEmptyState/GroupEmptyState'
 import { GroupFilters } from '@/components/groups/GroupFilters/GroupFilters'
-import { CreateGroupModal } from '@/components/groups/CreateGroupModal/CreateGroupModal'
-import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
+import Button from '@/components/ui/Button/Button'
+import { EmptyState } from '@/components/ui/EmptyState/EmptyState'
+import { Icon } from '@/components/ui/Icon/Icon'
+import { SkeletonBox } from '@/components/ui/Skeleton/SkeletonBox'
 import { useToast } from '@/components/ui/Toast/useToast'
+import { useUser } from '@/contexts/UserContext'
+import { useDelayedFlag } from '@/lib/useDelayedFlag'
+import { listGroups } from '@/services/api/groupService'
+import type {
+  Group,
+  GroupFilterParams,
+  GroupSummary,
+  Paging,
+} from '@/types/api'
+import { DEFAULT_GROUP_FILTERS } from '@/types/api'
 
 const PAGE_SIZE = 15
+const SKELETON_PLACEHOLDER_COUNT = 5
+
+function SkeletonList() {
+  return (
+    <div className="flex flex-col gap-3" data-testid="group-list-skeleton">
+      {Array.from({ length: SKELETON_PLACEHOLDER_COUNT }).map((_, i) => (
+        <SkeletonBox key={i} height={72} borderRadius={8} />
+      ))}
+    </div>
+  )
+}
 
 export function GroupList() {
   const user = useUser()
@@ -20,18 +41,30 @@ export function GroupList() {
   const { showToast } = useToast()
 
   const [groups, setGroups] = useState<GroupSummary[]>([])
-  const [paging, setPaging] = useState<Paging>({ limit: PAGE_SIZE, offset: 0, total: 0 })
-  const [filters, setFilters] = useState<GroupFilterParams>(DEFAULT_GROUP_FILTERS)
+  const [paging, setPaging] = useState<Paging>({
+    limit: PAGE_SIZE,
+    offset: 0,
+    total: 0,
+  })
+  const [filters, setFilters] = useState<GroupFilterParams>(
+    DEFAULT_GROUP_FILTERS,
+  )
   const [loadingInitial, setLoadingInitial] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [loadingFilter, setLoadingFilter] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const isLoadingForSkeleton = loadingInitial || loadingFilter
+  const showSkeleton = useDelayedFlag(isLoadingForSkeleton, 150)
   const hasMore = paging.offset + paging.limit < paging.total
 
   const fetchGroups = useCallback(
-    async (offset: number, append: boolean, activeFilters: GroupFilterParams) => {
+    async (
+      offset: number,
+      append: boolean,
+      activeFilters: GroupFilterParams,
+    ) => {
       if (!userId) return
       try {
         const result = await listGroups({
@@ -42,10 +75,13 @@ export function GroupList() {
           statuses: activeFilters.statuses,
           sortDirection: activeFilters.sortDirection,
         })
-        setGroups((prev) => (append ? [...prev, ...result.result] : result.result))
+        setGroups((prev) =>
+          append ? [...prev, ...result.result] : result.result,
+        )
         setPaging(result.paging)
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Erro ao carregar grupos.'
+        const message =
+          err instanceof Error ? err.message : 'Erro ao carregar grupos.'
         if (append) {
           showToast({ message, type: 'error' })
         } else {
@@ -86,6 +122,16 @@ export function GroupList() {
     setLoadingMore(false)
   }
 
+  async function handleRetry() {
+    setError(null)
+    setLoadingInitial(true)
+    try {
+      await fetchGroups(0, false, filters)
+    } finally {
+      setLoadingInitial(false)
+    }
+  }
+
   function handleGroupCreated(group: Group) {
     setGroups((prev) => [
       {
@@ -103,82 +149,52 @@ export function GroupList() {
     showToast({ message: 'Grupo criado com sucesso!', type: 'success' })
   }
 
-  if (loadingInitial) {
-    return (
-      <div className="text-center py-5">
-        <span
-          className="spinner-border"
-          style={{ color: 'var(--mg-primary-hover)' }}
-          role="status"
-          aria-label="Carregando grupos"
-        />
-      </div>
-    )
-  }
-
   return (
-    <>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4 className="mb-0" style={{ color: 'var(--mg-text)' }}>
-          Meus grupos
-        </h4>
-        <button
-          type="button"
-          className="btn btn-primary btn-sm"
+    <div className="flex flex-col gap-4">
+      <header className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-mg-text">Meus grupos</h1>
+        <Button
+          shape="pill"
+          size="sm"
           onClick={() => setIsModalOpen(true)}
+          iconLeft={<Icon name="Plus" size={14} />}
         >
-          <i className="fas fa-plus mr-1" aria-hidden="true" />
           Novo grupo
-        </button>
-      </div>
+        </Button>
+      </header>
 
       <GroupFilters filters={filters} onChange={handleFilterChange} />
 
       {error ? (
-        <ErrorAlert
-          message={error}
-          onRetry={() => {
-            setError(null)
-            fetchGroups(0, false, filters)
-          }}
+        <EmptyState
+          variant="error"
+          icon={<Icon name="CircleAlert" size={28} />}
+          title="Erro ao carregar grupos"
+          description={error}
+          cta={{ label: 'Tentar novamente', onClick: handleRetry }}
         />
-      ) : loadingFilter ? (
-        <div className="text-center py-4">
-          <span
-            className="spinner-border"
-            style={{ color: 'var(--mg-primary-hover)' }}
-            role="status"
-            aria-label="Filtrando grupos"
-          />
-        </div>
+      ) : showSkeleton ? (
+        <SkeletonList />
       ) : groups.length === 0 ? (
         <GroupEmptyState onCreateClick={() => setIsModalOpen(true)} />
       ) : (
         <>
-          {groups.map((group) => (
-            <GroupCard key={group.id} group={group} />
-          ))}
+          <div className="flex flex-col gap-3">
+            {groups.map((group) => (
+              <GroupCard key={group.id} group={group} />
+            ))}
+          </div>
           {hasMore && (
-            <div className="text-center mt-3">
-              <button
-                type="button"
-                className="btn btn-outline-secondary btn-sm"
+            <div className="flex justify-center pt-2">
+              <Button
+                variant="outline"
+                shape="pill"
+                size="sm"
                 onClick={handleLoadMore}
-                disabled={loadingMore}
+                loading={loadingMore}
               >
-                {loadingMore ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm mr-2"
-                      role="status"
-                      aria-label="Carregando"
-                    />
-                    Carregando...
-                  </>
-                ) : (
-                  'Carregar mais'
-                )}
-              </button>
+                Carregar mais
+              </Button>
             </div>
           )}
         </>
@@ -189,6 +205,6 @@ export function GroupList() {
         onClose={() => setIsModalOpen(false)}
         onSuccess={handleGroupCreated}
       />
-    </>
+    </div>
   )
 }
