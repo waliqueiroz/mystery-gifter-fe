@@ -63,19 +63,24 @@ export function GroupActions({ group, onGroupUpdate }: GroupActionsProps) {
       </div>
 
       <ConfirmModal
-        isOpen={modal === 'reopen'}
-        message="Tem certeza que deseja reabrir o grupo? O resultado do sorteio atual será apagado e os participantes poderão entrar novamente."
+        open={modal === 'reopen'}
+        onOpenChange={(o) => !o && setModal('none')}
+        title="Reabrir grupo"
+        body="Tem certeza que deseja reabrir o grupo? O resultado do sorteio atual será apagado e os participantes poderão entrar novamente."
         confirmLabel="Reabrir"
         onConfirm={handleConfirm}
-        onCancel={() => setModal('none')}
+        isLoading={loading}
       />
 
       <ConfirmModal
-        isOpen={modal === 'archive'}
-        message="Tem certeza que deseja arquivar este grupo? Esta ação é permanente e não pode ser desfeita."
+        open={modal === 'archive'}
+        onOpenChange={(o) => !o && setModal('none')}
+        title="Arquivar grupo"
+        body="Tem certeza que deseja arquivar este grupo? Esta ação é permanente e não pode ser desfeita."
         confirmLabel="Arquivar"
+        destructive
         onConfirm={handleConfirm}
-        onCancel={() => setModal('none')}
+        isLoading={loading}
       />
     </>
   )
