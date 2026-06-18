@@ -85,14 +85,14 @@ describe('RegisterForm', () => {
     expect(mockRegister).not.toHaveBeenCalled()
   })
 
-  it('calls register and redirects to /dashboard on success', async () => {
+  it('calls register and redirects to /groups on success', async () => {
     mockRegister.mockResolvedValue(mockSession)
     render(<RegisterForm />)
     await fillForm()
     await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
     await waitFor(() => expect(mockRegister).toHaveBeenCalledTimes(1))
     expect(mockSetToken).toHaveBeenCalledWith('jwt-token')
-    expect(mockPush).toHaveBeenCalledWith('/dashboard')
+    expect(mockPush).toHaveBeenCalledWith('/groups')
   })
 
   it('shows API error message on failure', async () => {

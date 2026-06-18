@@ -53,7 +53,7 @@ describe('LoginForm', () => {
     expect(mockLogin).not.toHaveBeenCalled()
   })
 
-  it('calls login and redirects to /dashboard on success when no returnUrl', async () => {
+  it('calls login and redirects to /groups on success when no returnUrl', async () => {
     mockLogin.mockResolvedValue(mockSession)
     render(<LoginForm />)
     await userEvent.type(screen.getByLabelText('E-mail'), 'joao@example.com')
@@ -61,7 +61,7 @@ describe('LoginForm', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
     await waitFor(() => expect(mockLogin).toHaveBeenCalledTimes(1))
     expect(mockSetToken).toHaveBeenCalledWith('jwt-token')
-    expect(mockPush).toHaveBeenCalledWith('/dashboard')
+    expect(mockPush).toHaveBeenCalledWith('/groups')
   })
 
   it('redirects to returnUrl after login when present', async () => {

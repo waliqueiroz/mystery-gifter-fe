@@ -10,7 +10,7 @@ export default function GuestGuard({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     if (isAuthenticated()) {
-      router.push('/dashboard')
+      router.push('/groups')
     } else {
       setChecked(true)
     }

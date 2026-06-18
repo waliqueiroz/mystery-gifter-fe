@@ -58,7 +58,7 @@ export default function RegisterForm() {
         password_confirm: form.passwordConfirm,
       })
       setToken(session.access_token)
-      router.push('/dashboard')
+      router.push('/groups')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.')
     } finally {

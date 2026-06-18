@@ -33,7 +33,7 @@ describe('GuestGuard', () => {
     expect(mockPush).not.toHaveBeenCalled()
   })
 
-  it('redirects to /dashboard when token is present', async () => {
+  it('redirects to /groups when token is present', async () => {
     mockIsAuthenticated.mockReturnValue(true)
     render(
       <GuestGuard>
@@ -41,7 +41,7 @@ describe('GuestGuard', () => {
       </GuestGuard>
     )
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/dashboard')
+      expect(mockPush).toHaveBeenCalledWith('/groups')
     })
     expect(screen.queryByText('Conteúdo público')).not.toBeInTheDocument()
   })
@@ -53,7 +53,7 @@ describe('GuestGuard', () => {
         <div>Conteúdo público</div>
       </GuestGuard>
     )
-    await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/dashboard'))
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith('/groups'))
     expect(container.querySelector('div > div')).not.toBeInTheDocument()
   })
 })
