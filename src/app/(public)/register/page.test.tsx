@@ -1,0 +1,20 @@
+import { render, screen } from '@testing-library/react'
+
+import RegisterPage from './page'
+
+jest.mock('@/components/auth/GuestGuard', () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}))
+
+jest.mock('@/components/register/RegisterForm', () => ({
+  __esModule: true,
+  default: () => <div data-testid="register-form">register form</div>,
+}))
+
+describe('RegisterPage', () => {
+  it('renderiza o RegisterForm envolto em GuestGuard', () => {
+    render(<RegisterPage />)
+    expect(screen.getByTestId('register-form')).toBeInTheDocument()
+  })
+})
