@@ -88,7 +88,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 ### Implementação para US2
 
-- [ ] T021 [P] [US2] Criar `src/components/ui/BottomTabBar/BottomTabBar.tsx` (nav fixo bottom com tabs Grupos e Perfil, `aria-current="page"` no ativo via `usePathname`, padding-bottom com `env(safe-area-inset-bottom)`) e teste `BottomTabBar.test.tsx`
+- [X] T021 [P] [US2] Criar `src/components/ui/BottomTabBar/BottomTabBar.tsx` (nav fixo bottom com tabs Grupos e Perfil, `aria-current="page"` no ativo via `usePathname`, padding-bottom com `env(safe-area-inset-bottom)`) e teste `BottomTabBar.test.tsx`
 - [ ] T022 [US2] Criar `src/components/ui/AppShell/AppShell.tsx` (container `min-h-dvh bg-mg-bg`, conteúdo centralizado em `max-w-app mx-auto`, padding-bottom suficiente para a tab bar) com `SkeletonProvider` aninhado; teste `AppShell.test.tsx` (depende de T009, T021)
 - [ ] T023 [US2] Reescrever `src/app/(protected)/layout.tsx` substituindo `AdminLTELayout` por `<AppShell>` envolvendo children
 - [ ] T024 [US2] Remover `src/app/(protected)/AdminLTELayout.test.tsx` (componente eliminado)
