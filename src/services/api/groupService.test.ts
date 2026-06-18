@@ -168,14 +168,14 @@ describe('groupService', () => {
   })
 
   describe('error handling', () => {
-    it('throws ForbiddenError em 403 com mensagem do backend', async () => {
+    it('throws ForbiddenError on 403 with backend message', async () => {
       mockFetch(403, { code: 'forbidden', message: 'Acesso negado.' })
       const err = await getGroup('g1').catch((e) => e)
       expect(err).toBeInstanceOf(ForbiddenError)
       expect(err.message).toBe('Acesso negado.')
     })
 
-    it('throws SessionExpiredError e limpa o token em 401', async () => {
+    it('throws SessionExpiredError and clears token on 401', async () => {
       mockFetch(401, {})
       await expect(getGroup('g1')).rejects.toBeInstanceOf(SessionExpiredError)
       expect(localStorage.getItem('mystery_gifter_token')).toBeNull()

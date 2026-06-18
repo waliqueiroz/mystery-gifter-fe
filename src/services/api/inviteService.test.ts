@@ -109,21 +109,21 @@ describe('inviteService', () => {
       expect(result).toEqual(mockGroup)
     })
 
-    it('throws InvalidInviteError quando convite não existe (404)', async () => {
+    it('throws InvalidInviteError when invite does not exist (404)', async () => {
       mockFetch(404, { code: 'not_found', message: 'group invite not found' })
       const err = await joinGroup('token').catch((e) => e)
       expect(err).toBeInstanceOf(InvalidInviteError)
       expect(err.status).toBe(404)
     })
 
-    it('throws InvalidInviteError quando convite expirou (409 invite has expired)', async () => {
+    it('throws InvalidInviteError when invite has expired (409)', async () => {
       mockFetch(409, { code: 'conflict', message: 'invite has expired' })
       const err = await joinGroup('token').catch((e) => e)
       expect(err).toBeInstanceOf(InvalidInviteError)
       expect(err.status).toBe(409)
     })
 
-    it('throws DrawCompletedError quando grupo não está OPEN (409 group not open)', async () => {
+    it('throws DrawCompletedError when group is not OPEN (409)', async () => {
       mockFetch(409, {
         code: 'conflict',
         message:
@@ -133,7 +133,7 @@ describe('inviteService', () => {
       expect(err).toBeInstanceOf(DrawCompletedError)
     })
 
-    it('re-lança ApiRequestError para outros erros não mapeados (500)', async () => {
+    it('re-throws ApiRequestError for unmapped errors (500)', async () => {
       mockFetch(500, { code: 'internal_server_error', message: 'falha interna' })
       const err = await joinGroup('token').catch((e) => e)
       expect(err).toBeInstanceOf(ApiRequestError)
@@ -159,7 +159,7 @@ describe('inviteService', () => {
   })
 
   describe('error handling', () => {
-    it('throws SessionExpiredError e limpa o token em 401', async () => {
+    it('throws SessionExpiredError and clears token on 401', async () => {
       mockFetch(401, {})
       await expect(joinGroup('token')).rejects.toBeInstanceOf(SessionExpiredError)
       expect(localStorage.getItem('mystery_gifter_token')).toBeNull()

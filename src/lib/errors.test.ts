@@ -9,7 +9,7 @@ import {
 } from './errors'
 
 describe('ApiRequestError', () => {
-  it('stores message, status e code', () => {
+  it('stores message, status and code', () => {
     const err = new ApiRequestError('mensagem', 500, 'internal_server_error')
     expect(err.message).toBe('mensagem')
     expect(err.status).toBe(500)
@@ -17,7 +17,7 @@ describe('ApiRequestError', () => {
     expect(err.name).toBe('ApiRequestError')
   })
 
-  it('é instanceof Error e ApiRequestError', () => {
+  it('is instanceof Error and ApiRequestError', () => {
     const err = new ApiRequestError('msg', 500, 'code')
     expect(err instanceof Error).toBe(true)
     expect(err instanceof ApiRequestError).toBe(true)
@@ -25,7 +25,7 @@ describe('ApiRequestError', () => {
 })
 
 describe('SessionExpiredError', () => {
-  it('tem status 401, code unauthorized e mensagem padrão em pt-BR', () => {
+  it('has status 401, code unauthorized and default message', () => {
     const err = new SessionExpiredError()
     expect(err.status).toBe(401)
     expect(err.code).toBe('unauthorized')
@@ -33,19 +33,19 @@ describe('SessionExpiredError', () => {
     expect(err.name).toBe('SessionExpiredError')
   })
 
-  it('é instanceof ApiRequestError', () => {
+  it('is instanceof ApiRequestError', () => {
     const err = new SessionExpiredError()
     expect(err instanceof SessionExpiredError).toBe(true)
     expect(err instanceof ApiRequestError).toBe(true)
   })
 
-  it('não é instanceof NotFoundError', () => {
+  it('is not instanceof NotFoundError', () => {
     expect(new SessionExpiredError() instanceof NotFoundError).toBe(false)
   })
 })
 
 describe('NotFoundError', () => {
-  it('tem status 404 e code not_found', () => {
+  it('has status 404 and code not_found', () => {
     const err = new NotFoundError('recurso não encontrado')
     expect(err.status).toBe(404)
     expect(err.code).toBe('not_found')
@@ -53,7 +53,7 @@ describe('NotFoundError', () => {
     expect(err.message).toBe('recurso não encontrado')
   })
 
-  it('é instanceof ApiRequestError mas não SessionExpiredError', () => {
+  it('is instanceof ApiRequestError but not SessionExpiredError', () => {
     const err = new NotFoundError('msg')
     expect(err instanceof NotFoundError).toBe(true)
     expect(err instanceof ApiRequestError).toBe(true)
@@ -62,14 +62,14 @@ describe('NotFoundError', () => {
 })
 
 describe('ForbiddenError', () => {
-  it('tem status 403 e code forbidden', () => {
+  it('has status 403 and code forbidden', () => {
     const err = new ForbiddenError('acesso negado')
     expect(err.status).toBe(403)
     expect(err.code).toBe('forbidden')
     expect(err.name).toBe('ForbiddenError')
   })
 
-  it('é instanceof ApiRequestError mas não NotFoundError', () => {
+  it('is instanceof ApiRequestError but not NotFoundError', () => {
     const err = new ForbiddenError('msg')
     expect(err instanceof ForbiddenError).toBe(true)
     expect(err instanceof ApiRequestError).toBe(true)
@@ -78,7 +78,7 @@ describe('ForbiddenError', () => {
 })
 
 describe('DrawCompletedError', () => {
-  it('tem status 409 e code conflict', () => {
+  it('has status 409 and code conflict', () => {
     const err = new DrawCompletedError('sorteio realizado')
     expect(err.status).toBe(409)
     expect(err.code).toBe('conflict')
@@ -86,40 +86,40 @@ describe('DrawCompletedError', () => {
     expect(err.message).toBe('sorteio realizado')
   })
 
-  it('é instanceof InviteError e ApiRequestError', () => {
+  it('is instanceof InviteError and ApiRequestError', () => {
     const err = new DrawCompletedError('msg')
     expect(err instanceof DrawCompletedError).toBe(true)
     expect(err instanceof InviteError).toBe(true)
     expect(err instanceof ApiRequestError).toBe(true)
   })
 
-  it('não é instanceof InvalidInviteError', () => {
+  it('is not instanceof InvalidInviteError', () => {
     expect(new DrawCompletedError('msg') instanceof InvalidInviteError).toBe(false)
   })
 })
 
 describe('InvalidInviteError', () => {
-  it('tem code not_found quando status é 404', () => {
+  it('has code not_found when status is 404', () => {
     const err = new InvalidInviteError('convite não encontrado', 404)
     expect(err.status).toBe(404)
     expect(err.code).toBe('not_found')
     expect(err.name).toBe('InvalidInviteError')
   })
 
-  it('tem code conflict quando status é 409', () => {
+  it('has code conflict when status is 409', () => {
     const err = new InvalidInviteError('convite expirado', 409)
     expect(err.status).toBe(409)
     expect(err.code).toBe('conflict')
   })
 
-  it('é instanceof InviteError e ApiRequestError', () => {
+  it('is instanceof InviteError and ApiRequestError', () => {
     const err = new InvalidInviteError('msg', 404)
     expect(err instanceof InvalidInviteError).toBe(true)
     expect(err instanceof InviteError).toBe(true)
     expect(err instanceof ApiRequestError).toBe(true)
   })
 
-  it('não é instanceof DrawCompletedError', () => {
+  it('is not instanceof DrawCompletedError', () => {
     expect(new InvalidInviteError('msg', 404) instanceof DrawCompletedError).toBe(false)
   })
 })

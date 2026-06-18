@@ -25,13 +25,13 @@ function mockFetch(status: number, body: unknown) {
 }
 
 describe('apiFetch', () => {
-  it('retorna JSON parseado em 200', async () => {
+  it('returns parsed JSON on 200', async () => {
     mockFetch(200, { foo: 'bar' })
     const result = await apiFetch<{ foo: string }>('/api/test')
     expect(result).toEqual({ foo: 'bar' })
   })
 
-  it('envia Authorization header quando token existe', async () => {
+  it('sends Authorization header when token exists', async () => {
     mockFetch(200, {})
     await apiFetch('/api/test')
     expect(global.fetch).toHaveBeenCalledWith(
@@ -44,7 +44,7 @@ describe('apiFetch', () => {
     )
   })
 
-  it('omite Authorization header quando não há token', async () => {
+  it('omits Authorization header when no token', async () => {
     localStorage.clear()
     mockFetch(200, {})
     await apiFetch('/api/test')
@@ -52,13 +52,13 @@ describe('apiFetch', () => {
     expect(headers).not.toHaveProperty('Authorization')
   })
 
-  it('lança SessionExpiredError em 401 e limpa o token', async () => {
+  it('throws SessionExpiredError on 401 and clears the token', async () => {
     mockFetch(401, {})
     await expect(apiFetch('/api/test')).rejects.toBeInstanceOf(SessionExpiredError)
     expect(localStorage.getItem('mystery_gifter_token')).toBeNull()
   })
 
-  it('lança NotFoundError em 404 com a mensagem do backend', async () => {
+  it('throws NotFoundError on 404 with the backend message', async () => {
     mockFetch(404, { code: 'not_found', message: 'recurso não encontrado' })
     const err = await apiFetch('/api/test').catch((e) => e) as NotFoundError
     expect(err).toBeInstanceOf(NotFoundError)
@@ -66,7 +66,7 @@ describe('apiFetch', () => {
     expect(err.status).toBe(404)
   })
 
-  it('lança ForbiddenError em 403', async () => {
+  it('throws ForbiddenError on 403', async () => {
     mockFetch(403, { code: 'forbidden', message: 'acesso negado' })
     const err = await apiFetch('/api/test').catch((e) => e) as ForbiddenError
     expect(err).toBeInstanceOf(ForbiddenError)
@@ -74,7 +74,7 @@ describe('apiFetch', () => {
     expect(err.status).toBe(403)
   })
 
-  it('lança ApiRequestError genérico para outros status de erro', async () => {
+  it('throws generic ApiRequestError for other error statuses', async () => {
     mockFetch(500, { code: 'internal_server_error', message: 'falha interna' })
     const err = await apiFetch('/api/test').catch((e) => e) as ApiRequestError
     expect(err).toBeInstanceOf(ApiRequestError)
@@ -82,13 +82,13 @@ describe('apiFetch', () => {
     expect(err.code).toBe('internal_server_error')
   })
 
-  it('usa mensagem fallback quando body.message está ausente', async () => {
+  it('uses fallback message when body.message is missing', async () => {
     mockFetch(500, {})
     const err = await apiFetch('/api/test').catch((e) => e) as ApiRequestError
     expect(err.message).toBe('Ocorreu um erro. Tente novamente.')
   })
 
-  it('mescla headers customizados sem sobrescrever os de autenticação', async () => {
+  it('merges custom headers without overriding auth headers', async () => {
     mockFetch(200, {})
     await apiFetch('/api/test', { headers: { 'X-Custom': 'valor' } })
     const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers as Record<string, string>

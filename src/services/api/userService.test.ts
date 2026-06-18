@@ -50,14 +50,14 @@ describe('userService', () => {
       expect(user).toEqual(mockUser)
     })
 
-    it('throws NotFoundError em 404 com mensagem do backend', async () => {
+    it('throws NotFoundError on 404 with backend message', async () => {
       mockFetch(404, { code: 'not_found', message: 'Usuário não encontrado.' })
       const err = await getUserById('u1').catch((e) => e)
       expect(err).toBeInstanceOf(NotFoundError)
       expect(err.message).toBe('Usuário não encontrado.')
     })
 
-    it('throws SessionExpiredError e limpa o token em 401', async () => {
+    it('throws SessionExpiredError and clears token on 401', async () => {
       mockFetch(401, {})
       await expect(getUserById('u1')).rejects.toBeInstanceOf(SessionExpiredError)
       expect(localStorage.getItem('mystery_gifter_token')).toBeNull()
