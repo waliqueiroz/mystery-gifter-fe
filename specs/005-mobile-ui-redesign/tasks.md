@@ -134,9 +134,9 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T038 [US4] Extrair formulário do `CreateGroupModal` para `src/components/groups/CreateGroupForm/CreateGroupForm.tsx` puro (sem modal) e criar teste `CreateGroupForm.test.tsx`
 - [X] T039 [US4] Criar nova rota `src/app/(protected)/groups/new/page.tsx` consumindo `CreateGroupForm` e teste `page.test.tsx`; substituir todas as aberturas do modal por navegação para `/groups/new` (depende de T038)
 - [X] T040 [US4] Remover por completo o diretório `src/components/groups/CreateGroupModal/` após auditoria de que nenhum import remanesce (`grep -rn "CreateGroupModal" src/` → 0)
-- [ ] T041 [P] [US4] Refazer `src/components/groups/DrawButton/DrawButton.tsx` como botão circular ou pill grande conforme DESIGN.md, com `ConfirmModal` mantido para confirmação; atualizar `DrawButton.test.tsx`
-- [ ] T042 [P] [US4] Refazer `src/components/groups/GroupActions/GroupActions.tsx` em Tailwind preservando comportamento; atualizar teste
-- [ ] T043 [P] [US4] Refazer `src/components/groups/ResultReveal/ResultReveal.tsx` em Tailwind; atualizar teste
+- [X] T041 [P] [US4] Refazer `src/components/groups/DrawButton/DrawButton.tsx` como botão circular ou pill grande conforme DESIGN.md, com `ConfirmModal` mantido para confirmação; atualizar `DrawButton.test.tsx`
+- [X] T042 [P] [US4] Refazer `src/components/groups/GroupActions/GroupActions.tsx` em Tailwind preservando comportamento; atualizar teste
+- [X] T043 [P] [US4] Refazer `src/components/groups/ResultReveal/ResultReveal.tsx` em Tailwind; atualizar teste
 - [ ] T044 [US4] Criar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx` substituindo o modal antigo por `<BottomSheet>`; teste `MemberProfileSheet.test.tsx` cobrindo abertura via clique, fechamento por ESC/backdrop e a11y (depende de T032)
 - [ ] T045 [US4] Refazer `src/components/groups/MemberList/MemberList.tsx` para abrir `MemberProfileSheet` ao clicar em um membro (em vez do modal antigo); atualizar `MemberList.test.tsx` (depende de T044)
 - [ ] T046 [US4] Remover por completo o diretório `src/components/groups/MemberProfileModal/` após auditoria de que nenhum import remanesce (`grep -rn "MemberProfileModal" src/` → 0) (depende de T045)
