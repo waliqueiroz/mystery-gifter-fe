@@ -84,8 +84,6 @@ const mockInvite: GroupInvite = {
   created_at: '',
 }
 
-// jsdom já fornece window.location com origin "http://localhost"; basta
-// usá-lo como referência nos asserts.
 const ORIGIN = window.location.origin
 
 beforeEach(() => {
@@ -94,7 +92,7 @@ beforeEach(() => {
 })
 
 describe('InvitePage', () => {
-  it('renderiza heading "Convite" + botão voltar ao grupo', async () => {
+  it('renders "Convite" heading and back button', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     mockGetActiveInvite.mockResolvedValue(mockInvite)
     render(<InvitePage />)
@@ -107,7 +105,7 @@ describe('InvitePage', () => {
     ).toBeInTheDocument()
   })
 
-  it('exibe o link de convite + botões Copiar/Compartilhar quando existe invite ativo', async () => {
+  it('shows invite link and Copy/Share buttons when an active invite exists', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     mockGetActiveInvite.mockResolvedValue(mockInvite)
     Object.assign(navigator, { share: jest.fn() })
@@ -125,7 +123,7 @@ describe('InvitePage', () => {
     ).toBeInTheDocument()
   })
 
-  it('copia o link para o clipboard ao clicar em "Copiar link"', async () => {
+  it('copies the link to clipboard when "Copiar link" is clicked', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     mockGetActiveInvite.mockResolvedValue(mockInvite)
     const writeText = jest.fn().mockResolvedValue(undefined)
@@ -146,7 +144,7 @@ describe('InvitePage', () => {
     })
   })
 
-  describe('quando não há convite ativo (404)', () => {
+  describe('when there is no active invite (404)', () => {
     it('owner sees "Gerar link de convite" CTA when there is no active invite (NotFoundError)', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
       mockGetActiveInvite.mockRejectedValue(new NotFoundError('no active invite found for this group'))
@@ -165,7 +163,7 @@ describe('InvitePage', () => {
       ).toBeInTheDocument()
     })
 
-    it('não-dono vê mensagem orientativa, sem CTA', async () => {
+    it('non-owner sees guidance message with no CTA', async () => {
       mockUseUser.mockReturnValue(member)
       mockGetGroup.mockResolvedValue(makeGroup())
       mockGetActiveInvite.mockRejectedValue(new NotFoundError('no active invite found for this group'))
@@ -178,7 +176,7 @@ describe('InvitePage', () => {
       ).toBeNull()
     })
 
-    it('clique em "Gerar" cria invite e exibe o link', async () => {
+    it('clicking "Gerar" creates an invite and shows the link', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())
       mockGetActiveInvite.mockRejectedValue(new NotFoundError('no active invite found for this group'))
       mockCreateInvite.mockResolvedValue(mockInvite)
@@ -195,8 +193,8 @@ describe('InvitePage', () => {
     })
   })
 
-  describe('grupo MATCHED ou ARCHIVED', () => {
-    it('MATCHED exibe EmptyState "Convites desabilitados" sem buscar invite', async () => {
+  describe('when group is MATCHED or ARCHIVED', () => {
+    it('MATCHED shows "Convites desabilitados" EmptyState without fetching invite', async () => {
       mockGetGroup.mockResolvedValue(makeGroup({ status: 'MATCHED' }))
       render(<InvitePage />)
       expect(
@@ -208,7 +206,7 @@ describe('InvitePage', () => {
       expect(mockGetActiveInvite).not.toHaveBeenCalled()
     })
 
-    it('ARCHIVED exibe EmptyState com mensagem específica', async () => {
+    it('ARCHIVED shows EmptyState with specific message', async () => {
       mockGetGroup.mockResolvedValue(makeGroup({ status: 'ARCHIVED' }))
       render(<InvitePage />)
       expect(
@@ -220,7 +218,7 @@ describe('InvitePage', () => {
     })
   })
 
-  it('falha ao carregar grupo exibe EmptyState de erro com retry', async () => {
+  it('group load failure shows error EmptyState with retry', async () => {
     mockGetGroup.mockRejectedValue(new Error('Falha 500.'))
     render(<InvitePage />)
     expect(
@@ -232,7 +230,7 @@ describe('InvitePage', () => {
     ).toBeInTheDocument()
   })
 
-  it('botão "Voltar ao grupo" no header chama router.push para /groups/[id]', async () => {
+  it('"Voltar ao grupo" button calls router.push to /groups/[id]', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     mockGetActiveInvite.mockResolvedValue(mockInvite)
     render(<InvitePage />)
