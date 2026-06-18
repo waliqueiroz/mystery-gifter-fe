@@ -34,7 +34,7 @@ export default function LoginForm() {
       const session = await login({ email: form.email, password: form.password })
       setToken(session.access_token)
       const returnUrl = searchParams.get('returnUrl')
-      router.push(returnUrl ?? '/dashboard')
+      router.push(returnUrl ?? '/groups')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.')
     } finally {
