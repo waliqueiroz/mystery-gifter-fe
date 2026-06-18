@@ -12,41 +12,35 @@ export function ProfileCard() {
   if (!user) return null
 
   return (
-    <div
-      className="card"
-      style={{
-        backgroundColor: 'var(--mg-bg-card)',
-        border: '1px solid rgba(107,70,193,0.2)',
-        maxWidth: 480,
-      }}
-    >
-      <div className="card-body">
-        <div className="d-flex align-items-center mb-4">
-          <i
-            className="fas fa-user-circle fa-3x mr-3"
-            style={{ color: 'var(--mg-primary-hover)' }}
-            aria-hidden="true"
-          />
-          <div>
-            <h5 className="mb-0" style={{ color: 'var(--mg-text)' }}>
-              {user.name} {user.surname}
-            </h5>
-            <small style={{ color: 'var(--mg-text-muted)' }}>Membro desde {formatDate(user.created_at)}</small>
-          </div>
+    <div className="rounded-card bg-mg-surface p-6">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-mg-surface-2 text-mg-green text-2xl font-bold">
+          {user.name.charAt(0).toUpperCase()}
         </div>
+        <div>
+          <p className="text-lg font-semibold text-mg-text">
+            {user.name} {user.surname}
+          </p>
+          <p className="text-sm text-mg-text-muted">
+            Membro desde {formatDate(user.created_at)}
+          </p>
+        </div>
+      </div>
 
-        <dl className="mb-0">
-          <dt style={{ color: 'var(--mg-text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <dl className="space-y-4">
+        <div>
+          <dt className="text-xs uppercase tracking-widest text-mg-text-muted mb-1">
             E-mail
           </dt>
-          <dd style={{ color: 'var(--mg-text)', marginBottom: '1rem' }}>{user.email}</dd>
-
-          <dt style={{ color: 'var(--mg-text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <dd className="text-mg-text">{user.email}</dd>
+        </div>
+        <div>
+          <dt className="text-xs uppercase tracking-widest text-mg-text-muted mb-1">
             Membro desde
           </dt>
-          <dd style={{ color: 'var(--mg-text)', marginBottom: 0 }}>{formatDate(user.created_at)}</dd>
-        </dl>
-      </div>
+          <dd className="text-mg-text">{formatDate(user.created_at)}</dd>
+        </div>
+      </dl>
     </div>
   )
 }

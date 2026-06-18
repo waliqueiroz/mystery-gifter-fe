@@ -140,10 +140,10 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T044 [US4] Criar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx` substituindo o modal antigo por `<BottomSheet>`; teste `MemberProfileSheet.test.tsx` cobrindo abertura via clique, fechamento por ESC/backdrop e a11y (depende de T032)
 - [X] T045 [US4] Refazer `src/components/groups/MemberList/MemberList.tsx` para abrir `MemberProfileSheet` ao clicar em um membro (em vez do modal antigo); atualizar `MemberList.test.tsx` (depende de T044)
 - [X] T046 [US4] Remover por completo o diretório `src/components/groups/MemberProfileModal/` após auditoria de que nenhum import remanesce (`grep -rn "MemberProfileModal" src/` → 0) (depende de T045)
-- [ ] T047 [US4] Refatorar `src/components/groups/InviteSection/InviteSection.tsx` para navegar para a nova rota `/groups/[id]/invite` em vez de abrir overlay/modal; atualizar `InviteSection.test.tsx`
-- [ ] T048 [US4] Criar nova rota `src/app/(protected)/groups/[id]/invite/page.tsx` com formulário de convite e fluxo completo preservado; teste `page.test.tsx`
-- [ ] T049 [US4] Modificar `src/app/(protected)/groups/page.tsx` (lista) e `page.test.tsx` consumindo `GroupList` + `GroupFilters` refeitos
-- [ ] T050 [US4] Modificar `src/app/(protected)/groups/[id]/page.tsx` (detalhe) e `page.test.tsx` consumindo componentes refeitos (cartão, ações, lista de membros via sheet, sorteio)
+- [X] T047 [US4] Refatorar `src/components/groups/InviteSection/InviteSection.tsx` para navegar para a nova rota `/groups/[id]/invite` em vez de abrir overlay/modal; atualizar `InviteSection.test.tsx`
+- [X] T048 [US4] Criar nova rota `src/app/(protected)/groups/[id]/invite/page.tsx` com formulário de convite e fluxo completo preservado; teste `page.test.tsx`
+- [X] T049 [US4] Modificar `src/app/(protected)/groups/page.tsx` (lista) e `page.test.tsx` consumindo `GroupList` + `GroupFilters` refeitos
+- [X] T050 [US4] Modificar `src/app/(protected)/groups/[id]/page.tsx` (detalhe) e `page.test.tsx` consumindo componentes refeitos (cartão, ações, lista de membros via sheet, sorteio)
 
 **Checkpoint**: lista, detalhe, criação, convite, lista de membros, sheet de detalhes e sorteio operam no novo padrão; nenhum modal não-confirmatório remanesce.
 
@@ -157,11 +157,11 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 ### Implementação para US5
 
-- [ ] T051 [P] [US5] Refazer `src/components/profile/ProfileCard/ProfileCard.tsx` em Tailwind exibindo nome, sobrenome, e-mail, data de criação; atualizar `ProfileCard.test.tsx`
-- [ ] T052 [P] [US5] Criar `src/components/profile/LogoutButton/LogoutButton.tsx` (Button outline, chama `clearToken()` e redireciona) e teste `LogoutButton.test.tsx`
-- [ ] T053 [US5] Modificar `src/app/(protected)/profile/page.tsx` e `page.test.tsx` consumindo `ProfileCard` + `LogoutButton` (depende de T051, T052)
-- [ ] T054 [P] [US5] Refazer `src/components/invite/InviteJoinCard/InviteJoinCard.tsx` em Tailwind preservando fluxo de aceite com login obrigatório e `returnUrl`; atualizar teste
-- [ ] T055 [US5] Modificar `src/app/invite/[token]/page.tsx` e `page.test.tsx` consumindo `InviteJoinCard` refeito
+- [X] T051 [P] [US5] Refazer `src/components/profile/ProfileCard/ProfileCard.tsx` em Tailwind exibindo nome, sobrenome, e-mail, data de criação; atualizar `ProfileCard.test.tsx`
+- [X] T052 [P] [US5] Criar `src/components/profile/LogoutButton/LogoutButton.tsx` (Button outline, chama `clearToken()` e redireciona) e teste `LogoutButton.test.tsx`
+- [X] T053 [US5] Modificar `src/app/(protected)/profile/page.tsx` e `page.test.tsx` consumindo `ProfileCard` + `LogoutButton` (depende de T051, T052)
+- [X] T054 [P] [US5] Refazer `src/components/invite/InviteJoinCard/InviteJoinCard.tsx` em Tailwind preservando fluxo de aceite com login obrigatório e `returnUrl`; atualizar teste
+- [X] T055 [US5] Modificar `src/app/invite/[token]/page.tsx` e `page.test.tsx` consumindo `InviteJoinCard` refeito
 
 **Checkpoint**: toda a área autenticada e o ponto de entrada do convite operam na nova identidade.
 
@@ -175,8 +175,8 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 ### Implementação para US6
 
-- [ ] T056 [P] [US6] Atualizar `/Users/waliqueiroz/.claude/projects/-Users-waliqueiroz-Documents-projetos-mystery-gifter-fe/memory/MEMORY.md` (e arquivos de memória apontados por ele) removendo referências a Bootstrap/AdminLTE e à política de inglês para specs; refletir nova stack e política pt-BR
-- [ ] T057 [US6] Remover de `package.json` as dependências `bootstrap`, `admin-lte`, `jquery`, `popper.js`, `@fortawesome/fontawesome-free` e `@types/jquery`; rodar `npm install` para reconciliar lockfile; auditar via `grep -rnE "bootstrap|admin-lte|jquery|popper|fortawesome" src/` para garantir 0 imports remanescentes (depende de T023, T029, T031, T049, T050, T053, T055)
+- [X] T056 [P] [US6] Atualizar `/Users/waliqueiroz/.claude/projects/-Users-waliqueiroz-Documents-projetos-mystery-gifter-fe/memory/MEMORY.md` (e arquivos de memória apontados por ele) removendo referências a Bootstrap/AdminLTE e à política de inglês para specs; refletir nova stack e política pt-BR
+- [X] T057 [US6] Remover de `package.json` as dependências `bootstrap`, `admin-lte`, `jquery`, `popper.js`, `@fortawesome/fontawesome-free` e `@types/jquery`; rodar `npm install` para reconciliar lockfile; auditar via `grep -rnE "bootstrap|admin-lte|jquery|popper|fortawesome" src/` para garantir 0 imports remanescentes (depende de T023, T029, T031, T049, T050, T053, T055)
 
 **Checkpoint**: governança e dependências totalmente alinhadas ao código entregue.
 
@@ -186,15 +186,15 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 **Objetivo**: validar critérios de sucesso, executar gates de qualidade e amarrar pontas soltas.
 
-- [ ] T058 [P] Rodar `npm run build` e validar SC-002 (0 referências a Bootstrap/AdminLTE em assets do build) via `grep -ri "bootstrap\|admin-lte\|jquery" .next/static` (esperado vazio)
-- [ ] T059 [P] Rodar `npm test -- --coverage` e validar SC-003 (todos os testes passam, cobertura ≥ 80%)
-- [ ] T060 [P] Auditar SC-004 e SC-008: `grep -RnE '#[0-9a-fA-F]{3,6}' src/ --include='*.tsx' --include='*.ts'` deve ficar restrito a arquivos de configuração/tema; `grep -RnE 'rounded(?!-pill|-card|-full)' src/components` deve retornar vazio
-- [ ] T061 [P] Auditar SC-011 e SC-012: `grep -RinE 'spinner|loading-icon|fa-spin' src/` (esperado vazio) e auditoria manual de imports — apenas `ConfirmModal` é importado de `components/ui/` como overlay
-- [ ] T062 [P] **Inventário de rotas/telas (SC-001)**: gerar checklist em `specs/005-mobile-ui-redesign/checklists/screen-inventory.md` listando cada rota existente em `src/app/` e marcando "✅ migrada" para cada uma; bloquear merge enquanto houver "❌"
+- [X] T058 [P] Rodar `npm run build` e validar SC-002 (0 referências a Bootstrap/AdminLTE em assets do build) via `grep -ri "bootstrap\|admin-lte\|jquery" .next/static` (esperado vazio)
+- [X] T059 [P] Rodar `npm test -- --coverage` e validar SC-003 (todos os testes passam, cobertura ≥ 80%)
+- [X] T060 [P] Auditar SC-004 e SC-008: `grep -RnE '#[0-9a-fA-F]{3,6}' src/ --include='*.tsx' --include='*.ts'` deve ficar restrito a arquivos de configuração/tema; `grep -RnE 'rounded(?!-pill|-card|-full)' src/components` deve retornar vazio
+- [X] T061 [P] Auditar SC-011 e SC-012: `grep -RinE 'spinner|loading-icon|fa-spin' src/` (esperado vazio) e auditoria manual de imports — apenas `ConfirmModal` é importado de `components/ui/` como overlay
+- [X] T062 [P] **Inventário de rotas/telas (SC-001)**: gerar checklist em `specs/005-mobile-ui-redesign/checklists/screen-inventory.md` listando cada rota existente em `src/app/` e marcando "✅ migrada" para cada uma; bloquear merge enquanto houver "❌"
+- [X] T064 [P] **Auditoria pt-BR (FR-017)**: rodar `grep -RinE "\b(loading|submit|cancel|confirm|email|password|users?|groups?|profile|members?|register|login|logout)\b" src/components src/app --include='*.tsx'` filtrando strings visíveis ao usuário; substituir as ocorrências por pt-BR; testes podem usar inglês livremente
+- [X] T066 Rodar `npm run lint` e `npm run type-check`; corrigir warnings remanescentes
 - [ ] T063 [P] **Auditoria de a11y (FR-014, FR-015, FR-016, SC-006)**: rodar axe em cada tela representativa (landing, login, register, groups, groups/[id], groups/new, groups/[id]/invite, profile, invite/[token]); validar foco visível por tabulação em fluxos críticos; corrigir achados
-- [ ] T064 [P] **Auditoria pt-BR (FR-017)**: rodar `grep -RinE "\b(loading|submit|cancel|confirm|email|password|users?|groups?|profile|members?|register|login|logout)\b" src/components src/app --include='*.tsx'` filtrando strings visíveis ao usuário; substituir as ocorrências por pt-BR; testes podem usar inglês livremente
 - [ ] T065 Validar SC-005 manualmente seguindo `quickstart.md` (320px sem scroll horizontal nos fluxos críticos via DevTools)
-- [ ] T066 Rodar `npm run lint` e `npm run type-check`; corrigir warnings remanescentes
 - [ ] T067 Validar end-to-end `quickstart.md` (todos os roteiros de teste manual por história executados sem regressão)
 
 ---
