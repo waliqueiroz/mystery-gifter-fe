@@ -1,10 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import type { Group, User } from '@/types/api'
-import { removeMember } from '@/services/api/groupService'
+
+import { MemberProfileSheet } from '@/components/groups/MemberProfileSheet/MemberProfileSheet'
+import Button from '@/components/ui/Button/Button'
+import { Icon } from '@/components/ui/Icon/Icon'
 import { useToast } from '@/components/ui/Toast/useToast'
-import { MemberProfileModal } from '@/components/groups/MemberProfileModal/MemberProfileModal'
+import { cn } from '@/lib/cn'
+import { removeMember } from '@/services/api/groupService'
+import type { Group, User } from '@/types/api'
 
 interface MemberListProps {
   group: Group
@@ -12,7 +16,11 @@ interface MemberListProps {
   onGroupUpdate: (group: Group) => void
 }
 
-export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListProps) {
+export function MemberList({
+  group,
+  currentUserId,
+  onGroupUpdate,
+}: MemberListProps) {
   const { showToast } = useToast()
   const [removingId, setRemovingId] = useState<string | null>(null)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
@@ -26,7 +34,10 @@ export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListPr
       onGroupUpdate(updated)
     } catch (err) {
       showToast({
-        message: err instanceof Error ? err.message : 'Erro ao remover participante.',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'Erro ao remover participante.',
         type: 'error',
       })
     } finally {
@@ -35,54 +46,76 @@ export function MemberList({ group, currentUserId, onGroupUpdate }: MemberListPr
   }
 
   return (
-    <div>
-      <h6 className="mb-3" style={{ color: 'var(--mg-text-muted)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+    <section className="flex flex-col gap-3">
+      <h2 className="text-xs font-semibold uppercase tracking-btn text-mg-text-muted">
         Participantes ({group.users.length})
-      </h6>
-      <ul className="list-group">
-        {group.users.map((user) => (
-          <li
-            key={user.id}
-            className="list-group-item d-flex align-items-center justify-content-between"
-            style={{ backgroundColor: 'var(--mg-bg-card)', border: '1px solid rgba(107,70,193,0.15)', color: 'var(--mg-text)' }}
-          >
-            <div className="d-flex align-items-center gap-2">
-              <i className="fas fa-user-circle fa-lg" style={{ color: 'var(--mg-text-muted)' }} aria-hidden="true" />
+      </h2>
+      <ul className="flex flex-col gap-2">
+        {group.users.map((user) => {
+          const isUserOwner = user.id === group.owner_id
+          const canDelete = isOwner && user.id !== currentUserId
+          return (
+            <li
+              key={user.id}
+              className={cn(
+                'flex items-center justify-between gap-2 rounded-card bg-mg-surface px-3 py-2',
+              )}
+            >
               <button
                 type="button"
-                className="btn btn-link p-0 mg-member-btn"
-                style={{ color: 'var(--mg-text)', textDecoration: 'none', cursor: 'pointer' }}
                 onClick={() => setSelectedUserId(user.id)}
                 aria-label={`Ver perfil de ${user.name} ${user.surname}`}
+                className={cn(
+                  'flex flex-grow items-center gap-2 rounded-card px-1 py-1 text-left text-sm text-mg-text',
+                  'transition-colors hover:bg-mg-surface-2',
+                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-mg-green focus-visible:outline-offset-2',
+                )}
               >
-                {user.name} {user.surname}
-                {user.id === group.owner_id && (
-                  <span className="ml-2 badge badge-secondary" style={{ fontSize: '0.65rem' }}>
-                    dono
+                <Icon
+                  name="User"
+                  size={20}
+                  className="shrink-0 text-mg-text-muted"
+                />
+                <span className="truncate">
+                  {user.name} {user.surname}
+                </span>
+                {isUserOwner && (
+                  <span className="shrink-0 rounded-pill bg-mg-surface-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-btn text-mg-text-muted">
+                    Dono
                   </span>
                 )}
               </button>
-            </div>
-            {isOwner && user.id !== currentUserId && (
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-danger"
-                onClick={() => handleRemove(user)}
-                disabled={!canRemove || removingId === user.id}
-                title={canRemove ? 'Remover participante' : 'Não é possível remover após o sorteio'}
-                aria-label={`Remover ${user.name}`}
-              >
-                {removingId === user.id ? (
-                  <span className="spinner-border spinner-border-sm" role="status" aria-label="Removendo" />
-                ) : (
-                  <i className="fas fa-times" aria-hidden="true" />
-                )}
-              </button>
-            )}
-          </li>
-        ))}
+              {canDelete && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  shape="circle"
+                  size="sm"
+                  onClick={() => handleRemove(user)}
+                  loading={removingId === user.id}
+                  disabled={!canRemove}
+                  aria-label={`Remover ${user.name}`}
+                  className={cn(
+                    'text-mg-text-negative hover:bg-mg-text-negative/10',
+                    !canRemove && 'opacity-50',
+                  )}
+                  title={
+                    canRemove
+                      ? 'Remover participante'
+                      : 'Não é possível remover após o sorteio'
+                  }
+                >
+                  <Icon name="X" size={16} aria-hidden />
+                </Button>
+              )}
+            </li>
+          )
+        })}
       </ul>
-      <MemberProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
-    </div>
+      <MemberProfileSheet
+        userId={selectedUserId}
+        onClose={() => setSelectedUserId(null)}
+      />
+    </section>
   )
 }

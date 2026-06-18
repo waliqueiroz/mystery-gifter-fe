@@ -10,8 +10,8 @@ interface ErrorAlertProps {
    * de ErrorAlert é **erro inline em formulário** (falha de submit, mensagem
    * de validação contextual). Para "falha ao carregar uma seção inteira",
    * a primitiva correta é `<EmptyState variant="error" cta={{...}} />`. O
-   * `onRetry` aqui existe para preservar consumidores legados (ex.:
-   * MemberProfileModal) até sua migração para EmptyState em Phase 6.
+   * `onRetry` permanece opcional para suportar casos onde o componente cabe
+   * no fluxo (raros após a migração para EmptyState em todas as seções).
    */
   onRetry?: () => void
   className?: string

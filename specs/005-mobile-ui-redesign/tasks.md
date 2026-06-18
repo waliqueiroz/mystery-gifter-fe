@@ -137,9 +137,9 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 - [X] T041 [P] [US4] Refazer `src/components/groups/DrawButton/DrawButton.tsx` como botão circular ou pill grande conforme DESIGN.md, com `ConfirmModal` mantido para confirmação; atualizar `DrawButton.test.tsx`
 - [X] T042 [P] [US4] Refazer `src/components/groups/GroupActions/GroupActions.tsx` em Tailwind preservando comportamento; atualizar teste
 - [X] T043 [P] [US4] Refazer `src/components/groups/ResultReveal/ResultReveal.tsx` em Tailwind; atualizar teste
-- [ ] T044 [US4] Criar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx` substituindo o modal antigo por `<BottomSheet>`; teste `MemberProfileSheet.test.tsx` cobrindo abertura via clique, fechamento por ESC/backdrop e a11y (depende de T032)
-- [ ] T045 [US4] Refazer `src/components/groups/MemberList/MemberList.tsx` para abrir `MemberProfileSheet` ao clicar em um membro (em vez do modal antigo); atualizar `MemberList.test.tsx` (depende de T044)
-- [ ] T046 [US4] Remover por completo o diretório `src/components/groups/MemberProfileModal/` após auditoria de que nenhum import remanesce (`grep -rn "MemberProfileModal" src/` → 0) (depende de T045)
+- [X] T044 [US4] Criar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx` substituindo o modal antigo por `<BottomSheet>`; teste `MemberProfileSheet.test.tsx` cobrindo abertura via clique, fechamento por ESC/backdrop e a11y (depende de T032)
+- [X] T045 [US4] Refazer `src/components/groups/MemberList/MemberList.tsx` para abrir `MemberProfileSheet` ao clicar em um membro (em vez do modal antigo); atualizar `MemberList.test.tsx` (depende de T044)
+- [X] T046 [US4] Remover por completo o diretório `src/components/groups/MemberProfileModal/` após auditoria de que nenhum import remanesce (`grep -rn "MemberProfileModal" src/` → 0) (depende de T045)
 - [ ] T047 [US4] Refatorar `src/components/groups/InviteSection/InviteSection.tsx` para navegar para a nova rota `/groups/[id]/invite` em vez de abrir overlay/modal; atualizar `InviteSection.test.tsx`
 - [ ] T048 [US4] Criar nova rota `src/app/(protected)/groups/[id]/invite/page.tsx` com formulário de convite e fluxo completo preservado; teste `page.test.tsx`
 - [ ] T049 [US4] Modificar `src/app/(protected)/groups/page.tsx` (lista) e `page.test.tsx` consumindo `GroupList` + `GroupFilters` refeitos
