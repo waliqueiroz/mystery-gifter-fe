@@ -106,7 +106,7 @@ description: "Lista de tarefas — Redesenho Mobile-first com Design System Insp
 
 ### Implementação para US3
 
-- [ ] T026 [P] [US3] Refazer `src/components/landing/HeroSection.tsx` em Tailwind (sem gradiente roxo / glassmorphism), CTAs como `<Button variant="primary" shape="pill-lg" />`; atualizar `HeroSection.test.tsx`
+- [X] T026 [P] [US3] Refazer `src/components/landing/HeroSection.tsx` em Tailwind (sem gradiente roxo / glassmorphism), CTAs como `<Button variant="primary" shape="pill-lg" />`; atualizar `HeroSection.test.tsx`
 - [ ] T027 [P] [US3] Refazer `src/components/login/LoginForm.tsx` com `<FormField>` e `<Button>` novos, mantendo lógica de `returnUrl`; atualizar `LoginForm.test.tsx`
 - [ ] T028 [P] [US3] Refazer `src/components/register/RegisterForm.tsx` com primitivas novas mantendo fluxo de auto-login pós-cadastro; atualizar `RegisterForm.test.tsx`
 - [ ] T029 [US3] Modificar `src/app/(public)/page.tsx` (landing) consumindo HeroSection refeita e atualizar `page.test.tsx`
