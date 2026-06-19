@@ -4,13 +4,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@/components/ui/Button/Button'
 import { joinGroup } from '@/services/api/inviteService'
+import { DrawCompletedError, InvalidInviteError } from '@/lib/errors'
 
 interface InviteJoinCardProps {
   token: string
 }
 
 enum JoinStatus {
-  Idle = 'idle',
   Loading = 'loading',
   DrawCompleted = 'draw_completed',
   Invalid = 'invalid',
@@ -26,7 +26,7 @@ const STATUS_MESSAGES: Partial<Record<JoinStatus, string>> = {
 
 export function InviteJoinCard({ token }: InviteJoinCardProps) {
   const router = useRouter()
-  const [status, setStatus] = useState<JoinStatus>(JoinStatus.Idle)
+  const [status, setStatus] = useState<JoinStatus | null>(null)
 
   async function handleJoin() {
     setStatus(JoinStatus.Loading)
@@ -34,14 +34,9 @@ export function InviteJoinCard({ token }: InviteJoinCardProps) {
       const group = await joinGroup(token)
       router.push(`/groups/${group.id}`)
     } catch (err) {
-      const message = err instanceof Error ? err.message : ''
-      if (message.toLowerCase().includes('draw') || message.toLowerCase().includes('matched')) {
+      if (err instanceof DrawCompletedError) {
         setStatus(JoinStatus.DrawCompleted)
-      } else if (
-        message.toLowerCase().includes('invalid') ||
-        message.toLowerCase().includes('expired') ||
-        message.toLowerCase().includes('not found')
-      ) {
+      } else if (err instanceof InvalidInviteError) {
         setStatus(JoinStatus.Invalid)
       } else {
         setStatus(JoinStatus.Error)
@@ -49,7 +44,7 @@ export function InviteJoinCard({ token }: InviteJoinCardProps) {
     }
   }
 
-  const errorMessage = STATUS_MESSAGES[status]
+  const errorMessage = status !== null ? STATUS_MESSAGES[status] : undefined
 
   return (
     <div className="rounded-card bg-mg-surface p-8 text-center">

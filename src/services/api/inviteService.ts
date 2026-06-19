@@ -1,37 +1,11 @@
 import type { GroupInvite, Group, User } from '@/types/api'
-import { getToken, clearToken } from '@/lib/auth'
-import { clearUser } from '@/lib/session'
-import type { ApiError } from '@/types/api'
-
-function authHeaders(): HeadersInit {
-  const token = getToken()
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  }
-}
-
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    ...init,
-    headers: { ...authHeaders(), ...init?.headers },
-  })
-
-  if (response.status === 401) {
-    clearToken()
-    clearUser()
-    throw new Error('Sessão expirada. Faça login novamente.')
-  }
-
-  if (!response.ok) {
-    const body: ApiError = await response.json()
-    const err = new Error(body.message ?? 'Ocorreu um erro. Tente novamente.')
-    ;(err as Error & { status: number }).status = response.status
-    throw err
-  }
-
-  return response.json() as Promise<T>
-}
+import { apiFetch } from './apiClient'
+import {
+  ApiRequestError,
+  DrawCompletedError,
+  InvalidInviteError,
+  NotFoundError,
+} from '@/lib/errors'
 
 export function getActiveInvite(groupId: string): Promise<GroupInvite> {
   return apiFetch<GroupInvite>(`/api/v1/groups/${groupId}/invites/active`)
@@ -43,10 +17,25 @@ export function createInvite(groupId: string): Promise<GroupInvite> {
   })
 }
 
-export function joinGroup(inviteToken: string): Promise<Group> {
-  return apiFetch<Group>(`/api/v1/invites/${inviteToken}/join`, {
-    method: 'POST',
-  })
+export async function joinGroup(inviteToken: string): Promise<Group> {
+  try {
+    return await apiFetch<Group>(`/api/v1/invites/${inviteToken}/join`, {
+      method: 'POST',
+    })
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      throw new InvalidInviteError(err.message, 404)
+    }
+
+    if (err instanceof ApiRequestError && err.status === 409) {
+      if (err.message === 'invite has expired') {
+        throw new InvalidInviteError(err.message, 409)
+      }
+      throw new DrawCompletedError(err.message)
+    }
+
+    throw err
+  }
 }
 
 export function getUserMatch(groupId: string): Promise<User> {

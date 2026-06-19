@@ -68,6 +68,8 @@ correspondente. Restrição inegociável que se aplica a todo código novo ou mo
   do limiar do projeto (mínimo 80% de cobertura de linhas).
 - Testes NÃO DEVEM apoiar-se em detalhes de implementação (sem acesso direto a state
   interno ou refs); testar comportamento sob a ótica do usuário.
+- Descrições de teste (`describe`/`it`) DEVEM ser escritas em **inglês**, mesmo que o
+  restante dos artefatos do projeto seja em pt-BR.
 
 **Justificativa**: testes unitários são a principal rede de segurança para refatoração
 e novas features. Exigi-los para todo componente previne regressões não detectadas e

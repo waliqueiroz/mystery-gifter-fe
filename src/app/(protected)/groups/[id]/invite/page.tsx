@@ -16,12 +16,7 @@ import { useDelayedFlag } from '@/lib/useDelayedFlag'
 import { getGroup } from '@/services/api/groupService'
 import { createInvite, getActiveInvite } from '@/services/api/inviteService'
 import type { Group, GroupInvite } from '@/types/api'
-
-function isNotFound(err: unknown): boolean {
-  if (err instanceof Error && (err as Error & { status?: number }).status === 404) return true
-  const message = err instanceof Error ? err.message : ''
-  return message.toLowerCase().includes('not found')
-}
+import { NotFoundError } from '@/lib/errors'
 
 function buildInviteUrl(token: string): string {
   if (typeof window === 'undefined') return ''
@@ -64,7 +59,7 @@ export default function InvitePage() {
       setInvite(data)
       setHasInvite(true)
     } catch (err) {
-      if (isNotFound(err)) {
+      if (err instanceof NotFoundError) {
         setHasInvite(false)
         setInvite(null)
       } else {

@@ -4,6 +4,13 @@ import {
   joinGroup,
   getUserMatch,
 } from './inviteService'
+import {
+  ApiRequestError,
+  SessionExpiredError,
+  NotFoundError,
+  DrawCompletedError,
+  InvalidInviteError,
+} from '@/lib/errors'
 import type { GroupInvite, Group, User } from '@/types/api'
 
 const mockInvite: GroupInvite = {
@@ -69,9 +76,9 @@ describe('inviteService', () => {
       expect(result).toEqual(mockInvite)
     })
 
-    it('throws on 404', async () => {
+    it('throws NotFoundError on 404', async () => {
       mockFetch(404, { code: 'not_found', message: 'Convite não encontrado.' })
-      await expect(getActiveInvite('g1')).rejects.toThrow('Convite não encontrado.')
+      await expect(getActiveInvite('g1')).rejects.toBeInstanceOf(NotFoundError)
     })
   })
 
@@ -101,6 +108,37 @@ describe('inviteService', () => {
       const result = await joinGroup('token')
       expect(result).toEqual(mockGroup)
     })
+
+    it('throws InvalidInviteError when invite does not exist (404)', async () => {
+      mockFetch(404, { code: 'not_found', message: 'group invite not found' })
+      const err = await joinGroup('token').catch((e) => e)
+      expect(err).toBeInstanceOf(InvalidInviteError)
+      expect(err.status).toBe(404)
+    })
+
+    it('throws InvalidInviteError when invite has expired (409)', async () => {
+      mockFetch(409, { code: 'conflict', message: 'invite has expired' })
+      const err = await joinGroup('token').catch((e) => e)
+      expect(err).toBeInstanceOf(InvalidInviteError)
+      expect(err.status).toBe(409)
+    })
+
+    it('throws DrawCompletedError when group is not OPEN (409)', async () => {
+      mockFetch(409, {
+        code: 'conflict',
+        message:
+          'group is not open for registration, contact the group owner to reopen the group',
+      })
+      const err = await joinGroup('token').catch((e) => e)
+      expect(err).toBeInstanceOf(DrawCompletedError)
+    })
+
+    it('re-throws ApiRequestError for unmapped errors (500)', async () => {
+      mockFetch(500, { code: 'internal_server_error', message: 'falha interna' })
+      const err = await joinGroup('token').catch((e) => e)
+      expect(err).toBeInstanceOf(ApiRequestError)
+      expect(err.status).toBe(500)
+    })
   })
 
   describe('getUserMatch', () => {
@@ -121,9 +159,9 @@ describe('inviteService', () => {
   })
 
   describe('error handling', () => {
-    it('clears token and throws on 401', async () => {
+    it('throws SessionExpiredError and clears token on 401', async () => {
       mockFetch(401, {})
-      await expect(joinGroup('token')).rejects.toThrow('Sessão expirada.')
+      await expect(joinGroup('token')).rejects.toBeInstanceOf(SessionExpiredError)
       expect(localStorage.getItem('mystery_gifter_token')).toBeNull()
     })
   })

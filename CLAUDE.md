@@ -124,6 +124,7 @@ useEffect(() => {
 ## Regras Essenciais (Constituição v2.0.0)
 
 - Todo componente React e função utilitária DEVE ter teste unitário co-localizado.
+- Descrições de teste (`describe`/`it`) DEVEM ser escritas em inglês.
 - Toda string de UI DEVE estar em pt-BR. URLs em inglês (`/register`, não `/registro`).
 - **Todos os artefatos speckit (spec.md, plan.md, tasks.md, research.md, etc.) DEVEM ser
   redigidos em pt-BR.**
