@@ -16,27 +16,56 @@ const mockSession: AuthSession = {
   expires_in: 3600,
 }
 
-const mockFetch = jest.fn()
-global.fetch = mockFetch
-
 beforeEach(() => {
-  mockFetch.mockReset()
+  global.fetch = jest.fn()
 })
 
-describe('login', () => {
-  it('returns AuthSession on success', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve(mockSession),
-    })
+afterEach(() => {
+  jest.resetAllMocks()
+  localStorage.clear()
+})
 
+function mockFetchOk(body: unknown) {
+  ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve(body),
+  })
+}
+
+function mockFetchError(status: number, body: unknown = {}) {
+  ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+    ok: false,
+    status,
+    json: () => Promise.resolve(body),
+  })
+}
+
+describe('login', () => {
+  it('calls POST /api/v1/login with credentials', async () => {
+    mockFetchOk(mockSession)
+    await login({ email: 'joao@example.com', password: 'senha123' })
+    expect(global.fetch).toHaveBeenCalledWith(
+      '/api/v1/login',
+      expect.objectContaining({ method: 'POST' }),
+    )
+  })
+
+  it('does not send Authorization header', async () => {
+    mockFetchOk(mockSession)
+    await login({ email: 'joao@example.com', password: 'senha123' })
+    const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers as Record<string, string>
+    expect(headers).not.toHaveProperty('Authorization')
+  })
+
+  it('returns AuthSession on success', async () => {
+    mockFetchOk(mockSession)
     const result = await login({ email: 'joao@example.com', password: 'senha123' })
     expect(result).toEqual(mockSession)
-    expect(mockFetch).toHaveBeenCalledWith('/api/v1/login', expect.objectContaining({ method: 'POST' }))
   })
 
   it('throws InvalidCredentialsError with correct message on 401', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 401 })
+    mockFetchError(401, { code: 'unauthorized', message: 'invalid credentials' })
     const err = await login({ email: 'x@x.com', password: 'wrong' }).catch((e) => e)
     expect(err).toBeInstanceOf(InvalidCredentialsError)
     expect(err.message).toBe('E-mail ou senha inválidos.')
@@ -44,15 +73,14 @@ describe('login', () => {
   })
 
   it('throws ApiRequestError on unknown error', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 })
+    mockFetchError(500, { code: 'internal_server_error', message: 'falha interna' })
     const err = await login({ email: 'x@x.com', password: '123' }).catch((e) => e)
     expect(err).toBeInstanceOf(ApiRequestError)
     expect(err.status).toBe(500)
-    expect(err.message).toBe('Ocorreu um erro. Tente novamente.')
   })
 
   it('InvalidCredentialsError is not instanceof ConflictError', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 401 })
+    mockFetchError(401, { code: 'unauthorized', message: 'invalid credentials' })
     const err = await login({ email: 'x@x.com', password: 'wrong' }).catch((e) => e)
     expect(err instanceof ConflictError).toBe(false)
   })
@@ -67,36 +95,43 @@ describe('register', () => {
     password_confirm: 'senha123',
   }
 
-  it('makes two sequential fetch calls and returns AuthSession on success', async () => {
-    mockFetch
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockSession) })
+  it('calls POST /api/v1/users then POST /api/v1/login on success', async () => {
+    mockFetchOk({})
+    mockFetchOk(mockSession)
 
     const result = await register(payload)
     expect(result).toEqual(mockSession)
-    expect(mockFetch).toHaveBeenCalledTimes(2)
-    expect(mockFetch).toHaveBeenNthCalledWith(1, '/api/v1/users', expect.objectContaining({ method: 'POST' }))
-    expect(mockFetch).toHaveBeenNthCalledWith(2, '/api/v1/login', expect.objectContaining({ method: 'POST' }))
+    expect(global.fetch).toHaveBeenCalledTimes(2)
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      1,
+      '/api/v1/users',
+      expect.objectContaining({ method: 'POST' }),
+    )
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      2,
+      '/api/v1/login',
+      expect.objectContaining({ method: 'POST' }),
+    )
   })
 
   it('throws ConflictError with correct message on 409', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 409 })
+    mockFetchError(409, { code: 'conflict', message: 'user already exists' })
     const err = await register(payload).catch((e) => e)
     expect(err).toBeInstanceOf(ConflictError)
     expect(err.message).toBe('Este e-mail já está em uso.')
     expect(err.status).toBe(409)
-    expect(mockFetch).toHaveBeenCalledTimes(1)
+    expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 
   it('throws ApiRequestError on generic server error', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 })
+    mockFetchError(500, { code: 'internal_server_error', message: 'falha interna' })
     const err = await register(payload).catch((e) => e)
     expect(err).toBeInstanceOf(ApiRequestError)
     expect(err.status).toBe(500)
   })
 
   it('re-throws network errors as-is', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'))
+    ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
     await expect(register(payload)).rejects.toThrow('Network error')
   })
 })

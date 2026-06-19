@@ -7,8 +7,13 @@ import {
 } from '@/lib/errors'
 import type { ApiError } from '@/types/api'
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = getToken()
+export async function apiFetch<T>(
+  path: string,
+  init?: RequestInit,
+  options: { authenticated?: boolean } = {},
+): Promise<T> {
+  const { authenticated = true } = options
+  const token = authenticated ? getToken() : null
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -16,7 +21,7 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
   }
   const response = await fetch(path, { ...init, headers })
 
-  if (response.status === 401) {
+  if (authenticated && response.status === 401) {
     clearToken()
     throw new SessionExpiredError()
   }

@@ -95,4 +95,27 @@ describe('apiFetch', () => {
     expect(headers).toHaveProperty('X-Custom', 'valor')
     expect(headers).toHaveProperty('Authorization', 'Bearer test-token')
   })
+
+  describe('authenticated: false', () => {
+    it('omits Authorization header even when token exists', async () => {
+      mockFetch(200, {})
+      await apiFetch('/api/test', undefined, { authenticated: false })
+      const headers = (global.fetch as jest.Mock).mock.calls[0][1].headers as Record<string, string>
+      expect(headers).not.toHaveProperty('Authorization')
+    })
+
+    it('throws ApiRequestError on 401 without clearing the token', async () => {
+      mockFetch(401, { code: 'unauthorized', message: 'invalid credentials' })
+      const err = await apiFetch('/api/test', undefined, { authenticated: false }).catch((e) => e) as ApiRequestError
+      expect(err).toBeInstanceOf(ApiRequestError)
+      expect(err.status).toBe(401)
+      expect(localStorage.getItem('mystery_gifter_token')).toBe('test-token')
+    })
+
+    it('is not instanceof SessionExpiredError on 401', async () => {
+      mockFetch(401, { code: 'unauthorized', message: 'invalid credentials' })
+      const err = await apiFetch('/api/test', undefined, { authenticated: false }).catch((e) => e)
+      expect(err instanceof SessionExpiredError).toBe(false)
+    })
+  })
 })

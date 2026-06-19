@@ -1,30 +1,35 @@
-import type { AuthSession, LoginCredentials, CreateUserPayload } from '@/types/api'
+import type { AuthSession, LoginCredentials, CreateUserPayload, User } from '@/types/api'
 import { setUser } from '@/lib/session'
 import { ApiRequestError, ConflictError, InvalidCredentialsError } from '@/lib/errors'
-
-async function authFetch<T>(path: string, body: unknown): Promise<T> {
-  const response = await fetch(path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  })
-
-  if (!response.ok) {
-    if (response.status === 401) throw new InvalidCredentialsError('E-mail ou senha inválidos.')
-    if (response.status === 409) throw new ConflictError('Este e-mail já está em uso.')
-    throw new ApiRequestError('Ocorreu um erro. Tente novamente.', response.status, 'unknown')
-  }
-
-  return response.json() as Promise<T>
-}
+import { apiFetch } from './apiClient'
 
 export async function login(credentials: LoginCredentials): Promise<AuthSession> {
-  const session = await authFetch<AuthSession>('/api/v1/login', credentials)
-  setUser(session.user)
-  return session
+  try {
+    const session = await apiFetch<AuthSession>('/api/v1/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    }, { authenticated: false })
+    setUser(session.user)
+    return session
+  } catch (err) {
+    if (err instanceof ApiRequestError && err.status === 401) {
+      throw new InvalidCredentialsError('E-mail ou senha inválidos.')
+    }
+    throw err
+  }
 }
 
 export async function register(payload: CreateUserPayload): Promise<AuthSession> {
-  await authFetch<unknown>('/api/v1/users', payload)
+  try {
+    await apiFetch<User>('/api/v1/users', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }, { authenticated: false })
+  } catch (err) {
+    if (err instanceof ApiRequestError && err.status === 409) {
+      throw new ConflictError('Este e-mail já está em uso.')
+    }
+    throw err
+  }
   return login({ email: payload.email, password: payload.password })
 }
