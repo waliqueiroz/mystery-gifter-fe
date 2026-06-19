@@ -1,5 +1,5 @@
 import { login, register } from './authService'
-import { ApiRequestError, ConflictError, InvalidCredentialsError } from '@/lib/errors'
+import { ApiRequestError, ConflictError, UnauthorizedError } from '@/lib/errors'
 import type { AuthSession } from '@/types/api'
 
 const mockSession: AuthSession = {
@@ -64,22 +64,22 @@ describe('login', () => {
     expect(result).toEqual(mockSession)
   })
 
-  it('throws InvalidCredentialsError with correct message on 401', async () => {
+  it('throws UnauthorizedError with backend message on 401', async () => {
     mockFetchError(401, { code: 'unauthorized', message: 'invalid credentials' })
     const err = await login({ email: 'x@x.com', password: 'wrong' }).catch((e) => e)
-    expect(err).toBeInstanceOf(InvalidCredentialsError)
-    expect(err.message).toBe('E-mail ou senha inválidos.')
+    expect(err).toBeInstanceOf(UnauthorizedError)
+    expect(err.message).toBe('invalid credentials')
     expect(err.status).toBe(401)
   })
 
-  it('throws ApiRequestError on unknown error', async () => {
+  it('throws ApiRequestError on server error', async () => {
     mockFetchError(500, { code: 'internal_server_error', message: 'falha interna' })
     const err = await login({ email: 'x@x.com', password: '123' }).catch((e) => e)
     expect(err).toBeInstanceOf(ApiRequestError)
     expect(err.status).toBe(500)
   })
 
-  it('InvalidCredentialsError is not instanceof ConflictError', async () => {
+  it('UnauthorizedError is not instanceof ConflictError', async () => {
     mockFetchError(401, { code: 'unauthorized', message: 'invalid credentials' })
     const err = await login({ email: 'x@x.com', password: 'wrong' }).catch((e) => e)
     expect(err instanceof ConflictError).toBe(false)
@@ -114,11 +114,11 @@ describe('register', () => {
     )
   })
 
-  it('throws ConflictError with correct message on 409', async () => {
+  it('throws ConflictError with backend message on 409', async () => {
     mockFetchError(409, { code: 'conflict', message: 'user already exists' })
     const err = await register(payload).catch((e) => e)
     expect(err).toBeInstanceOf(ConflictError)
-    expect(err.message).toBe('Este e-mail já está em uso.')
+    expect(err.message).toBe('user already exists')
     expect(err.status).toBe(409)
     expect(global.fetch).toHaveBeenCalledTimes(1)
   })

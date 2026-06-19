@@ -4,6 +4,7 @@ import {
   ForbiddenError,
   NotFoundError,
   SessionExpiredError,
+  UnauthorizedError,
 } from '@/lib/errors'
 
 beforeEach(() => {
@@ -56,10 +57,10 @@ describe('http client', () => {
     expect(localStorage.getItem('mystery_gifter_token')).toBeNull()
   })
 
-  it('does not throw SessionExpiredError on 401 for public paths', async () => {
+  it('throws UnauthorizedError on 401 for public paths without clearing the token', async () => {
     mockFetch(401, { code: 'unauthorized', message: 'invalid credentials' })
     const err = await http('/api/v1/login').catch((e) => e)
-    expect(err).toBeInstanceOf(ApiRequestError)
+    expect(err).toBeInstanceOf(UnauthorizedError)
     expect(err instanceof SessionExpiredError).toBe(false)
     expect(localStorage.getItem('mystery_gifter_token')).toBe('test-token')
   })

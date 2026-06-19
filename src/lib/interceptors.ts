@@ -1,9 +1,11 @@
 import { clearToken, getToken } from '@/lib/auth'
 import {
   ApiRequestError,
+  ConflictError,
   ForbiddenError,
   NotFoundError,
   SessionExpiredError,
+  UnauthorizedError,
 } from '@/lib/errors'
 import type { ApiError } from '@/types/api'
 import type { ResponseInterceptor } from '@/lib/httpClient'
@@ -44,8 +46,10 @@ export async function httpErrorInterceptor(response: Response): Promise<Response
   if (!response.ok) {
     const body: ApiError = await response.json()
     const message = body.message ?? 'Ocorreu um erro. Tente novamente.'
-    if (response.status === 404) throw new NotFoundError(message)
+    if (response.status === 401) throw new UnauthorizedError(message)
     if (response.status === 403) throw new ForbiddenError(message)
+    if (response.status === 404) throw new NotFoundError(message)
+    if (response.status === 409) throw new ConflictError(message)
     throw new ApiRequestError(message, response.status, body.code ?? 'unknown')
   }
   return response

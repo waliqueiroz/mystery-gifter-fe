@@ -1,7 +1,7 @@
 import type { GroupInvite, Group, User } from '@/types/api'
 import { http } from './client'
 import {
-  ApiRequestError,
+  ConflictError,
   DrawCompletedError,
   InvalidInviteError,
   NotFoundError,
@@ -27,7 +27,7 @@ export async function joinGroup(inviteToken: string): Promise<Group> {
       throw new InvalidInviteError(err.message, 404)
     }
 
-    if (err instanceof ApiRequestError && err.status === 409) {
+    if (err instanceof ConflictError) {
       if (err.message === 'invite has expired') {
         throw new InvalidInviteError(err.message, 409)
       }

@@ -6,7 +6,7 @@ import {
   InviteError,
   DrawCompletedError,
   InvalidInviteError,
-  InvalidCredentialsError,
+  UnauthorizedError,
   ConflictError,
 } from './errors'
 
@@ -126,24 +126,24 @@ describe('InvalidInviteError', () => {
   })
 })
 
-describe('InvalidCredentialsError', () => {
+describe('UnauthorizedError', () => {
   it('has status 401, code unauthorized and preserves message', () => {
-    const err = new InvalidCredentialsError('E-mail ou senha inválidos.')
+    const err = new UnauthorizedError('E-mail ou senha inválidos.')
     expect(err.status).toBe(401)
     expect(err.code).toBe('unauthorized')
     expect(err.message).toBe('E-mail ou senha inválidos.')
-    expect(err.name).toBe('InvalidCredentialsError')
+    expect(err.name).toBe('UnauthorizedError')
   })
 
   it('is instanceof ApiRequestError but not SessionExpiredError', () => {
-    const err = new InvalidCredentialsError('msg')
-    expect(err instanceof InvalidCredentialsError).toBe(true)
+    const err = new UnauthorizedError('msg')
+    expect(err instanceof UnauthorizedError).toBe(true)
     expect(err instanceof ApiRequestError).toBe(true)
     expect(err instanceof SessionExpiredError).toBe(false)
   })
 
   it('is not instanceof ConflictError', () => {
-    expect(new InvalidCredentialsError('msg') instanceof ConflictError).toBe(false)
+    expect(new UnauthorizedError('msg') instanceof ConflictError).toBe(false)
   })
 })
 
@@ -163,7 +163,7 @@ describe('ConflictError', () => {
     expect(err instanceof InviteError).toBe(false)
   })
 
-  it('is not instanceof InvalidCredentialsError', () => {
-    expect(new ConflictError('msg') instanceof InvalidCredentialsError).toBe(false)
+  it('is not instanceof UnauthorizedError', () => {
+    expect(new ConflictError('msg') instanceof UnauthorizedError).toBe(false)
   })
 })

@@ -6,9 +6,11 @@ import {
 } from './interceptors'
 import {
   ApiRequestError,
+  ConflictError,
   ForbiddenError,
   NotFoundError,
   SessionExpiredError,
+  UnauthorizedError,
 } from './errors'
 import { TOKEN_KEY } from './auth'
 
@@ -159,20 +161,22 @@ describe('httpErrorInterceptor', () => {
     expect(err.code).toBe('internal_server_error')
   })
 
-  it('throws ApiRequestError on 409', async () => {
+  it('throws ConflictError on 409', async () => {
     const err = await httpErrorInterceptor(
       mockResponse(409, { code: 'conflict', message: 'conflito' }), url
     ).catch((e) => e)
-    expect(err).toBeInstanceOf(ApiRequestError)
+    expect(err).toBeInstanceOf(ConflictError)
     expect(err.status).toBe(409)
+    expect(err.message).toBe('conflito')
   })
 
-  it('throws ApiRequestError on 401 (generic — session expiry is handled upstream)', async () => {
+  it('throws UnauthorizedError on 401 (public paths — session expiry is handled upstream)', async () => {
     const err = await httpErrorInterceptor(
-      mockResponse(401, { code: 'unauthorized', message: 'invalid token' }), url
+      mockResponse(401, { code: 'unauthorized', message: 'invalid credentials' }), url
     ).catch((e) => e)
-    expect(err).toBeInstanceOf(ApiRequestError)
+    expect(err).toBeInstanceOf(UnauthorizedError)
     expect(err.status).toBe(401)
+    expect(err.message).toBe('invalid credentials')
   })
 
   it('uses fallback message when body.message is absent', async () => {

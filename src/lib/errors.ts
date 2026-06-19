@@ -59,10 +59,10 @@ export class InvalidInviteError extends InviteError {
   }
 }
 
-export class InvalidCredentialsError extends ApiRequestError {
+export class UnauthorizedError extends ApiRequestError {
   constructor(message: string) {
     super(message, 401, 'unauthorized')
-    this.name = 'InvalidCredentialsError'
+    this.name = 'UnauthorizedError'
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }

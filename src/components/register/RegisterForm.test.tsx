@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import RegisterForm from './RegisterForm'
 import * as authService from '@/services/api/authService'
 import * as auth from '@/lib/auth'
+import { ConflictError } from '@/lib/errors'
 
 const mockPush = jest.fn()
 
@@ -95,12 +96,20 @@ describe('RegisterForm', () => {
     expect(mockPush).toHaveBeenCalledWith('/groups')
   })
 
-  it('shows API error message on failure', async () => {
-    mockRegister.mockRejectedValue(new Error('Este e-mail já está em uso.'))
+  it('shows "Este e-mail já está em uso." on conflict', async () => {
+    mockRegister.mockRejectedValue(new ConflictError('email already in use'))
     render(<RegisterForm />)
     await fillForm()
     await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
     expect(await screen.findByText('Este e-mail já está em uso.')).toBeInTheDocument()
+  })
+
+  it('shows generic error on unexpected failure', async () => {
+    mockRegister.mockRejectedValue(new Error('network error'))
+    render(<RegisterForm />)
+    await fillForm()
+    await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
+    expect(await screen.findByText('Ocorreu um erro. Tente novamente.')).toBeInTheDocument()
   })
 
   it('renders link to /login', () => {

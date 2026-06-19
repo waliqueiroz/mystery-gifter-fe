@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import LoginForm from './LoginForm'
 import * as authService from '@/services/api/authService'
 import * as auth from '@/lib/auth'
+import { UnauthorizedError } from '@/lib/errors'
 
 const mockPush = jest.fn()
 const mockGet = jest.fn().mockReturnValue(null)
@@ -75,12 +76,21 @@ describe('LoginForm', () => {
   })
 
   it('shows "E-mail ou senha inválidos." on 401', async () => {
-    mockLogin.mockRejectedValue(new Error('E-mail ou senha inválidos.'))
+    mockLogin.mockRejectedValue(new UnauthorizedError('invalid credentials'))
     render(<LoginForm />)
     await userEvent.type(screen.getByLabelText('E-mail'), 'x@x.com')
     await userEvent.type(screen.getByLabelText('Senha'), 'wrongpass')
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
     expect(await screen.findByText('E-mail ou senha inválidos.')).toBeInTheDocument()
+  })
+
+  it('shows generic error on unexpected failure', async () => {
+    mockLogin.mockRejectedValue(new Error('network error'))
+    render(<LoginForm />)
+    await userEvent.type(screen.getByLabelText('E-mail'), 'x@x.com')
+    await userEvent.type(screen.getByLabelText('Senha'), 'wrongpass')
+    await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
+    expect(await screen.findByText('Ocorreu um erro. Tente novamente.')).toBeInTheDocument()
   })
 
   it('renders link to /register', () => {
