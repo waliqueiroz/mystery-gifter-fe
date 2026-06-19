@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import LoginForm from './LoginForm'
 import * as authService from '@/services/api/authService'
 import * as auth from '@/lib/auth'
+import { UnauthorizedError } from '@/lib/errors'
 
 const mockPush = jest.fn()
 const mockGet = jest.fn().mockReturnValue(null)
@@ -20,10 +21,10 @@ jest.mock('next/link', () => ({
 }))
 
 jest.mock('@/services/api/authService', () => ({ login: jest.fn() }))
-jest.mock('@/lib/auth', () => ({ setToken: jest.fn() }))
+jest.mock('@/lib/auth', () => ({ setSession: jest.fn() }))
 
 const mockLogin = authService.login as jest.Mock
-const mockSetToken = auth.setToken as jest.Mock
+const mockSetSession = auth.setSession as jest.Mock
 
 const mockSession = {
   access_token: 'jwt-token',
@@ -35,7 +36,7 @@ const mockSession = {
 beforeEach(() => {
   mockPush.mockReset()
   mockLogin.mockReset()
-  mockSetToken.mockReset()
+  mockSetSession.mockReset()
   mockGet.mockReturnValue(null)
 })
 
@@ -60,7 +61,7 @@ describe('LoginForm', () => {
     await userEvent.type(screen.getByLabelText('Senha'), 'senha123')
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
     await waitFor(() => expect(mockLogin).toHaveBeenCalledTimes(1))
-    expect(mockSetToken).toHaveBeenCalledWith('jwt-token')
+    expect(mockSetSession).toHaveBeenCalledWith(mockSession)
     expect(mockPush).toHaveBeenCalledWith('/groups')
   })
 
@@ -75,12 +76,21 @@ describe('LoginForm', () => {
   })
 
   it('shows "E-mail ou senha inválidos." on 401', async () => {
-    mockLogin.mockRejectedValue(new Error('E-mail ou senha inválidos.'))
+    mockLogin.mockRejectedValue(new UnauthorizedError('invalid credentials'))
     render(<LoginForm />)
     await userEvent.type(screen.getByLabelText('E-mail'), 'x@x.com')
     await userEvent.type(screen.getByLabelText('Senha'), 'wrongpass')
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
     expect(await screen.findByText('E-mail ou senha inválidos.')).toBeInTheDocument()
+  })
+
+  it('shows generic error on unexpected failure', async () => {
+    mockLogin.mockRejectedValue(new Error('network error'))
+    render(<LoginForm />)
+    await userEvent.type(screen.getByLabelText('E-mail'), 'x@x.com')
+    await userEvent.type(screen.getByLabelText('Senha'), 'wrongpass')
+    await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
+    expect(await screen.findByText('Ocorreu um erro. Tente novamente.')).toBeInTheDocument()
   })
 
   it('renders link to /register', () => {

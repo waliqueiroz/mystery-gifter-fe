@@ -58,3 +58,19 @@ export class InvalidInviteError extends InviteError {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+
+export class UnauthorizedError extends ApiRequestError {
+  constructor(message: string) {
+    super(message, 401, 'unauthorized')
+    this.name = 'UnauthorizedError'
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class ConflictError extends ApiRequestError {
+  constructor(message: string) {
+    super(message, 409, 'conflict')
+    this.name = 'ConflictError'
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}

@@ -1,6 +1,6 @@
 import type { User } from '@/types/api'
-import { apiFetch } from './apiClient'
+import { http } from './client'
 
 export function getUserById(userId: string): Promise<User> {
-  return apiFetch<User>(`/api/v1/users/${userId}`)
+  return http<User>(`/api/v1/users/${userId}`)
 }

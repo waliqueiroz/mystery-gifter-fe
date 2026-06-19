@@ -1,41 +1,17 @@
-import type { AuthSession, LoginCredentials, CreateUserPayload } from '@/types/api'
-import { setUser } from '@/lib/session'
+import type { AuthSession, LoginCredentials, CreateUserPayload, User } from '@/types/api'
+import { http } from './client'
 
-const ERROR_MESSAGES: Record<number, string> = {
-  401: 'E-mail ou senha inválidos.',
-  409: 'Este e-mail já está em uso.',
-}
-
-function getErrorMessage(status: number): string {
-  return ERROR_MESSAGES[status] ?? 'Ocorreu um erro. Tente novamente.'
-}
-
-export async function login(credentials: LoginCredentials): Promise<AuthSession> {
-  const response = await fetch('/api/v1/login', {
+export function login(credentials: LoginCredentials): Promise<AuthSession> {
+  return http<AuthSession>('/api/v1/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
   })
-
-  if (!response.ok) {
-    throw new Error(getErrorMessage(response.status))
-  }
-
-  const session = (await response.json()) as AuthSession
-  setUser(session.user)
-  return session
 }
 
 export async function register(payload: CreateUserPayload): Promise<AuthSession> {
-  const createResponse = await fetch('/api/v1/users', {
+  await http<User>('/api/v1/users', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
-
-  if (!createResponse.ok) {
-    throw new Error(getErrorMessage(createResponse.status))
-  }
-
   return login({ email: payload.email, password: payload.password })
 }

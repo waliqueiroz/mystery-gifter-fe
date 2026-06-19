@@ -7,7 +7,8 @@ import { useState } from 'react'
 import Button from '@/components/ui/Button/Button'
 import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
 import FormField from '@/components/ui/FormField/FormField'
-import { setToken } from '@/lib/auth'
+import { setSession } from '@/lib/auth'
+import { UnauthorizedError } from '@/lib/errors'
 import { login } from '@/services/api/authService'
 import type { LoginFormData } from '@/types/forms'
 
@@ -37,13 +38,15 @@ export default function LoginForm() {
         email: form.email,
         password: form.password,
       })
-      setToken(session.access_token)
+      setSession(session)
       const returnUrl = searchParams.get('returnUrl')
       router.push(returnUrl ?? '/groups')
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Ocorreu um erro. Tente novamente.',
-      )
+      if (err instanceof UnauthorizedError) {
+        setError('E-mail ou senha inválidos.')
+      } else {
+        setError('Ocorreu um erro. Tente novamente.')
+      }
     } finally {
       setLoading(false)
     }
