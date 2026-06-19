@@ -36,6 +36,7 @@ export function createSessionExpiryInterceptor(skipPaths: string[]): ResponseInt
   return async (response, url) => {
     if (response.status === 401 && !skipPaths.some((p) => url.endsWith(p))) {
       clearToken()
+      window.location.href = '/login'
       throw new SessionExpiredError()
     }
     return response
