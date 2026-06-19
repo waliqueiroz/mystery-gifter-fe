@@ -20,10 +20,10 @@ jest.mock('next/link', () => ({
 }))
 
 jest.mock('@/services/api/authService', () => ({ login: jest.fn() }))
-jest.mock('@/lib/auth', () => ({ setToken: jest.fn() }))
+jest.mock('@/lib/auth', () => ({ setSession: jest.fn() }))
 
 const mockLogin = authService.login as jest.Mock
-const mockSetToken = auth.setToken as jest.Mock
+const mockSetSession = auth.setSession as jest.Mock
 
 const mockSession = {
   access_token: 'jwt-token',
@@ -35,7 +35,7 @@ const mockSession = {
 beforeEach(() => {
   mockPush.mockReset()
   mockLogin.mockReset()
-  mockSetToken.mockReset()
+  mockSetSession.mockReset()
   mockGet.mockReturnValue(null)
 })
 
@@ -60,7 +60,7 @@ describe('LoginForm', () => {
     await userEvent.type(screen.getByLabelText('Senha'), 'senha123')
     await userEvent.click(screen.getByRole('button', { name: 'Entrar' }))
     await waitFor(() => expect(mockLogin).toHaveBeenCalledTimes(1))
-    expect(mockSetToken).toHaveBeenCalledWith('jwt-token')
+    expect(mockSetSession).toHaveBeenCalledWith(mockSession)
     expect(mockPush).toHaveBeenCalledWith('/groups')
   })
 

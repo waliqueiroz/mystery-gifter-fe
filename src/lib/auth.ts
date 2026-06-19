@@ -1,4 +1,5 @@
-import { clearUser } from './session'
+import { clearUser, setUser } from './session'
+import type { AuthSession } from '@/types/api'
 
 export const TOKEN_KEY = 'mystery_gifter_token'
 
@@ -14,6 +15,11 @@ export function setToken(token: string): void {
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY)
   clearUser()
+}
+
+export function setSession(session: AuthSession): void {
+  setToken(session.access_token)
+  setUser(session.user)
 }
 
 export function isAuthenticated(): boolean {

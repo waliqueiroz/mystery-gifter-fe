@@ -7,7 +7,7 @@ import { useState } from 'react'
 import Button from '@/components/ui/Button/Button'
 import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
 import FormField from '@/components/ui/FormField/FormField'
-import { setToken } from '@/lib/auth'
+import { setSession } from '@/lib/auth'
 import { login } from '@/services/api/authService'
 import type { LoginFormData } from '@/types/forms'
 
@@ -37,7 +37,7 @@ export default function LoginForm() {
         email: form.email,
         password: form.password,
       })
-      setToken(session.access_token)
+      setSession(session)
       const returnUrl = searchParams.get('returnUrl')
       router.push(returnUrl ?? '/groups')
     } catch (err) {

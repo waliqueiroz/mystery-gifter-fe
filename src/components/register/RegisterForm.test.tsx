@@ -18,10 +18,10 @@ jest.mock('next/link', () => ({
 }))
 
 jest.mock('@/services/api/authService', () => ({ register: jest.fn() }))
-jest.mock('@/lib/auth', () => ({ setToken: jest.fn() }))
+jest.mock('@/lib/auth', () => ({ setSession: jest.fn() }))
 
 const mockRegister = authService.register as jest.Mock
-const mockSetToken = auth.setToken as jest.Mock
+const mockSetSession = auth.setSession as jest.Mock
 
 const mockSession = {
   access_token: 'jwt-token',
@@ -49,7 +49,7 @@ async function fillForm(overrides: Record<string, string> = {}) {
 beforeEach(() => {
   mockPush.mockReset()
   mockRegister.mockReset()
-  mockSetToken.mockReset()
+  mockSetSession.mockReset()
 })
 
 describe('RegisterForm', () => {
@@ -91,7 +91,7 @@ describe('RegisterForm', () => {
     await fillForm()
     await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
     await waitFor(() => expect(mockRegister).toHaveBeenCalledTimes(1))
-    expect(mockSetToken).toHaveBeenCalledWith('jwt-token')
+    expect(mockSetSession).toHaveBeenCalledWith(mockSession)
     expect(mockPush).toHaveBeenCalledWith('/groups')
   })
 

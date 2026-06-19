@@ -1,4 +1,4 @@
-import { TOKEN_KEY, getToken, setToken, clearToken, isAuthenticated } from './auth'
+import { TOKEN_KEY, getToken, setToken, clearToken, setSession, isAuthenticated } from './auth'
 import { USER_KEY } from './session'
 
 describe('auth helpers', () => {
@@ -44,6 +44,20 @@ describe('auth helpers', () => {
       localStorage.setItem(USER_KEY, JSON.stringify({ id: 'u1' }))
       clearToken()
       expect(localStorage.getItem(USER_KEY)).toBeNull()
+    })
+  })
+
+  describe('setSession', () => {
+    it('stores the access_token and the user in localStorage', () => {
+      const session = {
+        access_token: 'jwt-abc',
+        token_type: 'Bearer' as const,
+        expires_in: 3600,
+        user: { id: 'u1', name: 'João', surname: 'Silva', email: 'j@j.com', created_at: '', updated_at: '' },
+      }
+      setSession(session)
+      expect(localStorage.getItem(TOKEN_KEY)).toBe('jwt-abc')
+      expect(JSON.parse(localStorage.getItem(USER_KEY) ?? 'null')).toMatchObject({ id: 'u1' })
     })
   })
 

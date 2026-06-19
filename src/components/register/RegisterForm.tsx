@@ -7,7 +7,7 @@ import { useState } from 'react'
 import Button from '@/components/ui/Button/Button'
 import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
 import FormField from '@/components/ui/FormField/FormField'
-import { setToken } from '@/lib/auth'
+import { setSession } from '@/lib/auth'
 import { register } from '@/services/api/authService'
 import type { RegisterFormData } from '@/types/forms'
 
@@ -65,7 +65,7 @@ export default function RegisterForm() {
         password: form.password,
         password_confirm: form.passwordConfirm,
       })
-      setToken(session.access_token)
+      setSession(session)
       router.push('/groups')
     } catch (err) {
       setError(
