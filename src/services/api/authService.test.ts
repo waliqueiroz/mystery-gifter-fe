@@ -1,4 +1,5 @@
 import { login, register } from './authService'
+import { ApiRequestError, ConflictError, InvalidCredentialsError } from '@/lib/errors'
 import type { AuthSession } from '@/types/api'
 
 const mockSession: AuthSession = {
@@ -34,20 +35,26 @@ describe('login', () => {
     expect(mockFetch).toHaveBeenCalledWith('/api/v1/login', expect.objectContaining({ method: 'POST' }))
   })
 
-  it('throws "E-mail ou senha inválidos." on 401', async () => {
+  it('throws InvalidCredentialsError with correct message on 401', async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 401 })
-
-    await expect(login({ email: 'x@x.com', password: 'wrong' })).rejects.toThrow(
-      'E-mail ou senha inválidos.'
-    )
+    const err = await login({ email: 'x@x.com', password: 'wrong' }).catch((e) => e)
+    expect(err).toBeInstanceOf(InvalidCredentialsError)
+    expect(err.message).toBe('E-mail ou senha inválidos.')
+    expect(err.status).toBe(401)
   })
 
-  it('throws generic message on unknown error', async () => {
+  it('throws ApiRequestError on unknown error', async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 500 })
+    const err = await login({ email: 'x@x.com', password: '123' }).catch((e) => e)
+    expect(err).toBeInstanceOf(ApiRequestError)
+    expect(err.status).toBe(500)
+    expect(err.message).toBe('Ocorreu um erro. Tente novamente.')
+  })
 
-    await expect(login({ email: 'x@x.com', password: '123' })).rejects.toThrow(
-      'Ocorreu um erro. Tente novamente.'
-    )
+  it('InvalidCredentialsError is not instanceof ConflictError', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 401 })
+    const err = await login({ email: 'x@x.com', password: 'wrong' }).catch((e) => e)
+    expect(err instanceof ConflictError).toBe(false)
   })
 })
 
@@ -72,16 +79,24 @@ describe('register', () => {
     expect(mockFetch).toHaveBeenNthCalledWith(2, '/api/v1/login', expect.objectContaining({ method: 'POST' }))
   })
 
-  it('throws "Este e-mail já está em uso." on 409', async () => {
+  it('throws ConflictError with correct message on 409', async () => {
     mockFetch.mockResolvedValueOnce({ ok: false, status: 409 })
-
-    await expect(register(payload)).rejects.toThrow('Este e-mail já está em uso.')
+    const err = await register(payload).catch((e) => e)
+    expect(err).toBeInstanceOf(ConflictError)
+    expect(err.message).toBe('Este e-mail já está em uso.')
+    expect(err.status).toBe(409)
     expect(mockFetch).toHaveBeenCalledTimes(1)
   })
 
-  it('throws generic message on network error', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network error'))
+  it('throws ApiRequestError on generic server error', async () => {
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 })
+    const err = await register(payload).catch((e) => e)
+    expect(err).toBeInstanceOf(ApiRequestError)
+    expect(err.status).toBe(500)
+  })
 
+  it('re-throws network errors as-is', async () => {
+    mockFetch.mockRejectedValueOnce(new Error('Network error'))
     await expect(register(payload)).rejects.toThrow('Network error')
   })
 })

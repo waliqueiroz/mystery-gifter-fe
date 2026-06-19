@@ -1,41 +1,30 @@
 import type { AuthSession, LoginCredentials, CreateUserPayload } from '@/types/api'
 import { setUser } from '@/lib/session'
+import { ApiRequestError, ConflictError, InvalidCredentialsError } from '@/lib/errors'
 
-const ERROR_MESSAGES: Record<number, string> = {
-  401: 'E-mail ou senha inválidos.',
-  409: 'Este e-mail já está em uso.',
-}
-
-function getErrorMessage(status: number): string {
-  return ERROR_MESSAGES[status] ?? 'Ocorreu um erro. Tente novamente.'
-}
-
-export async function login(credentials: LoginCredentials): Promise<AuthSession> {
-  const response = await fetch('/api/v1/login', {
+async function authFetch<T>(path: string, body: unknown): Promise<T> {
+  const response = await fetch(path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
+    body: JSON.stringify(body),
   })
 
   if (!response.ok) {
-    throw new Error(getErrorMessage(response.status))
+    if (response.status === 401) throw new InvalidCredentialsError('E-mail ou senha inválidos.')
+    if (response.status === 409) throw new ConflictError('Este e-mail já está em uso.')
+    throw new ApiRequestError('Ocorreu um erro. Tente novamente.', response.status, 'unknown')
   }
 
-  const session = (await response.json()) as AuthSession
+  return response.json() as Promise<T>
+}
+
+export async function login(credentials: LoginCredentials): Promise<AuthSession> {
+  const session = await authFetch<AuthSession>('/api/v1/login', credentials)
   setUser(session.user)
   return session
 }
 
 export async function register(payload: CreateUserPayload): Promise<AuthSession> {
-  const createResponse = await fetch('/api/v1/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
-
-  if (!createResponse.ok) {
-    throw new Error(getErrorMessage(createResponse.status))
-  }
-
+  await authFetch<unknown>('/api/v1/users', payload)
   return login({ email: payload.email, password: payload.password })
 }

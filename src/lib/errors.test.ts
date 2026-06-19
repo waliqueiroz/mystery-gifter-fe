@@ -6,6 +6,8 @@ import {
   InviteError,
   DrawCompletedError,
   InvalidInviteError,
+  InvalidCredentialsError,
+  ConflictError,
 } from './errors'
 
 describe('ApiRequestError', () => {
@@ -121,5 +123,47 @@ describe('InvalidInviteError', () => {
 
   it('is not instanceof DrawCompletedError', () => {
     expect(new InvalidInviteError('msg', 404) instanceof DrawCompletedError).toBe(false)
+  })
+})
+
+describe('InvalidCredentialsError', () => {
+  it('has status 401, code unauthorized and preserves message', () => {
+    const err = new InvalidCredentialsError('E-mail ou senha inválidos.')
+    expect(err.status).toBe(401)
+    expect(err.code).toBe('unauthorized')
+    expect(err.message).toBe('E-mail ou senha inválidos.')
+    expect(err.name).toBe('InvalidCredentialsError')
+  })
+
+  it('is instanceof ApiRequestError but not SessionExpiredError', () => {
+    const err = new InvalidCredentialsError('msg')
+    expect(err instanceof InvalidCredentialsError).toBe(true)
+    expect(err instanceof ApiRequestError).toBe(true)
+    expect(err instanceof SessionExpiredError).toBe(false)
+  })
+
+  it('is not instanceof ConflictError', () => {
+    expect(new InvalidCredentialsError('msg') instanceof ConflictError).toBe(false)
+  })
+})
+
+describe('ConflictError', () => {
+  it('has status 409, code conflict and preserves message', () => {
+    const err = new ConflictError('Este e-mail já está em uso.')
+    expect(err.status).toBe(409)
+    expect(err.code).toBe('conflict')
+    expect(err.message).toBe('Este e-mail já está em uso.')
+    expect(err.name).toBe('ConflictError')
+  })
+
+  it('is instanceof ApiRequestError but not InviteError', () => {
+    const err = new ConflictError('msg')
+    expect(err instanceof ConflictError).toBe(true)
+    expect(err instanceof ApiRequestError).toBe(true)
+    expect(err instanceof InviteError).toBe(false)
+  })
+
+  it('is not instanceof InvalidCredentialsError', () => {
+    expect(new ConflictError('msg') instanceof InvalidCredentialsError).toBe(false)
   })
 })
