@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Button from '@/components/ui/Button/Button'
 import { ConfirmModal } from '@/components/ui/ConfirmModal/ConfirmModal'
 import { Icon } from '@/components/ui/Icon/Icon'
-import { useToast } from '@/components/ui/Toast/useToast'
+import { useToast } from '@/hooks/useToast'
 import { archiveGroup, reopenGroup } from '@/services/api/groupService'
 import type { Group } from '@/types/api'
 

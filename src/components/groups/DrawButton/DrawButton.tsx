@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import Button from '@/components/ui/Button/Button'
 import { Icon } from '@/components/ui/Icon/Icon'
-import { useToast } from '@/components/ui/Toast/useToast'
+import { useToast } from '@/hooks/useToast'
 import { generateDraw } from '@/services/api/groupService'
 import type { Group } from '@/types/api'
 

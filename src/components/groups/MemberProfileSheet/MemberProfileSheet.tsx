@@ -6,7 +6,7 @@ import { BottomSheet } from '@/components/ui/BottomSheet/BottomSheet'
 import { EmptyState } from '@/components/ui/EmptyState/EmptyState'
 import { Icon } from '@/components/ui/Icon/Icon'
 import { SkeletonText } from '@/components/ui/Skeleton/SkeletonText'
-import { useDelayedFlag } from '@/lib/useDelayedFlag'
+import { useDelayedFlag } from '@/hooks/useDelayedFlag'
 import { getUserById } from '@/services/api/userService'
 import type { User } from '@/types/api'
 

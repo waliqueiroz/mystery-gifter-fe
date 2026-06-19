@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 
 import { CreateGroupForm } from '@/components/groups/CreateGroupForm/CreateGroupForm'
-import { useToast } from '@/components/ui/Toast/useToast'
+import { useToast } from '@/hooks/useToast'
 import type { Group } from '@/types/api'
 
 export default function NewGroupPage() {
