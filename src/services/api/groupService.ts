@@ -4,7 +4,7 @@ import type {
   GroupStatus,
   CreateGroupPayload,
 } from '@/types/api'
-import { apiFetch } from './apiClient'
+import { http } from './client'
 
 export interface ListGroupsParams {
   userId: string
@@ -32,40 +32,40 @@ export function listGroups({
   })
   if (name) params.set('name', name)
   statuses.forEach((s) => params.append('status', s))
-  return apiFetch<GroupSearchResult>(`/api/v1/groups?${params.toString()}`)
+  return http<GroupSearchResult>(`/api/v1/groups?${params.toString()}`)
 }
 
 export function createGroup(payload: CreateGroupPayload): Promise<Group> {
-  return apiFetch<Group>('/api/v1/groups', {
+  return http<Group>('/api/v1/groups', {
     method: 'POST',
     body: JSON.stringify(payload),
   })
 }
 
 export function getGroup(groupId: string): Promise<Group> {
-  return apiFetch<Group>(`/api/v1/groups/${groupId}`)
+  return http<Group>(`/api/v1/groups/${groupId}`)
 }
 
 export function removeMember(groupId: string, userId: string): Promise<Group> {
-  return apiFetch<Group>(`/api/v1/groups/${groupId}/users/${userId}`, {
+  return http<Group>(`/api/v1/groups/${groupId}/users/${userId}`, {
     method: 'DELETE',
   })
 }
 
 export function generateDraw(groupId: string): Promise<Group> {
-  return apiFetch<Group>(`/api/v1/groups/${groupId}/matches`, {
+  return http<Group>(`/api/v1/groups/${groupId}/matches`, {
     method: 'POST',
   })
 }
 
 export function reopenGroup(groupId: string): Promise<Group> {
-  return apiFetch<Group>(`/api/v1/groups/${groupId}/reopen`, {
+  return http<Group>(`/api/v1/groups/${groupId}/reopen`, {
     method: 'POST',
   })
 }
 
 export function archiveGroup(groupId: string): Promise<Group> {
-  return apiFetch<Group>(`/api/v1/groups/${groupId}/archive`, {
+  return http<Group>(`/api/v1/groups/${groupId}/archive`, {
     method: 'POST',
   })
 }

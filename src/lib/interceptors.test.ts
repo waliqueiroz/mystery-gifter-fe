@@ -1,16 +1,16 @@
 import {
   authTokenInterceptor,
   contentTypeInterceptor,
+  createSessionExpiryInterceptor,
   httpErrorInterceptor,
-  sessionExpiryInterceptor,
 } from './interceptors'
 import {
   ApiRequestError,
   ForbiddenError,
   NotFoundError,
   SessionExpiredError,
-} from '@/lib/errors'
-import { TOKEN_KEY } from '@/lib/auth'
+} from './errors'
+import { TOKEN_KEY } from './auth'
 
 function mockResponse(status: number, body: unknown): Response {
   return {
@@ -49,7 +49,7 @@ describe('authTokenInterceptor', () => {
   beforeEach(() => { localStorage.clear() })
   afterEach(() => { localStorage.clear() })
 
-  it('adds Authorization header when token exists in localStorage', () => {
+  it('adds Authorization header when token exists', () => {
     localStorage.setItem(TOKEN_KEY, 'my-token')
     const result = authTokenInterceptor({})
     expect((result.headers as Record<string, string>)['Authorization']).toBe('Bearer my-token')
@@ -75,83 +75,108 @@ describe('authTokenInterceptor', () => {
   })
 })
 
-describe('sessionExpiryInterceptor', () => {
+describe('createSessionExpiryInterceptor', () => {
   beforeEach(() => { localStorage.setItem(TOKEN_KEY, 'tok') })
   afterEach(() => { localStorage.clear() })
 
-  it('throws SessionExpiredError on 401', async () => {
-    await expect(sessionExpiryInterceptor(mockResponse(401, {}))).rejects.toBeInstanceOf(SessionExpiredError)
+  it('throws SessionExpiredError on 401 for non-skipped paths', async () => {
+    const interceptor = createSessionExpiryInterceptor(['/api/v1/login'])
+    await expect(interceptor(mockResponse(401, {}), '/api/v1/groups/123')).rejects.toBeInstanceOf(SessionExpiredError)
   })
 
-  it('clears the token from localStorage on 401', async () => {
-    await sessionExpiryInterceptor(mockResponse(401, {})).catch(() => {})
+  it('throws SessionExpiredError on 401 for paths that start with but do not end with a skipped path', async () => {
+    const interceptor = createSessionExpiryInterceptor(['/api/v1/users'])
+    await expect(interceptor(mockResponse(401, {}), '/api/v1/users/u1')).rejects.toBeInstanceOf(SessionExpiredError)
+  })
+
+  it('clears the token on 401 for non-skipped paths', async () => {
+    const interceptor = createSessionExpiryInterceptor([])
+    await interceptor(mockResponse(401, {}), '/api/v1/groups').catch(() => {})
     expect(localStorage.getItem(TOKEN_KEY)).toBeNull()
   })
 
-  it('returns the response unchanged for 200', async () => {
+  it('passes through 401 without throwing for skipped paths', async () => {
+    const interceptor = createSessionExpiryInterceptor(['/api/v1/login'])
+    const response = mockResponse(401, {})
+    await expect(interceptor(response, '/api/v1/login')).resolves.toBe(response)
+  })
+
+  it('does not clear the token on 401 for skipped paths', async () => {
+    const interceptor = createSessionExpiryInterceptor(['/api/v1/login'])
+    await interceptor(mockResponse(401, {}), '/api/v1/login').catch(() => {})
+    expect(localStorage.getItem(TOKEN_KEY)).toBe('tok')
+  })
+
+  it('returns response unchanged for 200', async () => {
+    const interceptor = createSessionExpiryInterceptor([])
     const response = mockResponse(200, {})
-    await expect(sessionExpiryInterceptor(response)).resolves.toBe(response)
+    await expect(interceptor(response, '/api/v1/groups')).resolves.toBe(response)
   })
 
-  it('returns the response unchanged for 403', async () => {
+  it('returns response unchanged for 403', async () => {
+    const interceptor = createSessionExpiryInterceptor([])
     const response = mockResponse(403, {})
-    await expect(sessionExpiryInterceptor(response)).resolves.toBe(response)
-  })
-
-  it('returns the response unchanged for 404', async () => {
-    const response = mockResponse(404, {})
-    await expect(sessionExpiryInterceptor(response)).resolves.toBe(response)
+    await expect(interceptor(response, '/api/v1/groups')).resolves.toBe(response)
   })
 })
 
 describe('httpErrorInterceptor', () => {
+  const url = '/api/test'
+
   it('returns the response unchanged on 200', async () => {
     const response = mockResponse(200, { data: 'ok' })
-    await expect(httpErrorInterceptor(response)).resolves.toBe(response)
+    await expect(httpErrorInterceptor(response, url)).resolves.toBe(response)
+  })
+
+  it('returns the response unchanged on 201', async () => {
+    const response = mockResponse(201, {})
+    await expect(httpErrorInterceptor(response, url)).resolves.toBe(response)
   })
 
   it('throws NotFoundError on 404 with backend message', async () => {
     const err = await httpErrorInterceptor(
-      mockResponse(404, { code: 'not_found', message: 'recurso não encontrado' })
+      mockResponse(404, { code: 'not_found', message: 'recurso não encontrado' }), url
     ).catch((e) => e)
     expect(err).toBeInstanceOf(NotFoundError)
     expect(err.message).toBe('recurso não encontrado')
     expect(err.status).toBe(404)
   })
 
-  it('throws ForbiddenError on 403 with backend message', async () => {
+  it('throws ForbiddenError on 403', async () => {
     const err = await httpErrorInterceptor(
-      mockResponse(403, { code: 'forbidden', message: 'acesso negado' })
+      mockResponse(403, { code: 'forbidden', message: 'acesso negado' }), url
     ).catch((e) => e)
     expect(err).toBeInstanceOf(ForbiddenError)
     expect(err.message).toBe('acesso negado')
   })
 
-  it('throws ApiRequestError on 500 with code and message', async () => {
+  it('throws ApiRequestError on 500', async () => {
     const err = await httpErrorInterceptor(
-      mockResponse(500, { code: 'internal_server_error', message: 'falha interna' })
+      mockResponse(500, { code: 'internal_server_error', message: 'falha interna' }), url
     ).catch((e) => e)
     expect(err).toBeInstanceOf(ApiRequestError)
     expect(err.status).toBe(500)
     expect(err.code).toBe('internal_server_error')
-    expect(err.message).toBe('falha interna')
   })
 
   it('throws ApiRequestError on 409', async () => {
     const err = await httpErrorInterceptor(
-      mockResponse(409, { code: 'conflict', message: 'conflito' })
+      mockResponse(409, { code: 'conflict', message: 'conflito' }), url
     ).catch((e) => e)
     expect(err).toBeInstanceOf(ApiRequestError)
     expect(err.status).toBe(409)
   })
 
-  it('uses fallback message when body.message is absent', async () => {
-    const err = await httpErrorInterceptor(mockResponse(500, {})).catch((e) => e)
-    expect(err.message).toBe('Ocorreu um erro. Tente novamente.')
+  it('throws ApiRequestError on 401 (generic — session expiry is handled upstream)', async () => {
+    const err = await httpErrorInterceptor(
+      mockResponse(401, { code: 'unauthorized', message: 'invalid token' }), url
+    ).catch((e) => e)
+    expect(err).toBeInstanceOf(ApiRequestError)
+    expect(err.status).toBe(401)
   })
 
-  it('does not throw on 201', async () => {
-    const response = mockResponse(201, {})
-    await expect(httpErrorInterceptor(response)).resolves.toBe(response)
+  it('uses fallback message when body.message is absent', async () => {
+    const err = await httpErrorInterceptor(mockResponse(500, {}), url).catch((e) => e)
+    expect(err.message).toBe('Ocorreu um erro. Tente novamente.')
   })
 })

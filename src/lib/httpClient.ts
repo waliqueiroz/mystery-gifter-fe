@@ -1,5 +1,5 @@
 export type RequestInterceptor = (init: RequestInit) => RequestInit
-export type ResponseInterceptor = (response: Response) => Promise<Response>
+export type ResponseInterceptor = (response: Response, url: string) => Promise<Response>
 
 export interface HttpClientConfig {
   requestInterceptors?: RequestInterceptor[]
@@ -16,7 +16,7 @@ export function createHttpClient(config: HttpClientConfig = {}): ApiClient {
     const finalInit = requestInterceptors.reduce((acc, fn) => fn(acc), init)
     let response = await fetch(url, finalInit)
     for (const fn of responseInterceptors) {
-      response = await fn(response)
+      response = await fn(response, url)
     }
     return response.json() as Promise<T>
   }

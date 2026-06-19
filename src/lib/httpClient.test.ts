@@ -32,6 +32,13 @@ describe('createHttpClient', () => {
     expect(result).toEqual({ foo: 'bar' })
   })
 
+  it('uses empty init when no init is passed', async () => {
+    mockFetch(200, {})
+    const client = createHttpClient()
+    await client('/api/test')
+    expect(global.fetch).toHaveBeenCalledWith('/api/test', {})
+  })
+
   it('applies request interceptors in order', async () => {
     mockFetch(200, {})
     const order: string[] = []
@@ -44,14 +51,14 @@ describe('createHttpClient', () => {
     expect(calledInit.headers).toMatchObject({ 'X-A': 'a', 'X-B': 'b' })
   })
 
-  it('applies response interceptors in order', async () => {
+  it('applies response interceptors in order passing the url', async () => {
     mockFetch(200, {})
-    const order: string[] = []
-    const a: ResponseInterceptor = async (r) => { order.push('a'); return r }
-    const b: ResponseInterceptor = async (r) => { order.push('b'); return r }
+    const received: Array<[string]> = []
+    const a: ResponseInterceptor = async (r, url) => { received.push([url]); return r }
+    const b: ResponseInterceptor = async (r, url) => { received.push([url]); return r }
     const client = createHttpClient({ responseInterceptors: [a, b] })
     await client('/api/test')
-    expect(order).toEqual(['a', 'b'])
+    expect(received).toEqual([['/api/test'], ['/api/test']])
   })
 
   it('stops the chain when a response interceptor throws', async () => {
@@ -69,12 +76,5 @@ describe('createHttpClient', () => {
     const client = createHttpClient()
     const result = await client<{ value: number }>('/api/test')
     expect(result).toEqual({ value: 42 })
-  })
-
-  it('uses empty init when no init is passed', async () => {
-    mockFetch(200, {})
-    const client = createHttpClient()
-    await client('/api/test')
-    expect(global.fetch).toHaveBeenCalledWith('/api/test', {})
   })
 })

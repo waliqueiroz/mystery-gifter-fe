@@ -1,4 +1,4 @@
-import { getToken, clearToken } from '@/lib/auth'
+import { clearToken, getToken } from '@/lib/auth'
 import {
   ApiRequestError,
   ForbiddenError,
@@ -6,6 +6,7 @@ import {
   SessionExpiredError,
 } from '@/lib/errors'
 import type { ApiError } from '@/types/api'
+import type { ResponseInterceptor } from '@/lib/httpClient'
 
 export function contentTypeInterceptor(init: RequestInit): RequestInit {
   return {
@@ -29,12 +30,14 @@ export function authTokenInterceptor(init: RequestInit): RequestInit {
   }
 }
 
-export async function sessionExpiryInterceptor(response: Response): Promise<Response> {
-  if (response.status === 401) {
-    clearToken()
-    throw new SessionExpiredError()
+export function createSessionExpiryInterceptor(skipPaths: string[]): ResponseInterceptor {
+  return async (response, url) => {
+    if (response.status === 401 && !skipPaths.some((p) => url.endsWith(p))) {
+      clearToken()
+      throw new SessionExpiredError()
+    }
+    return response
   }
-  return response
 }
 
 export async function httpErrorInterceptor(response: Response): Promise<Response> {
