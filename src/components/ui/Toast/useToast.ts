@@ -1,8 +1,18 @@
 'use client'
 
-import { useContext } from 'react'
-import { ToastContext } from './ToastProvider'
+import { toast } from 'sonner'
+
+interface ShowToastOptions {
+  message: string
+  type: 'success' | 'error' | 'info'
+}
 
 export function useToast() {
-  return useContext(ToastContext)
+  return {
+    showToast: ({ message, type }: ShowToastOptions) => {
+      if (type === 'success') toast.success(message)
+      else if (type === 'error') toast.error(message)
+      else toast(message)
+    },
+  }
 }

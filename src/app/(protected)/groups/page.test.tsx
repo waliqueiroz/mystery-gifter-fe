@@ -7,7 +7,7 @@ jest.mock('@/components/groups/GroupList/GroupList', () => ({
 }))
 
 describe('GroupsPage', () => {
-  it('renderiza GroupList como conteúdo da rota /groups', () => {
+  it('renders GroupList as the content of the /groups route', () => {
     render(<GroupsPage />)
     expect(screen.getByTestId('group-list')).toBeInTheDocument()
   })

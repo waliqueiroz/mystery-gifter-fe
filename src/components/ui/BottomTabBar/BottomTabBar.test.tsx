@@ -14,7 +14,7 @@ describe('BottomTabBar', () => {
     mockPathname.mockReturnValue('/groups')
   })
 
-  it('renderiza apenas dois tabs: Grupos e Perfil', () => {
+  it('renders only two tabs: Grupos and Perfil', () => {
     render(<BottomTabBar />)
     const links = screen.getAllByRole('link')
     expect(links).toHaveLength(2)
@@ -22,33 +22,33 @@ describe('BottomTabBar', () => {
     expect(screen.getByRole('link', { name: /perfil/i })).toBeInTheDocument()
   })
 
-  it('NÃO renderiza tab "Sair" (vive dentro de Perfil)', () => {
+  it('does NOT render "Sair" tab (lives inside Perfil)', () => {
     render(<BottomTabBar />)
     expect(screen.queryByRole('link', { name: /sair/i })).toBeNull()
   })
 
-  it('expõe nav com aria-label "Navegação principal"', () => {
+  it('exposes nav with aria-label "Navegação principal"', () => {
     render(<BottomTabBar />)
     expect(
       screen.getByRole('navigation', { name: /navegação principal/i }),
     ).toBeInTheDocument()
   })
 
-  it('aplica posicionamento fixed bottom em todas as larguras', () => {
+  it('applies fixed bottom positioning at all widths', () => {
     render(<BottomTabBar />)
     const nav = screen.getByRole('navigation')
     expect(nav).toHaveClass('fixed')
     expect(nav).toHaveClass('bottom-0')
   })
 
-  it('aplica padding-bottom respeitando safe-area-inset-bottom (iOS)', () => {
+  it('applies padding-bottom respecting safe-area-inset-bottom (iOS)', () => {
     render(<BottomTabBar />)
     const nav = screen.getByRole('navigation')
     expect(nav.getAttribute('class')).toContain('pb-[env(safe-area-inset-bottom)]')
   })
 
-  describe('estado ativo via pathname', () => {
-    it('marca Grupos ativo em /groups com aria-current="page" e verde de marca', () => {
+  describe('active state via pathname', () => {
+    it('marks Grupos active at /groups with aria-current="page" and brand green', () => {
       mockPathname.mockReturnValue('/groups')
       render(<BottomTabBar />)
       const link = screen.getByRole('link', { name: /grupos/i })
@@ -56,7 +56,7 @@ describe('BottomTabBar', () => {
       expect(link).toHaveClass('text-mg-green')
     })
 
-    it('marca Grupos ativo em sub-rota (/groups/abc)', () => {
+    it('marks Grupos active on sub-route (/groups/abc)', () => {
       mockPathname.mockReturnValue('/groups/abc')
       render(<BottomTabBar />)
       expect(screen.getByRole('link', { name: /grupos/i })).toHaveAttribute(
@@ -65,7 +65,7 @@ describe('BottomTabBar', () => {
       )
     })
 
-    it('marca Perfil ativo em /profile', () => {
+    it('marks Perfil active at /profile', () => {
       mockPathname.mockReturnValue('/profile')
       render(<BottomTabBar />)
       expect(screen.getByRole('link', { name: /perfil/i })).toHaveAttribute(
@@ -74,7 +74,7 @@ describe('BottomTabBar', () => {
       )
     })
 
-    it('tab inativo usa text-mg-text-muted, NÃO aria-current', () => {
+    it('inactive tab uses text-mg-text-muted, NOT aria-current', () => {
       mockPathname.mockReturnValue('/profile')
       render(<BottomTabBar />)
       const grupos = screen.getByRole('link', { name: /grupos/i })
@@ -82,7 +82,7 @@ describe('BottomTabBar', () => {
       expect(grupos.getAttribute('aria-current')).toBeNull()
     })
 
-    it('quando pathname é null/desconhecido, nenhum tab fica ativo', () => {
+    it('when pathname is null/unknown, no tab is active', () => {
       mockPathname.mockReturnValue(null)
       render(<BottomTabBar />)
       const links = screen.getAllByRole('link')
@@ -92,7 +92,7 @@ describe('BottomTabBar', () => {
     })
   })
 
-  it('cada tab tem ícone (svg) acompanhando o rótulo', () => {
+  it('each tab has an icon (svg) accompanying the label', () => {
     render(<BottomTabBar />)
     const links = screen.getAllByRole('link')
     links.forEach((link) => {
@@ -100,7 +100,7 @@ describe('BottomTabBar', () => {
     })
   })
 
-  it('hrefs corretos: /groups e /profile', () => {
+  it('correct hrefs: /groups and /profile', () => {
     render(<BottomTabBar />)
     expect(screen.getByRole('link', { name: /grupos/i })).toHaveAttribute(
       'href',

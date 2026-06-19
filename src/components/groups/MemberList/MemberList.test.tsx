@@ -65,7 +65,7 @@ const baseGroup: Group = {
 beforeEach(() => jest.clearAllMocks())
 
 describe('MemberList', () => {
-  it('renderiza todos os participantes', () => {
+  it('renders all participants', () => {
     render(
       <MemberList
         group={baseGroup}
@@ -77,7 +77,7 @@ describe('MemberList', () => {
     expect(screen.getByText(/Bruno Costa/)).toBeInTheDocument()
   })
 
-  it('exibe badge "Dono" ao lado do dono do grupo', () => {
+  it('displays "Dono" badge next to the group owner', () => {
     render(
       <MemberList
         group={baseGroup}
@@ -88,7 +88,7 @@ describe('MemberList', () => {
     expect(screen.getByText('Dono')).toBeInTheDocument()
   })
 
-  it('exibe botão Remover para não-donos quando o usuário atual é o dono e status=OPEN', () => {
+  it('displays Remove button for non-owners when the current user is the owner and status=OPEN', () => {
     render(
       <MemberList
         group={baseGroup}
@@ -101,7 +101,7 @@ describe('MemberList', () => {
     ).toBeInTheDocument()
   })
 
-  it('NÃO exibe botões Remover quando o usuário atual não é o dono', () => {
+  it('does NOT display Remove buttons when the current user is not the owner', () => {
     render(
       <MemberList
         group={baseGroup}
@@ -112,7 +112,7 @@ describe('MemberList', () => {
     expect(screen.queryByRole('button', { name: /remover/i })).toBeNull()
   })
 
-  it('desabilita o botão Remover quando status != OPEN', () => {
+  it('disables the Remove button when status != OPEN', () => {
     const matchedGroup = { ...baseGroup, status: 'MATCHED' as const }
     render(
       <MemberList
@@ -126,7 +126,7 @@ describe('MemberList', () => {
     ).toBeDisabled()
   })
 
-  it('chama removeMember e dispara onGroupUpdate no clique', async () => {
+  it('calls removeMember and fires onGroupUpdate on click', async () => {
     const updatedGroup = { ...baseGroup, users: [owner] }
     mockRemoveMember.mockResolvedValue(updatedGroup)
     const onGroupUpdate = jest.fn()
@@ -146,7 +146,7 @@ describe('MemberList', () => {
     expect(onGroupUpdate).toHaveBeenCalledWith(updatedGroup)
   })
 
-  it('exibe toast de erro quando o remove falha', async () => {
+  it('displays error toast when remove fails', async () => {
     mockRemoveMember.mockRejectedValue(new Error('Falha ao remover.'))
     render(
       <MemberList
@@ -166,7 +166,7 @@ describe('MemberList', () => {
     )
   })
 
-  it('cada nome de participante é renderizado como botão clicável (ver perfil)', () => {
+  it('each participant name is rendered as a clickable button (view profile)', () => {
     render(
       <MemberList
         group={baseGroup}
@@ -182,7 +182,7 @@ describe('MemberList', () => {
     ).toBeInTheDocument()
   })
 
-  it('clique no nome abre o MemberProfileSheet com o userId correto', async () => {
+  it('clicking the name opens MemberProfileSheet with the correct userId', async () => {
     render(
       <MemberList
         group={baseGroup}
@@ -198,7 +198,7 @@ describe('MemberList', () => {
     expect(sheet).toHaveAttribute('data-userid', 'u2')
   })
 
-  it('onClose do sheet zera selectedUserId (sheet escondido)', async () => {
+  it('onClose of the sheet resets selectedUserId (sheet hidden)', async () => {
     render(
       <MemberList
         group={baseGroup}

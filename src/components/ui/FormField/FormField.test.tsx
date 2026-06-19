@@ -15,12 +15,12 @@ describe('FormField', () => {
     defaultProps.onChange.mockClear()
   })
 
-  it('renderiza o label associado ao input', () => {
+  it('renders the label associated with the input', () => {
     render(<FormField {...defaultProps} />)
     expect(screen.getByLabelText('E-mail')).toBeInTheDocument()
   })
 
-  it('renderiza o input com id fornecido', () => {
+  it('renders the input with the provided id', () => {
     render(<FormField {...defaultProps} />)
     expect(screen.getByRole('textbox')).toHaveAttribute('id', 'email')
   })
@@ -30,55 +30,55 @@ describe('FormField', () => {
     expect(screen.getByRole('textbox')).toHaveAttribute('type', 'text')
   })
 
-  it('aceita type customizado', () => {
+  it('accepts custom type', () => {
     render(<FormField {...defaultProps} type="email" />)
     expect(screen.getByLabelText('E-mail')).toHaveAttribute('type', 'email')
   })
 
-  it('aplica o valor recebido', () => {
+  it('applies the received value', () => {
     render(<FormField {...defaultProps} value="hello@example.com" />)
     expect(screen.getByRole('textbox')).toHaveValue('hello@example.com')
   })
 
-  it('chama onChange com a string (não o evento)', async () => {
+  it('calls onChange with the string (not the event)', async () => {
     render(<FormField {...defaultProps} value="" />)
     await userEvent.type(screen.getByRole('textbox'), 'a')
     expect(defaultProps.onChange).toHaveBeenCalledWith('a')
   })
 
-  it('renderiza placeholder', () => {
+  it('renders placeholder', () => {
     render(<FormField {...defaultProps} placeholder="Digite seu e-mail" />)
     expect(
       screen.getByPlaceholderText('Digite seu e-mail'),
     ).toBeInTheDocument()
   })
 
-  it('aplica visual pill (rounded-pill-lg) e fundo de superfície', () => {
+  it('applies pill visual (rounded-pill-lg) and surface background', () => {
     render(<FormField {...defaultProps} />)
     const input = screen.getByRole('textbox')
     expect(input).toHaveClass('rounded-pill-lg')
     expect(input).toHaveClass('bg-mg-surface-2')
   })
 
-  it('aplica inset shadow do DESIGN.md', () => {
+  it('applies inset shadow from DESIGN.md', () => {
     render(<FormField {...defaultProps} />)
     expect(screen.getByRole('textbox')).toHaveClass('shadow-mg-inset')
   })
 
-  describe('estado de erro', () => {
-    it('exibe a mensagem de erro abaixo do input', () => {
+  describe('error state', () => {
+    it('displays the error message below the input', () => {
       render(<FormField {...defaultProps} error="Campo obrigatório" />)
       expect(screen.getByText('Campo obrigatório')).toBeInTheDocument()
     })
 
-    it('marca o input com aria-invalid=true e cor de erro', () => {
+    it('marks the input with aria-invalid=true and error color', () => {
       render(<FormField {...defaultProps} error="x" />)
       const input = screen.getByRole('textbox')
       expect(input).toHaveAttribute('aria-invalid', 'true')
       expect(input).toHaveClass('border-mg-text-negative')
     })
 
-    it('associa aria-describedby ao id da mensagem de erro', () => {
+    it('associates aria-describedby with the error message id', () => {
       render(<FormField {...defaultProps} error="Campo obrigatório" />)
       expect(screen.getByRole('textbox')).toHaveAttribute(
         'aria-describedby',
@@ -86,7 +86,7 @@ describe('FormField', () => {
       )
     })
 
-    it('NÃO exibe helperText quando há error', () => {
+    it('does NOT display helperText when there is an error', () => {
       render(
         <FormField
           {...defaultProps}
@@ -99,12 +99,12 @@ describe('FormField', () => {
   })
 
   describe('helperText', () => {
-    it('exibe helperText abaixo do input quando não há erro', () => {
+    it('displays helperText below the input when there is no error', () => {
       render(<FormField {...defaultProps} helperText="Dica útil" />)
       expect(screen.getByText('Dica útil')).toBeInTheDocument()
     })
 
-    it('associa aria-describedby ao id do helperText', () => {
+    it('associates aria-describedby with the helperText id', () => {
       render(<FormField {...defaultProps} helperText="Dica" />)
       expect(screen.getByRole('textbox')).toHaveAttribute(
         'aria-describedby',
@@ -114,7 +114,7 @@ describe('FormField', () => {
   })
 
   describe('required', () => {
-    it('marca o input como required e exibe asterisco no label', () => {
+    it('marks the input as required and displays asterisk in the label', () => {
       render(<FormField {...defaultProps} required />)
       expect(screen.getByRole('textbox')).toBeRequired()
       expect(screen.getByText('*')).toHaveAttribute('aria-hidden', 'true')
@@ -122,14 +122,14 @@ describe('FormField', () => {
   })
 
   describe('disabled', () => {
-    it('marca o input como disabled', () => {
+    it('marks the input as disabled', () => {
       render(<FormField {...defaultProps} disabled />)
       expect(screen.getByRole('textbox')).toBeDisabled()
     })
   })
 
-  describe('atributos extras', () => {
-    it('encaminha autoComplete', () => {
+  describe('extra attributes', () => {
+    it('forwards autoComplete', () => {
       render(<FormField {...defaultProps} autoComplete="email" />)
       expect(screen.getByRole('textbox')).toHaveAttribute(
         'autocomplete',
@@ -137,7 +137,7 @@ describe('FormField', () => {
       )
     })
 
-    it('encaminha inputMode', () => {
+    it('forwards inputMode', () => {
       render(<FormField {...defaultProps} inputMode="numeric" />)
       expect(screen.getByRole('textbox')).toHaveAttribute(
         'inputmode',

@@ -1,5 +1,4 @@
 import { AppShell } from '@/components/ui/AppShell/AppShell'
-import { ToastProvider } from '@/components/ui/Toast/ToastProvider'
 import { UserProvider } from '@/contexts/UserContext'
 
 /**
@@ -16,10 +15,8 @@ export default function ProtectedLayout({
   children: React.ReactNode
 }) {
   return (
-    <ToastProvider>
-      <UserProvider>
-        <AppShell>{children}</AppShell>
-      </UserProvider>
-    </ToastProvider>
+    <UserProvider>
+      <AppShell>{children}</AppShell>
+    </UserProvider>
   )
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Manrope, Noto_Sans } from 'next/font/google'
 import NextTopLoader from 'nextjs-toploader'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 /*
@@ -44,6 +45,15 @@ export default function RootLayout({
       <body>
         <NextTopLoader color="#1ed760" showSpinner={false} />
         {children}
+        <Toaster
+          theme="dark"
+          position="bottom-center"
+          offset={96}
+          richColors
+          toastOptions={{
+            style: { fontFamily: 'var(--font-manrope), sans-serif' },
+          }}
+        />
       </body>
     </html>
   )

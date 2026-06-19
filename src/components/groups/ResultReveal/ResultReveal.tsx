@@ -40,7 +40,7 @@ export function ResultReveal({ groupId }: ResultRevealProps) {
   return (
     <div className="mx-auto w-full max-w-sm rounded-card bg-mg-surface p-6 text-center">
       {revealed ? (
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-3 motion-safe:animate-reveal">
           <div
             aria-hidden="true"
             className="flex h-16 w-16 items-center justify-center rounded-full bg-mg-green/10 text-mg-green"

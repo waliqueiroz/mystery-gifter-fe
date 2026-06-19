@@ -79,8 +79,8 @@ beforeEach(() => {
 })
 
 describe('GroupList', () => {
-  describe('estados de carregamento (FR-024 — skeletons, sem spinners)', () => {
-    it('NÃO exibe spinner — exibe SkeletonList no carregamento inicial após o delay', async () => {
+  describe('loading states (FR-024 — skeletons, no spinners)', () => {
+    it('does NOT show spinner — displays SkeletonList on initial load after the delay', async () => {
       jest.useFakeTimers()
       mockListGroups.mockReturnValue(new Promise(() => {}))
       render(<GroupList />)
@@ -96,7 +96,7 @@ describe('GroupList', () => {
     })
   })
 
-  it('renderiza GroupCards após o load', async () => {
+  it('renders GroupCards after load', async () => {
     mockListGroups.mockResolvedValue(
       makeResult([makeGroup('g1'), makeGroup('g2')]),
     )
@@ -105,13 +105,13 @@ describe('GroupList', () => {
     expect(screen.getByText('Grupo g2')).toBeInTheDocument()
   })
 
-  it('exibe empty state quando não há grupos', async () => {
+  it('displays empty state when there are no groups', async () => {
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)
     expect(await screen.findByText('Nenhum grupo ainda')).toBeInTheDocument()
   })
 
-  it('exibe "Carregar mais" quando há mais páginas', async () => {
+  it('displays "Carregar mais" when there are more pages', async () => {
     mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')], 30))
     render(<GroupList />)
     expect(
@@ -119,7 +119,7 @@ describe('GroupList', () => {
     ).toBeInTheDocument()
   })
 
-  it('esconde "Carregar mais" quando todos os grupos foram carregados', async () => {
+  it('hides "Carregar mais" when all groups have been loaded', async () => {
     mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')], 1))
     render(<GroupList />)
     await screen.findByText('Grupo g1')
@@ -128,7 +128,7 @@ describe('GroupList', () => {
     ).toBeNull()
   })
 
-  it('anexa próxima página ao clicar em "Carregar mais"', async () => {
+  it('appends next page when clicking "Carregar mais"', async () => {
     mockListGroups
       .mockResolvedValueOnce({
         result: [makeGroup('g1')],
@@ -147,7 +147,7 @@ describe('GroupList', () => {
     expect(screen.getByText('Grupo g1')).toBeInTheDocument()
   })
 
-  it('botão "Novo grupo" é um link para /groups/new (FR-023 + Q2)', async () => {
+  it('"Novo grupo" button is a link to /groups/new (FR-023 + Q2)', async () => {
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)
     await screen.findByText('Nenhum grupo ainda')
@@ -157,7 +157,7 @@ describe('GroupList', () => {
     )
   })
 
-  it('CTA do empty state também aponta para /groups/new', async () => {
+  it('empty state CTA also points to /groups/new', async () => {
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)
     await screen.findByText('Nenhum grupo ainda')
@@ -166,7 +166,7 @@ describe('GroupList', () => {
     ).toHaveAttribute('href', '/groups/new')
   })
 
-  it('chama listGroups com o userId do contexto', async () => {
+  it('calls listGroups with the userId from context', async () => {
     mockUseUser.mockReturnValue({
       id: 'user-42',
       name: 'Test',
@@ -182,14 +182,14 @@ describe('GroupList', () => {
     )
   })
 
-  it('NÃO chama listGroups quando o usuário do contexto é null', async () => {
+  it('does NOT call listGroups when the context user is null', async () => {
     mockUseUser.mockReturnValue(null)
     render(<GroupList />)
     await waitFor(() => expect(mockUseUser).toHaveBeenCalled())
     expect(mockListGroups).not.toHaveBeenCalled()
   })
 
-  it('GroupCard exibe o badge "Dono" quando o usuário é o dono', async () => {
+  it('GroupCard displays the "Dono" badge when the user is the owner', async () => {
     mockUseUser.mockReturnValue({
       id: 'u1',
       name: 'Test',
@@ -202,15 +202,15 @@ describe('GroupList', () => {
     expect(screen.getByText('Dono')).toBeInTheDocument()
   })
 
-  describe('filtros', () => {
-    it('renderiza o componente GroupFilters', async () => {
+  describe('filters', () => {
+    it('renders the GroupFilters component', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
       expect(screen.getByLabelText(/buscar por nome/i)).toBeInTheDocument()
     })
 
-    it('re-busca com o param "name" após o debounce', async () => {
+    it('re-fetches with the "name" param after debounce', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
@@ -227,7 +227,7 @@ describe('GroupList', () => {
       )
     })
 
-    it('re-busca com novos statuses ao mudar o filtro de status', async () => {
+    it('re-fetches with new statuses when the status filter changes', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
@@ -241,7 +241,7 @@ describe('GroupList', () => {
       )
     })
 
-    it('re-busca sem status quando todos são desmarcados', async () => {
+    it('re-fetches without statuses when all are deselected', async () => {
       mockListGroups.mockResolvedValue(makeResult([]))
       render(<GroupList />)
       await screen.findByText('Nenhum grupo ainda')
@@ -255,8 +255,8 @@ describe('GroupList', () => {
     })
   })
 
-  describe('estado de erro (EmptyState variant="error")', () => {
-    it('exibe EmptyState de erro quando a busca inicial falha', async () => {
+  describe('error state (EmptyState variant="error")', () => {
+    it('displays error EmptyState when the initial fetch fails', async () => {
       mockListGroups.mockRejectedValue(new Error('Falha na conexão.'))
       render(<GroupList />)
       expect(
@@ -268,14 +268,14 @@ describe('GroupList', () => {
       ).toBeInTheDocument()
     })
 
-    it('NÃO dispara toast quando a busca inicial falha', async () => {
+    it('does NOT fire toast when the initial fetch fails', async () => {
       mockListGroups.mockRejectedValue(new Error('Erro.'))
       render(<GroupList />)
       await screen.findByText('Erro ao carregar grupos')
       expect(mockShowToast).not.toHaveBeenCalled()
     })
 
-    it('refaz a busca ao clicar em "Tentar novamente"', async () => {
+    it('retries the fetch when clicking "Tentar novamente"', async () => {
       mockListGroups
         .mockRejectedValueOnce(new Error('Erro.'))
         .mockResolvedValueOnce(makeResult([makeGroup('g1')]))

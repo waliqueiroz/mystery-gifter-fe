@@ -4,35 +4,35 @@ import userEvent from '@testing-library/user-event'
 import Button from './Button'
 
 describe('Button', () => {
-  describe('render básico', () => {
-    it('renderiza o texto filho', () => {
+  describe('basic render', () => {
+    it('renders the child text', () => {
       render(<Button>Entrar</Button>)
       expect(screen.getByRole('button', { name: 'Entrar' })).toBeInTheDocument()
     })
 
-    it('aplica type="button" por padrão', () => {
+    it('applies type="button" by default', () => {
       render(<Button>OK</Button>)
       expect(screen.getByRole('button')).toHaveAttribute('type', 'button')
     })
 
-    it('aceita type="submit"', () => {
+    it('accepts type="submit"', () => {
       render(<Button type="submit">Salvar</Button>)
       expect(screen.getByRole('button')).toHaveAttribute('type', 'submit')
     })
   })
 
-  describe('variantes', () => {
-    it('variant=primary (default) aplica fundo verde de marca', () => {
+  describe('variants', () => {
+    it('variant=primary (default) applies brand green background', () => {
       render(<Button>CTA</Button>)
       expect(screen.getByRole('button')).toHaveClass('bg-mg-green')
     })
 
-    it('variant=secondary aplica fundo de superfície escura', () => {
+    it('variant=secondary applies dark surface background', () => {
       render(<Button variant="secondary">Outro</Button>)
       expect(screen.getByRole('button')).toHaveClass('bg-mg-surface-2')
     })
 
-    it('variant=outline aplica borda muted e fundo transparente', () => {
+    it('variant=outline applies muted border and transparent background', () => {
       render(<Button variant="outline">Outline</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toHaveClass('bg-transparent')
@@ -40,7 +40,7 @@ describe('Button', () => {
       expect(btn).toHaveClass('border-mg-border-light')
     })
 
-    it('variant=ghost aplica texto muted sem fundo', () => {
+    it('variant=ghost applies muted text without background', () => {
       render(<Button variant="ghost">Ghost</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toHaveClass('bg-transparent')
@@ -49,17 +49,17 @@ describe('Button', () => {
   })
 
   describe('shape', () => {
-    it('shape="pill-lg" (default) aplica rounded-pill-lg', () => {
+    it('shape="pill-lg" (default) applies rounded-pill-lg', () => {
       render(<Button>CTA</Button>)
       expect(screen.getByRole('button')).toHaveClass('rounded-pill-lg')
     })
 
-    it('shape="pill" aplica rounded-pill', () => {
+    it('shape="pill" applies rounded-pill', () => {
       render(<Button shape="pill">Small</Button>)
       expect(screen.getByRole('button')).toHaveClass('rounded-pill')
     })
 
-    it('shape="circle" aplica rounded-full, aspect-square e h/w iguais', () => {
+    it('shape="circle" applies rounded-full, aspect-square and equal h/w', () => {
       render(<Button shape="circle" aria-label="Play">▶</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toHaveClass('rounded-full')
@@ -68,7 +68,7 @@ describe('Button', () => {
       expect(btn).toHaveClass('w-10')
     })
 
-    it('shape="circle" ignora uppercase mesmo se uppercase=true', () => {
+    it('shape="circle" ignores uppercase even if uppercase=true', () => {
       render(
         <Button shape="circle" uppercase aria-label="Play">
           play
@@ -79,12 +79,12 @@ describe('Button', () => {
   })
 
   describe('size', () => {
-    it('size="md" (default) aplica h-10', () => {
+    it('size="md" (default) applies h-10', () => {
       render(<Button>OK</Button>)
       expect(screen.getByRole('button')).toHaveClass('h-10')
     })
 
-    it('size="sm" aplica h-8 px-3 text-xs', () => {
+    it('size="sm" applies h-8 px-3 text-xs', () => {
       render(<Button size="sm">SM</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toHaveClass('h-8')
@@ -92,7 +92,7 @@ describe('Button', () => {
       expect(btn).toHaveClass('text-xs')
     })
 
-    it('size="lg" aplica h-12 px-6 text-base', () => {
+    it('size="lg" applies h-12 px-6 text-base', () => {
       render(<Button size="lg">LG</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toHaveClass('h-12')
@@ -102,14 +102,14 @@ describe('Button', () => {
   })
 
   describe('uppercase', () => {
-    it('uppercase=true (default) aplica uppercase + tracking-btn', () => {
+    it('uppercase=true (default) applies uppercase + tracking-btn', () => {
       render(<Button>Confirmar</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toHaveClass('uppercase')
       expect(btn).toHaveClass('tracking-btn')
     })
 
-    it('uppercase=false não aplica uppercase nem tracking-btn', () => {
+    it('uppercase=false does not apply uppercase or tracking-btn', () => {
       render(<Button uppercase={false}>Confirmar</Button>)
       const btn = screen.getByRole('button')
       expect(btn).not.toHaveClass('uppercase')
@@ -117,28 +117,28 @@ describe('Button', () => {
     })
   })
 
-  describe('estado loading', () => {
-    it('expõe aria-busy=true e desabilita o botão', () => {
+  describe('loading state', () => {
+    it('exposes aria-busy=true and disables the button', () => {
       render(<Button loading>Salvando</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toBeDisabled()
       expect(btn).toHaveAttribute('aria-busy', 'true')
     })
 
-    it('substitui o conteúdo por skeleton, jamais por spinner', () => {
+    it('replaces content with skeleton, never with spinner', () => {
       render(<Button loading>Salvando</Button>)
       expect(document.querySelector('.react-loading-skeleton')).not.toBeNull()
       expect(screen.queryByRole('status')).toBeNull()
     })
 
-    it('não exibe texto do children durante loading', () => {
+    it('does not display children text during loading', () => {
       render(<Button loading>Salvando</Button>)
       expect(screen.queryByText('Salvando')).toBeNull()
     })
   })
 
-  describe('estado disabled', () => {
-    it('desabilita o botão e aplica disabled:opacity-60', () => {
+  describe('disabled state', () => {
+    it('disables the button and applies disabled:opacity-60', () => {
       render(<Button disabled>Entrar</Button>)
       const btn = screen.getByRole('button')
       expect(btn).toBeDisabled()
@@ -146,15 +146,15 @@ describe('Button', () => {
     })
   })
 
-  describe('interação', () => {
-    it('dispara onClick em click', async () => {
+  describe('interaction', () => {
+    it('fires onClick on click', async () => {
       const handle = jest.fn()
       render(<Button onClick={handle}>Entrar</Button>)
       await userEvent.click(screen.getByRole('button'))
       expect(handle).toHaveBeenCalledTimes(1)
     })
 
-    it('NÃO dispara onClick quando disabled', async () => {
+    it('does NOT fire onClick when disabled', async () => {
       const handle = jest.fn()
       render(
         <Button disabled onClick={handle}>
@@ -165,7 +165,7 @@ describe('Button', () => {
       expect(handle).not.toHaveBeenCalled()
     })
 
-    it('NÃO dispara onClick quando loading', async () => {
+    it('does NOT fire onClick when loading', async () => {
       const handle = jest.fn()
       render(
         <Button loading onClick={handle}>
@@ -177,8 +177,8 @@ describe('Button', () => {
     })
   })
 
-  describe('ícones e aria-label', () => {
-    it('renderiza iconLeft antes do texto', () => {
+  describe('icons and aria-label', () => {
+    it('renders iconLeft before the text', () => {
       render(
         <Button iconLeft={<span data-testid="left">L</span>}>Texto</Button>,
       )
@@ -187,7 +187,7 @@ describe('Button', () => {
       expect(btn.firstChild).toBe(leftIcon)
     })
 
-    it('renderiza iconRight depois do texto', () => {
+    it('renders iconRight after the text', () => {
       render(
         <Button iconRight={<span data-testid="right">R</span>}>Texto</Button>,
       )
@@ -196,7 +196,7 @@ describe('Button', () => {
       expect(btn.lastChild).toBe(rightIcon)
     })
 
-    it('expõe aria-label quando passado (botões circulares sem texto)', () => {
+    it('exposes aria-label when passed (circular buttons without text)', () => {
       render(
         <Button shape="circle" aria-label="Play">
           ▶

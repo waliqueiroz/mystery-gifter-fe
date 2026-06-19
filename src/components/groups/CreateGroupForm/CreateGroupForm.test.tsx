@@ -32,13 +32,13 @@ beforeEach(() => {
 })
 
 describe('CreateGroupForm', () => {
-  it('renderiza os campos do formulário', () => {
+  it('renders the form fields', () => {
     render(<CreateGroupForm onSuccess={jest.fn()} onCancel={jest.fn()} />)
     expect(screen.getByLabelText('Nome do grupo')).toBeInTheDocument()
     expect(screen.getByLabelText('Descrição')).toBeInTheDocument()
   })
 
-  it('renderiza os botões Criar grupo e Cancelar (geometria pill-lg)', () => {
+  it('renders Criar grupo and Cancelar buttons (pill-lg geometry)', () => {
     render(<CreateGroupForm onSuccess={jest.fn()} onCancel={jest.fn()} />)
     const criar = screen.getByRole('button', { name: /criar grupo/i })
     const cancelar = screen.getByRole('button', { name: /cancelar/i })
@@ -46,7 +46,7 @@ describe('CreateGroupForm', () => {
     expect(cancelar).toHaveClass('rounded-pill-lg')
   })
 
-  it('exibe erro inline quando o nome está vazio no submit', async () => {
+  it('displays inline error when name is empty on submit', async () => {
     render(<CreateGroupForm onSuccess={jest.fn()} onCancel={jest.fn()} />)
     await userEvent.click(screen.getByRole('button', { name: /criar grupo/i }))
     expect(
@@ -55,7 +55,7 @@ describe('CreateGroupForm', () => {
     expect(mockCreateGroup).not.toHaveBeenCalled()
   })
 
-  it('limpa o erro ao digitar no nome novamente', async () => {
+  it('clears the error when typing in the name field again', async () => {
     render(<CreateGroupForm onSuccess={jest.fn()} onCancel={jest.fn()} />)
     await userEvent.click(screen.getByRole('button', { name: /criar grupo/i }))
     await screen.findByText('O nome do grupo é obrigatório.')
@@ -63,7 +63,7 @@ describe('CreateGroupForm', () => {
     expect(screen.queryByText('O nome do grupo é obrigatório.')).toBeNull()
   })
 
-  it('chama createGroup com nome trimado e description opcional', async () => {
+  it('calls createGroup with trimmed name and optional description', async () => {
     mockCreateGroup.mockResolvedValue(mockGroup)
     const onSuccess = jest.fn()
     render(<CreateGroupForm onSuccess={onSuccess} onCancel={jest.fn()} />)
@@ -83,7 +83,7 @@ describe('CreateGroupForm', () => {
     expect(onSuccess).toHaveBeenCalledWith(mockGroup)
   })
 
-  it('envia description=undefined quando vazia', async () => {
+  it('sends description=undefined when empty', async () => {
     mockCreateGroup.mockResolvedValue(mockGroup)
     render(<CreateGroupForm onSuccess={jest.fn()} onCancel={jest.fn()} />)
     await userEvent.type(screen.getByLabelText('Nome do grupo'), 'Família')
@@ -97,7 +97,7 @@ describe('CreateGroupForm', () => {
     )
   })
 
-  it('exibe toast e NÃO chama onSuccess quando createGroup falha', async () => {
+  it('displays toast and does NOT call onSuccess when createGroup fails', async () => {
     mockCreateGroup.mockRejectedValue(new Error('Falha no servidor.'))
     const onSuccess = jest.fn()
     render(<CreateGroupForm onSuccess={onSuccess} onCancel={jest.fn()} />)
@@ -113,14 +113,14 @@ describe('CreateGroupForm', () => {
     expect(onSuccess).not.toHaveBeenCalled()
   })
 
-  it('chama onCancel ao clicar em Cancelar', async () => {
+  it('calls onCancel when clicking Cancelar', async () => {
     const onCancel = jest.fn()
     render(<CreateGroupForm onSuccess={jest.fn()} onCancel={onCancel} />)
     await userEvent.click(screen.getByRole('button', { name: /cancelar/i }))
     expect(onCancel).toHaveBeenCalledTimes(1)
   })
 
-  it('respeita maxLength=255 no textarea de descrição', () => {
+  it('respects maxLength=255 on the description textarea', () => {
     render(<CreateGroupForm onSuccess={jest.fn()} onCancel={jest.fn()} />)
     expect(screen.getByLabelText('Descrição')).toHaveAttribute(
       'maxlength',

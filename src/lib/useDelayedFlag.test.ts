@@ -11,12 +11,12 @@ describe('useDelayedFlag', () => {
     jest.useRealTimers()
   })
 
-  it('inicia como false', () => {
+  it('starts as false', () => {
     const { result } = renderHook(() => useDelayedFlag(false, 150))
     expect(result.current).toBe(false)
   })
 
-  it('permanece false enquanto delay não decorre', () => {
+  it('remains false while delay has not elapsed', () => {
     const { result } = renderHook(() => useDelayedFlag(true, 150))
     expect(result.current).toBe(false)
 
@@ -26,7 +26,7 @@ describe('useDelayedFlag', () => {
     expect(result.current).toBe(false)
   })
 
-  it('vira true após delay completo com value=true', () => {
+  it('becomes true after full delay with value=true', () => {
     const { result } = renderHook(() => useDelayedFlag(true, 150))
 
     act(() => {
@@ -35,7 +35,7 @@ describe('useDelayedFlag', () => {
     expect(result.current).toBe(true)
   })
 
-  it('cancela timer quando value volta para false antes do delay', () => {
+  it('cancels timer when value returns to false before the delay', () => {
     const { result, rerender } = renderHook(
       ({ value }) => useDelayedFlag(value, 150),
       { initialProps: { value: true } },
@@ -54,7 +54,7 @@ describe('useDelayedFlag', () => {
     expect(result.current).toBe(false)
   })
 
-  it('reseta para false imediatamente quando value vira false', () => {
+  it('resets to false immediately when value turns false', () => {
     const { result, rerender } = renderHook(
       ({ value }) => useDelayedFlag(value, 150),
       { initialProps: { value: true } },
@@ -69,7 +69,7 @@ describe('useDelayedFlag', () => {
     expect(result.current).toBe(false)
   })
 
-  it('respeita um delay novo quando delayMs muda', () => {
+  it('respects a new delay when delayMs changes', () => {
     const { result, rerender } = renderHook(
       ({ delay }) => useDelayedFlag(true, delay),
       { initialProps: { delay: 150 } },

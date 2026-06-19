@@ -13,7 +13,7 @@ jest.mock('@/components/login/LoginForm', () => ({
 }))
 
 describe('LoginPage', () => {
-  it('renderiza o LoginForm envolto em GuestGuard', () => {
+  it('renders LoginForm wrapped in GuestGuard', () => {
     render(<LoginPage />)
     expect(screen.getByTestId('login-form')).toBeInTheDocument()
   })

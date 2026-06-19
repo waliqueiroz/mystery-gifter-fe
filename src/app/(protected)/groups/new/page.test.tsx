@@ -36,7 +36,7 @@ beforeEach(() => {
 })
 
 describe('NewGroupPage', () => {
-  it('renderiza heading "Criar grupo" e CreateGroupForm', () => {
+  it('renders heading "Criar grupo" and CreateGroupForm', () => {
     render(<NewGroupPage />)
     expect(
       screen.getByRole('heading', { level: 1, name: 'Criar grupo' }),
@@ -44,7 +44,7 @@ describe('NewGroupPage', () => {
     expect(screen.getByLabelText('Nome do grupo')).toBeInTheDocument()
   })
 
-  it('redireciona para /groups/[id] após criação bem-sucedida + dispara toast', async () => {
+  it('redirects to /groups/[id] after successful creation and fires toast', async () => {
     mockCreateGroup.mockResolvedValue(mockGroup)
     render(<NewGroupPage />)
     await userEvent.type(screen.getByLabelText('Nome do grupo'), 'Família')
@@ -59,7 +59,7 @@ describe('NewGroupPage', () => {
     })
   })
 
-  it('clique em Cancelar navega de volta para /groups', async () => {
+  it('clicking Cancelar navigates back to /groups', async () => {
     render(<NewGroupPage />)
     await userEvent.click(screen.getByRole('button', { name: /cancelar/i }))
     expect(mockPush).toHaveBeenCalledWith('/groups')

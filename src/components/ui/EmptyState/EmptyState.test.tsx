@@ -11,14 +11,14 @@ const baseProps = {
 }
 
 describe('EmptyState', () => {
-  it('renderiza ícone, title e expõe role="status"', () => {
+  it('renders icon, title and exposes role="status"', () => {
     render(<EmptyState {...baseProps} />)
     expect(screen.getByText('Nenhum grupo ainda')).toBeInTheDocument()
     expect(screen.getByRole('status')).toBeInTheDocument()
     expect(document.querySelector('svg')).not.toBeNull()
   })
 
-  it('exibe description quando passada', () => {
+  it('displays description when provided', () => {
     render(
       <EmptyState
         {...baseProps}
@@ -30,18 +30,18 @@ describe('EmptyState', () => {
     ).toBeInTheDocument()
   })
 
-  it('NÃO exibe description quando ausente', () => {
+  it('does NOT display description when absent', () => {
     const { container } = render(<EmptyState {...baseProps} />)
     expect(container.querySelectorAll('p').length).toBe(0)
   })
 
   describe('variant', () => {
-    it('default aplica cor de texto branca no título', () => {
+    it('default applies white text color to the title', () => {
       render(<EmptyState {...baseProps} />)
       expect(screen.getByRole('heading')).toHaveClass('text-mg-text')
     })
 
-    it('error aplica cor de erro no título e wrapper do ícone', () => {
+    it('error applies error color to the title and icon wrapper', () => {
       render(<EmptyState {...baseProps} variant="error" />)
       const heading = screen.getByRole('heading')
       expect(heading).toHaveClass('text-mg-text-negative')
@@ -54,13 +54,13 @@ describe('EmptyState', () => {
   })
 
   describe('CTA', () => {
-    it('sem cta NÃO renderiza botão (caso de borda do FR-025)', () => {
+    it('without cta does NOT render button (edge case of FR-025)', () => {
       render(<EmptyState {...baseProps} />)
       expect(screen.queryByRole('button')).toBeNull()
       expect(screen.queryByRole('link')).toBeNull()
     })
 
-    it('com cta.onClick renderiza <button> e dispara onClick', async () => {
+    it('with cta.onClick renders <button> and fires onClick', async () => {
       const handle = jest.fn()
       render(
         <EmptyState
@@ -74,7 +74,7 @@ describe('EmptyState', () => {
       expect(handle).toHaveBeenCalledTimes(1)
     })
 
-    it('com cta.href renderiza <Link> apontando para o href', () => {
+    it('with cta.href renders <Link> pointing to the href', () => {
       render(
         <EmptyState
           {...baseProps}
@@ -85,7 +85,7 @@ describe('EmptyState', () => {
       expect(link).toHaveAttribute('href', '/groups/new')
     })
 
-    it('CTA segue geometria pill-lg + uppercase do botão', () => {
+    it('CTA follows pill-lg geometry + button uppercase', () => {
       render(
         <EmptyState
           {...baseProps}
@@ -98,7 +98,7 @@ describe('EmptyState', () => {
     })
   })
 
-  it('encaminha className adicional', () => {
+  it('forwards additional className', () => {
     render(<EmptyState {...baseProps} className="my-8" />)
     expect(screen.getByRole('status')).toHaveClass('my-8')
   })

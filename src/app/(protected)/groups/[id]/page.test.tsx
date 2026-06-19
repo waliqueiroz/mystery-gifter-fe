@@ -105,7 +105,7 @@ beforeEach(() => {
 })
 
 describe('GroupDetailPage', () => {
-  it('NÃO exibe spinner — exibe skeleton após o delay (FR-024)', () => {
+  it('does NOT show spinner — displays skeleton after the delay (FR-024)', () => {
     jest.useFakeTimers()
     try {
       mockGetGroup.mockReturnValue(new Promise(() => {}))
@@ -122,14 +122,14 @@ describe('GroupDetailPage', () => {
     }
   })
 
-  it('renderiza nome e badge de status após o load', async () => {
+  it('renders name and status badge after load', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     render(<GroupDetailPage />)
     expect(await screen.findByText('Grupo Teste')).toBeInTheDocument()
     expect(screen.getByTestId('status-badge')).toHaveTextContent('OPEN')
   })
 
-  it('renderiza InviteSection com groupId e groupStatus', async () => {
+  it('renders InviteSection with groupId and groupStatus', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     render(<GroupDetailPage />)
     await screen.findByText('Grupo Teste')
@@ -138,7 +138,7 @@ describe('GroupDetailPage', () => {
     expect(section).toHaveAttribute('data-group-status', 'OPEN')
   })
 
-  it('exibe toast de erro e redireciona para /groups quando o fetch falha', async () => {
+  it('shows error toast and redirects to /groups when fetch fails', async () => {
     mockGetGroup.mockRejectedValue(new Error('Grupo não encontrado.'))
     render(<GroupDetailPage />)
     await waitFor(() =>
@@ -150,13 +150,13 @@ describe('GroupDetailPage', () => {
     expect(mockPush).toHaveBeenCalledWith('/groups')
   })
 
-  it('chama getGroup com o id correto', async () => {
+  it('calls getGroup with the correct id', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     render(<GroupDetailPage />)
     await waitFor(() => expect(mockGetGroup).toHaveBeenCalledWith('g1'))
   })
 
-  it('renderiza MemberList com group e currentUserId corretos', async () => {
+  it('renders MemberList with correct group and currentUserId', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     render(<GroupDetailPage />)
     await screen.findByText('Grupo Teste')
@@ -166,14 +166,14 @@ describe('GroupDetailPage', () => {
   })
 
   describe('DrawButton', () => {
-    it('renderiza para o dono em grupo OPEN', async () => {
+    it('renders for the owner in an OPEN group', async () => {
       mockGetGroup.mockResolvedValue(makeGroup({ owner_id: 'u1' }))
       render(<GroupDetailPage />)
       await screen.findByText('Grupo Teste')
       expect(screen.getByTestId('draw-button')).toBeInTheDocument()
     })
 
-    it('NÃO renderiza para não-dono', async () => {
+    it('does NOT render for non-owner', async () => {
       mockUseUser.mockReturnValue({
         id: 'u2',
         name: 'Bruno',
@@ -186,7 +186,7 @@ describe('GroupDetailPage', () => {
       expect(screen.queryByTestId('draw-button')).toBeNull()
     })
 
-    it('NÃO renderiza quando o grupo NÃO está OPEN', async () => {
+    it('does NOT render when the group is NOT OPEN', async () => {
       mockGetGroup.mockResolvedValue(
         makeGroup({ owner_id: 'u1', status: 'MATCHED' }),
       )
@@ -197,7 +197,7 @@ describe('GroupDetailPage', () => {
   })
 
   describe('ResultReveal', () => {
-    it('renderiza quando status é MATCHED', async () => {
+    it('renders when status is MATCHED', async () => {
       mockGetGroup.mockResolvedValue(makeGroup({ status: 'MATCHED' }))
       render(<GroupDetailPage />)
       await screen.findByText('Grupo Teste')
@@ -205,7 +205,7 @@ describe('GroupDetailPage', () => {
       expect(reveal).toHaveAttribute('data-group-id', 'g1')
     })
 
-    it('NÃO renderiza quando status é OPEN', async () => {
+    it('does NOT render when status is OPEN', async () => {
       mockGetGroup.mockResolvedValue(makeGroup({ status: 'OPEN' }))
       render(<GroupDetailPage />)
       await screen.findByText('Grupo Teste')
@@ -214,7 +214,7 @@ describe('GroupDetailPage', () => {
   })
 
   describe('GroupActions', () => {
-    it('renderiza para o dono quando NÃO arquivado', async () => {
+    it('renders for the owner when NOT archived', async () => {
       mockGetGroup.mockResolvedValue(
         makeGroup({ owner_id: 'u1', status: 'OPEN' }),
       )
@@ -223,7 +223,7 @@ describe('GroupDetailPage', () => {
       expect(screen.getByTestId('group-actions')).toBeInTheDocument()
     })
 
-    it('NÃO renderiza para não-dono', async () => {
+    it('does NOT render for non-owner', async () => {
       mockUseUser.mockReturnValue({
         id: 'u2',
         name: 'Bruno',
@@ -238,7 +238,7 @@ describe('GroupDetailPage', () => {
       expect(screen.queryByTestId('group-actions')).toBeNull()
     })
 
-    it('NÃO renderiza quando o grupo está ARCHIVED', async () => {
+    it('does NOT render when the group is ARCHIVED', async () => {
       mockGetGroup.mockResolvedValue(
         makeGroup({ owner_id: 'u1', status: 'ARCHIVED' }),
       )

@@ -20,33 +20,33 @@ jest.mock('next/link', () => ({
 }))
 
 describe('InviteSection', () => {
-  it('renderiza link "Convidar participantes" para grupo OPEN', () => {
+  it('renders link "Convidar participantes" for OPEN group', () => {
     render(<InviteSection groupId="g1" groupStatus="OPEN" />)
     const link = screen.getByRole('link', { name: /convidar participantes/i })
     expect(link).toHaveAttribute('href', '/groups/g1/invite')
   })
 
-  it('botão usa geometria pill compacta (FR-009)', () => {
+  it('button uses compact pill geometry (FR-009)', () => {
     render(<InviteSection groupId="g1" groupStatus="OPEN" />)
     const btn = screen.getByRole('button', { name: /convidar participantes/i })
     expect(btn).toHaveClass('rounded-pill')
   })
 
-  it('renderiza null quando grupo está MATCHED', () => {
+  it('renders null when group is MATCHED', () => {
     const { container } = render(
       <InviteSection groupId="g1" groupStatus="MATCHED" />,
     )
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('renderiza null quando grupo está ARCHIVED', () => {
+  it('renders null when group is ARCHIVED', () => {
     const { container } = render(
       <InviteSection groupId="g1" groupStatus="ARCHIVED" />,
     )
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('inclui ícone de link como decoração', () => {
+  it('includes link icon as decoration', () => {
     const { container } = render(
       <InviteSection groupId="g1" groupStatus="OPEN" />,
     )

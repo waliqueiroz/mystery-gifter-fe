@@ -13,7 +13,7 @@ jest.mock('@/components/landing/HeroSection', () => ({
 }))
 
 describe('HomePage (landing)', () => {
-  it('renderiza a HeroSection envolta em GuestGuard', () => {
+  it('renders HeroSection wrapped in GuestGuard', () => {
     render(<HomePage />)
     expect(screen.getByTestId('hero-section')).toBeInTheDocument()
   })

@@ -7,7 +7,7 @@ jest.mock('next/navigation', () => ({
 }))
 
 describe('AppShell', () => {
-  it('renderiza children dentro do <main>', () => {
+  it('renders children inside <main>', () => {
     render(
       <AppShell>
         <p>conteúdo da rota</p>
@@ -20,7 +20,7 @@ describe('AppShell', () => {
     )
   })
 
-  it('aplica bg-mg-bg e min-h-dvh no container externo', () => {
+  it('applies bg-mg-bg and min-h-dvh to the outer container', () => {
     const { container } = render(
       <AppShell>
         <span>x</span>
@@ -31,7 +31,7 @@ describe('AppShell', () => {
     expect(outer).toHaveClass('bg-mg-bg')
   })
 
-  it('centraliza o conteúdo com max-w-app (estética app-like em desktop)', () => {
+  it('centers content with max-w-app (app-like aesthetic on desktop)', () => {
     render(
       <AppShell>
         <span>x</span>
@@ -41,7 +41,7 @@ describe('AppShell', () => {
     expect(screen.getByRole('main')).toHaveClass('mx-auto')
   })
 
-  it('renderiza a BottomTabBar (nav "Navegação principal")', () => {
+  it('renders the BottomTabBar (nav "Navegação principal")', () => {
     render(
       <AppShell>
         <span>x</span>
@@ -52,7 +52,7 @@ describe('AppShell', () => {
     ).toBeInTheDocument()
   })
 
-  it('reserva padding inferior para não cobrir conteúdo com a tab bar', () => {
+  it('reserves bottom padding to prevent content from being covered by the tab bar', () => {
     render(
       <AppShell>
         <span>x</span>
@@ -62,7 +62,7 @@ describe('AppShell', () => {
     expect(main.getAttribute('class')).toContain('pb-[calc(theme(spacing.24)+env(safe-area-inset-bottom))]')
   })
 
-  it('encaminha className no container externo', () => {
+  it('forwards className to the outer container', () => {
     const { container } = render(
       <AppShell className="custom-shell">
         <span>x</span>
