@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 import { MemberProfileSheet } from '@/components/groups/MemberProfileSheet/MemberProfileSheet'
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { Icon } from '@/components/ui/Icon/Icon'
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/cn'

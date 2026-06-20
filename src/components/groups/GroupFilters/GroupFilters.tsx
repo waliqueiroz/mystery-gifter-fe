@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import FormField from '@/components/ui/FormField/FormField'
+import { FormField } from '@/components/ui/FormField/FormField'
 import { Icon } from '@/components/ui/Icon/Icon'
 import { cn } from '@/lib/cn'
 import type { GroupFilterParams, GroupStatus } from '@/types/api'

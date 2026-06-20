@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { joinGroup } from '@/services/api/inviteService'
 import { DrawCompletedError, InvalidInviteError } from '@/lib/errors'
 
@@ -10,18 +10,13 @@ interface InviteJoinCardProps {
   token: string
 }
 
-enum JoinStatus {
-  Loading = 'loading',
-  DrawCompleted = 'draw_completed',
-  Invalid = 'invalid',
-  Error = 'error',
-}
+type JoinStatus = 'loading' | 'draw_completed' | 'invalid' | 'error'
 
 const STATUS_MESSAGES: Partial<Record<JoinStatus, string>> = {
-  [JoinStatus.DrawCompleted]:
+  draw_completed:
     'O sorteio deste grupo já foi realizado. Peça ao dono para reabrir o grupo antes de entrar.',
-  [JoinStatus.Invalid]: 'Este link de convite é inválido ou expirou.',
-  [JoinStatus.Error]: 'Ocorreu um erro ao entrar no grupo. Tente novamente.',
+  invalid: 'Este link de convite é inválido ou expirou.',
+  error: 'Ocorreu um erro ao entrar no grupo. Tente novamente.',
 }
 
 export function InviteJoinCard({ token }: InviteJoinCardProps) {
@@ -29,17 +24,17 @@ export function InviteJoinCard({ token }: InviteJoinCardProps) {
   const [status, setStatus] = useState<JoinStatus | null>(null)
 
   async function handleJoin() {
-    setStatus(JoinStatus.Loading)
+    setStatus('loading')
     try {
       const group = await joinGroup(token)
       router.push(`/groups/${group.id}`)
     } catch (err) {
       if (err instanceof DrawCompletedError) {
-        setStatus(JoinStatus.DrawCompleted)
+        setStatus('draw_completed')
       } else if (err instanceof InvalidInviteError) {
-        setStatus(JoinStatus.Invalid)
+        setStatus('invalid')
       } else {
-        setStatus(JoinStatus.Error)
+        setStatus('error')
       }
     }
   }
@@ -66,11 +61,11 @@ export function InviteJoinCard({ token }: InviteJoinCardProps) {
         </p>
       )}
 
-      {status !== JoinStatus.DrawCompleted && status !== JoinStatus.Invalid && (
+      {status !== 'draw_completed' && status !== 'invalid' && (
         <Button
           type="button"
-          loading={status === JoinStatus.Loading}
-          disabled={status === JoinStatus.Loading}
+          loading={status === 'loading'}
+          disabled={status === 'loading'}
           onClick={handleJoin}
         >
           Entrar no grupo

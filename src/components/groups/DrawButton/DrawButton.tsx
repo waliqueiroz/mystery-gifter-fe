@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { Icon } from '@/components/ui/Icon/Icon'
 import { useToast } from '@/hooks/useToast'
 import { generateDraw } from '@/services/api/groupService'

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 
-import HeroSection from './HeroSection'
+import { HeroSection } from './HeroSection'
 
 jest.mock('next/link', () => ({
   __esModule: true,

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { Icon, type IconName } from '@/components/ui/Icon/Icon'
 import { cn } from '@/lib/cn'
 
@@ -28,7 +28,7 @@ const FEATURES: readonly Feature[] = [
   },
 ] as const
 
-export default function HeroSection() {
+export function HeroSection() {
   return (
     <section
       className={cn(

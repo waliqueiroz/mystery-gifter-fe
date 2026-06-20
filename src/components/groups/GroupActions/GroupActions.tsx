@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { ConfirmModal } from '@/components/ui/ConfirmModal/ConfirmModal'
 import { Icon } from '@/components/ui/Icon/Icon'
 import { useToast } from '@/hooks/useToast'

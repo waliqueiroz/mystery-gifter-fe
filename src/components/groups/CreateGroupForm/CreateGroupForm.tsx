@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
-import Button from '@/components/ui/Button/Button'
-import FormField from '@/components/ui/FormField/FormField'
+import { Button } from '@/components/ui/Button/Button'
+import { FormField } from '@/components/ui/FormField/FormField'
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/cn'
 import { createGroup } from '@/services/api/groupService'
