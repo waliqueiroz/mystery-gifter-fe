@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback } from 'react'
 import { toast } from 'sonner'
 
 interface ShowToastOptions {
@@ -8,11 +9,11 @@ interface ShowToastOptions {
 }
 
 export function useToast() {
-  return {
-    showToast: ({ message, type }: ShowToastOptions) => {
-      if (type === 'success') toast.success(message)
-      else if (type === 'error') toast.error(message)
-      else toast(message)
-    },
-  }
+  const showToast = useCallback(({ message, type }: ShowToastOptions) => {
+    if (type === 'success') toast.success(message)
+    else if (type === 'error') toast.error(message)
+    else toast(message)
+  }, [])
+
+  return { showToast }
 }

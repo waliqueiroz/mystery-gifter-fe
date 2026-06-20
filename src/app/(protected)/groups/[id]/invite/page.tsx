@@ -177,6 +177,8 @@ export default function InvitePage() {
           }
           cta={{ label: 'Voltar ao grupo', href: `/groups/${id}` }}
         />
+      ) : loadingGroup || loadingInvite ? (
+        null
       ) : !hasInvite ? (
         <section className="flex flex-col gap-3 rounded-card bg-mg-surface p-6">
           <p className="text-sm text-mg-text-muted">

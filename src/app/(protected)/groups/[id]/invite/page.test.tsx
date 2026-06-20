@@ -144,6 +144,17 @@ describe('InvitePage', () => {
     })
   })
 
+  it('does NOT show "no invite" section before the skeleton delay elapses', () => {
+    jest.useFakeTimers()
+    mockGetGroup.mockReturnValue(new Promise(() => {}))
+    mockGetActiveInvite.mockReturnValue(new Promise(() => {}))
+    render(<InvitePage />)
+    // 0 ms: loadingGroup=true, showSkeleton=false — must not flash the "no invite" state
+    expect(screen.queryByRole('button', { name: /gerar link de convite/i })).toBeNull()
+    expect(screen.queryByText(/peça ao dono/i)).toBeNull()
+    jest.useRealTimers()
+  })
+
   describe('when there is no active invite (404)', () => {
     it('owner sees "Gerar link de convite" CTA when there is no active invite (NotFoundError)', async () => {
       mockGetGroup.mockResolvedValue(makeGroup())

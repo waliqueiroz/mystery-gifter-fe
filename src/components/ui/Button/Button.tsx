@@ -1,4 +1,3 @@
-import { SkeletonText } from '@/components/ui/Skeleton/SkeletonText'
 import { cn } from '@/lib/cn'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
@@ -94,7 +93,7 @@ export function Button({
       aria-label={ariaLabel}
       title={title}
       className={cn(
-        'inline-flex items-center justify-center gap-2 font-semibold transition-colors',
+        'relative inline-flex items-center justify-center gap-2 font-semibold transition-colors',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mg-green',
         'disabled:cursor-not-allowed disabled:opacity-60',
         VARIANT_CLASSES[variant],
@@ -104,14 +103,19 @@ export function Button({
         className,
       )}
     >
-      {loading ? (
-        <SkeletonText width="60%" />
-      ) : (
-        <>
-          {iconLeft}
-          {children}
-          {iconRight}
-        </>
+      <span
+        aria-hidden={loading || undefined}
+        className={cn('flex items-center gap-2', loading && 'invisible')}
+      >
+        {iconLeft}
+        {children}
+        {iconRight}
+      </span>
+      {loading && (
+        <span
+          aria-hidden="true"
+          className="absolute h-3 w-[60%] animate-pulse rounded-full bg-current opacity-40"
+        />
       )}
     </button>
   )

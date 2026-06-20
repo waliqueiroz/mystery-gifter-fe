@@ -82,8 +82,7 @@ export function GroupList() {
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [userId],
+    [userId, showToast],
   )
 
   useEffect(() => {
@@ -153,6 +152,8 @@ export function GroupList() {
         />
       ) : showSkeleton ? (
         <SkeletonList />
+      ) : loadingInitial ? (
+        null
       ) : groups.length === 0 ? (
         <GroupEmptyState />
       ) : (
