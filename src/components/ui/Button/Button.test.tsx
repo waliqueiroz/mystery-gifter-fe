@@ -131,9 +131,11 @@ describe('Button', () => {
       expect(screen.queryByRole('status')).toBeNull()
     })
 
-    it('does not display children text during loading', () => {
+    it('hides children visually during loading while keeping them in the DOM', () => {
       render(<Button loading>Salvando</Button>)
-      expect(screen.queryByText('Salvando')).toBeNull()
+      const text = screen.getByText('Salvando')
+      expect(text.closest('span')).toHaveClass('invisible')
+      expect(text.closest('span')).toHaveAttribute('aria-hidden', 'true')
     })
   })
 
@@ -182,18 +184,18 @@ describe('Button', () => {
       render(
         <Button iconLeft={<span data-testid="left">L</span>}>Texto</Button>,
       )
-      const btn = screen.getByRole('button')
+      const inner = screen.getByRole('button').firstChild as HTMLElement
       const leftIcon = screen.getByTestId('left')
-      expect(btn.firstChild).toBe(leftIcon)
+      expect(inner.firstChild).toBe(leftIcon)
     })
 
     it('renders iconRight after the text', () => {
       render(
         <Button iconRight={<span data-testid="right">R</span>}>Texto</Button>,
       )
-      const btn = screen.getByRole('button')
+      const inner = screen.getByRole('button').firstChild as HTMLElement
       const rightIcon = screen.getByTestId('right')
-      expect(btn.lastChild).toBe(rightIcon)
+      expect(inner.lastChild).toBe(rightIcon)
     })
 
     it('exposes aria-label when passed (circular buttons without text)', () => {
