@@ -9,7 +9,7 @@ import { CreateGroupForm } from './CreateGroupForm'
 jest.mock('@/services/api/groupService', () => ({ createGroup: jest.fn() }))
 
 const mockShowToast = jest.fn()
-jest.mock('@/components/ui/Toast/useToast', () => ({
+jest.mock('@/hooks/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
@@ -98,7 +98,7 @@ describe('CreateGroupForm', () => {
   })
 
   it('displays toast and does NOT call onSuccess when createGroup fails', async () => {
-    mockCreateGroup.mockRejectedValue(new Error('Falha no servidor.'))
+    mockCreateGroup.mockRejectedValue(new Error('server error'))
     const onSuccess = jest.fn()
     render(<CreateGroupForm onSuccess={onSuccess} onCancel={jest.fn()} />)
     await userEvent.type(screen.getByLabelText('Nome do grupo'), 'Família')
@@ -106,7 +106,7 @@ describe('CreateGroupForm', () => {
 
     await waitFor(() =>
       expect(mockShowToast).toHaveBeenCalledWith({
-        message: 'Falha no servidor.',
+        message: 'Erro ao criar o grupo. Tente novamente.',
         type: 'error',
       }),
     )

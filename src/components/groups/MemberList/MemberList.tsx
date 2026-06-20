@@ -32,12 +32,9 @@ export function MemberList({
     try {
       const updated = await removeMember(group.id, user.id)
       onGroupUpdate(updated)
-    } catch (err) {
+    } catch {
       showToast({
-        message:
-          err instanceof Error
-            ? err.message
-            : 'Erro ao remover participante.',
+        message: 'Erro ao remover o participante.',
         type: 'error',
       })
     } finally {

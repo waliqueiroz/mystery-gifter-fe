@@ -14,6 +14,7 @@ import { SkeletonText } from '@/components/ui/Skeleton/SkeletonText'
 import { useToast } from '@/hooks/useToast'
 import { useUser } from '@/contexts/UserContext'
 import { useDelayedFlag } from '@/hooks/useDelayedFlag'
+import { ForbiddenError, NotFoundError } from '@/lib/errors'
 import { getGroup } from '@/services/api/groupService'
 import type { Group } from '@/types/api'
 
@@ -45,11 +46,10 @@ function GroupDetailContent() {
       const data = await getGroup(id)
       setGroup(data)
     } catch (err) {
-      showToast({
-        message:
-          err instanceof Error ? err.message : 'Grupo não encontrado.',
-        type: 'error',
-      })
+      let message = 'Erro ao carregar o grupo.'
+      if (err instanceof NotFoundError) message = 'Grupo não encontrado.'
+      else if (err instanceof ForbiddenError) message = 'Você não faz parte deste grupo.'
+      showToast({ message, type: 'error' })
       router.push('/groups')
     } finally {
       setLoading(false)

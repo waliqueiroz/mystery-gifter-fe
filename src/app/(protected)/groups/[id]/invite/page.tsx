@@ -16,7 +16,7 @@ import { useDelayedFlag } from '@/hooks/useDelayedFlag'
 import { getGroup } from '@/services/api/groupService'
 import { createInvite, getActiveInvite } from '@/services/api/inviteService'
 import type { Group, GroupInvite } from '@/types/api'
-import { NotFoundError } from '@/lib/errors'
+import { ForbiddenError, NotFoundError } from '@/lib/errors'
 
 function buildInviteUrl(token: string): string {
   if (typeof window === 'undefined') return ''
@@ -44,9 +44,10 @@ export default function InvitePage() {
       const data = await getGroup(id)
       setGroup(data)
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Não foi possível carregar o grupo.',
-      )
+      let errorMsg = 'Não foi possível carregar o grupo.'
+      if (err instanceof NotFoundError) errorMsg = 'Grupo não encontrado.'
+      else if (err instanceof ForbiddenError) errorMsg = 'Você não faz parte deste grupo.'
+      setError(errorMsg)
     } finally {
       setLoadingGroup(false)
     }
@@ -63,11 +64,7 @@ export default function InvitePage() {
         setHasInvite(false)
         setInvite(null)
       } else {
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'Não foi possível carregar o convite.',
-        )
+        setError('Não foi possível carregar o convite.')
       }
     } finally {
       setLoadingInvite(false)
@@ -97,10 +94,9 @@ export default function InvitePage() {
       setInvite(newInvite)
       setHasInvite(true)
       showToast({ message: 'Convite gerado!', type: 'success' })
-    } catch (err) {
+    } catch {
       showToast({
-        message:
-          err instanceof Error ? err.message : 'Erro ao gerar convite.',
+        message: 'Erro ao gerar o convite.',
         type: 'error',
       })
     } finally {

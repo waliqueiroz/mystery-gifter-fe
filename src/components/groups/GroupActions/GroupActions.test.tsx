@@ -10,7 +10,7 @@ jest.mock('@/services/api/groupService', () => ({
 }))
 
 const mockShowToast = jest.fn()
-jest.mock('@/components/ui/Toast/useToast', () => ({
+jest.mock('@/hooks/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
@@ -94,22 +94,22 @@ describe('GroupActions', () => {
 
   describe('error handling', () => {
     it('shows error toast when reopen fails', async () => {
-      mockReopenGroup.mockRejectedValue(new Error('Falha ao reabrir.'))
+      mockReopenGroup.mockRejectedValue(new Error('server error'))
       render(<GroupActions group={makeGroup('MATCHED')} onGroupUpdate={() => {}} />)
       await userEvent.click(screen.getByRole('button', { name: /reabrir grupo/i }))
       await userEvent.click(screen.getByRole('button', { name: /^reabrir$/i }))
       await waitFor(() =>
-        expect(mockShowToast).toHaveBeenCalledWith({ message: 'Falha ao reabrir.', type: 'error' }),
+        expect(mockShowToast).toHaveBeenCalledWith({ message: 'Ocorreu um erro. Tente novamente.', type: 'error' }),
       )
     })
 
     it('shows error toast when archive fails', async () => {
-      mockArchiveGroup.mockRejectedValue(new Error('Falha ao arquivar.'))
+      mockArchiveGroup.mockRejectedValue(new Error('server error'))
       render(<GroupActions group={makeGroup('OPEN')} onGroupUpdate={() => {}} />)
       await userEvent.click(screen.getByRole('button', { name: /arquivar grupo/i }))
       await userEvent.click(screen.getByRole('button', { name: /^arquivar$/i }))
       await waitFor(() =>
-        expect(mockShowToast).toHaveBeenCalledWith({ message: 'Falha ao arquivar.', type: 'error' }),
+        expect(mockShowToast).toHaveBeenCalledWith({ message: 'Ocorreu um erro. Tente novamente.', type: 'error' }),
       )
     })
   })

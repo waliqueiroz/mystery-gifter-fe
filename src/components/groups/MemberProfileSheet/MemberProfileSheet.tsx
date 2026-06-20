@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/EmptyState/EmptyState'
 import { Icon } from '@/components/ui/Icon/Icon'
 import { SkeletonText } from '@/components/ui/Skeleton/SkeletonText'
 import { useDelayedFlag } from '@/hooks/useDelayedFlag'
+import { NotFoundError } from '@/lib/errors'
 import { getUserById } from '@/services/api/userService'
 import type { User } from '@/types/api'
 
@@ -44,9 +45,11 @@ export function MemberProfileSheet({
       const user = await getUserById(id)
       setUserData(user)
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Erro ao carregar perfil.',
-      )
+      if (err instanceof NotFoundError) {
+        setError('Perfil não encontrado.')
+      } else {
+        setError('Erro ao carregar o perfil.')
+      }
     } finally {
       setLoading(false)
     }

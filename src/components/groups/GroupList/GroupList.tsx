@@ -73,9 +73,8 @@ export function GroupList() {
           append ? [...prev, ...result.result] : result.result,
         )
         setPaging(result.paging)
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Erro ao carregar grupos.'
+      } catch {
+        const message = 'Erro ao carregar os grupos.'
         if (append) {
           showToast({ message, type: 'error' })
         } else {
@@ -83,7 +82,8 @@ export function GroupList() {
         }
       }
     },
-    [userId, showToast],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [userId],
   )
 
   useEffect(() => {

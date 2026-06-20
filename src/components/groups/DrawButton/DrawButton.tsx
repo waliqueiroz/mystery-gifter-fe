@@ -29,10 +29,9 @@ export function DrawButton({ group, onGroupUpdate }: DrawButtonProps) {
     try {
       const updated = await generateDraw(group.id)
       onGroupUpdate(updated)
-    } catch (err) {
+    } catch {
       showToast({
-        message:
-          err instanceof Error ? err.message : 'Erro ao realizar sorteio.',
+        message: 'Erro ao realizar o sorteio.',
         type: 'error',
       })
     } finally {

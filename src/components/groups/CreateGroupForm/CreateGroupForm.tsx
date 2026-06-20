@@ -67,12 +67,9 @@ export function CreateGroupForm({ onSuccess, onCancel }: CreateGroupFormProps) {
       })
       setForm(EMPTY_FORM)
       onSuccess(group)
-    } catch (err) {
+    } catch {
       showToast({
-        message:
-          err instanceof Error
-            ? err.message
-            : 'Ocorreu um erro. Tente novamente.',
+        message: 'Erro ao criar o grupo. Tente novamente.',
         type: 'error',
       })
     } finally {

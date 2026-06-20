@@ -33,7 +33,7 @@ jest.mock('next/link', () => ({
 }))
 
 const mockShowToast = jest.fn()
-jest.mock('@/components/ui/Toast/useToast', () => ({
+jest.mock('@/hooks/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
@@ -219,12 +219,12 @@ describe('InvitePage', () => {
   })
 
   it('group load failure shows error EmptyState with retry', async () => {
-    mockGetGroup.mockRejectedValue(new Error('Falha 500.'))
+    mockGetGroup.mockRejectedValue(new Error('server error'))
     render(<InvitePage />)
     expect(
       await screen.findByText('Não foi possível carregar'),
     ).toBeInTheDocument()
-    expect(screen.getByText('Falha 500.')).toBeInTheDocument()
+    expect(screen.getByText('Não foi possível carregar o grupo.')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: /tentar novamente/i }),
     ).toBeInTheDocument()

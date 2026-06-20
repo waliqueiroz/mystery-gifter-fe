@@ -9,7 +9,7 @@ import { MemberList } from './MemberList'
 jest.mock('@/services/api/groupService', () => ({ removeMember: jest.fn() }))
 
 const mockShowToast = jest.fn()
-jest.mock('@/components/ui/Toast/useToast', () => ({
+jest.mock('@/hooks/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
@@ -147,7 +147,7 @@ describe('MemberList', () => {
   })
 
   it('displays error toast when remove fails', async () => {
-    mockRemoveMember.mockRejectedValue(new Error('Falha ao remover.'))
+    mockRemoveMember.mockRejectedValue(new Error('server error'))
     render(
       <MemberList
         group={baseGroup}
@@ -160,7 +160,7 @@ describe('MemberList', () => {
     )
     await waitFor(() =>
       expect(mockShowToast).toHaveBeenCalledWith({
-        message: 'Falha ao remover.',
+        message: 'Erro ao remover o participante.',
         type: 'error',
       }),
     )

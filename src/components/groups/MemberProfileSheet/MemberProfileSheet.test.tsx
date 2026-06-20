@@ -2,6 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import * as userService from '@/services/api/userService'
+import { NotFoundError } from '@/lib/errors'
 import type { User } from '@/types/api'
 
 import { MemberProfileSheet } from './MemberProfileSheet'
@@ -86,14 +87,22 @@ describe('MemberProfileSheet', () => {
 
   describe('estado de erro', () => {
     it('exibe EmptyState variant="error" + retry quando o fetch falha', async () => {
-      mockGetUserById.mockRejectedValue(new Error('Falha no servidor.'))
+      mockGetUserById.mockRejectedValue(new Error('server error'))
       render(<MemberProfileSheet userId="u2" onClose={jest.fn()} />)
       expect(
         await screen.findByText('Não foi possível carregar'),
       ).toBeInTheDocument()
-      expect(screen.getByText('Falha no servidor.')).toBeInTheDocument()
+      expect(screen.getByText('Erro ao carregar o perfil.')).toBeInTheDocument()
       expect(
         screen.getByRole('button', { name: /tentar novamente/i }),
+      ).toBeInTheDocument()
+    })
+
+    it('shows "Perfil não encontrado." when fetch fails with NotFoundError', async () => {
+      mockGetUserById.mockRejectedValue(new NotFoundError('user not found'))
+      render(<MemberProfileSheet userId="u2" onClose={jest.fn()} />)
+      expect(
+        await screen.findByText('Perfil não encontrado.'),
       ).toBeInTheDocument()
     })
 

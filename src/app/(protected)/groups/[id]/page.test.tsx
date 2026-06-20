@@ -2,6 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 
 import * as userContext from '@/contexts/UserContext'
 import * as groupService from '@/services/api/groupService'
+import { ForbiddenError, NotFoundError } from '@/lib/errors'
 import type { Group } from '@/types/api'
 
 import GroupDetailPage from './page'
@@ -67,7 +68,7 @@ jest.mock('@/services/api/groupService', () => ({ getGroup: jest.fn() }))
 const mockShowToast = jest.fn()
 const mockPush = jest.fn()
 
-jest.mock('@/components/ui/Toast/useToast', () => ({
+jest.mock('@/hooks/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
@@ -138,12 +139,36 @@ describe('GroupDetailPage', () => {
     expect(section).toHaveAttribute('data-group-status', 'OPEN')
   })
 
-  it('shows error toast and redirects to /groups when fetch fails', async () => {
-    mockGetGroup.mockRejectedValue(new Error('Grupo não encontrado.'))
+  it('shows "Grupo não encontrado." toast and redirects when fetch fails with NotFoundError', async () => {
+    mockGetGroup.mockRejectedValue(new NotFoundError('group not found'))
     render(<GroupDetailPage />)
     await waitFor(() =>
       expect(mockShowToast).toHaveBeenCalledWith({
         message: 'Grupo não encontrado.',
+        type: 'error',
+      }),
+    )
+    expect(mockPush).toHaveBeenCalledWith('/groups')
+  })
+
+  it('shows "Você não faz parte deste grupo." toast and redirects when fetch fails with ForbiddenError', async () => {
+    mockGetGroup.mockRejectedValue(new ForbiddenError('forbidden'))
+    render(<GroupDetailPage />)
+    await waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith({
+        message: 'Você não faz parte deste grupo.',
+        type: 'error',
+      }),
+    )
+    expect(mockPush).toHaveBeenCalledWith('/groups')
+  })
+
+  it('shows generic error toast and redirects on unexpected error', async () => {
+    mockGetGroup.mockRejectedValue(new Error('server error'))
+    render(<GroupDetailPage />)
+    await waitFor(() =>
+      expect(mockShowToast).toHaveBeenCalledWith({
+        message: 'Erro ao carregar o grupo.',
         type: 'error',
       }),
     )

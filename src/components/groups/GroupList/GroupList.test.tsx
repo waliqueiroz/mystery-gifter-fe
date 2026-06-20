@@ -35,7 +35,7 @@ jest.mock('next/link', () => ({
 }))
 
 const mockShowToast = jest.fn()
-jest.mock('@/components/ui/Toast/useToast', () => ({
+jest.mock('@/hooks/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
@@ -257,12 +257,12 @@ describe('GroupList', () => {
 
   describe('error state (EmptyState variant="error")', () => {
     it('displays error EmptyState when the initial fetch fails', async () => {
-      mockListGroups.mockRejectedValue(new Error('Falha na conexão.'))
+      mockListGroups.mockRejectedValue(new Error('network error'))
       render(<GroupList />)
       expect(
         await screen.findByText('Erro ao carregar grupos'),
       ).toBeInTheDocument()
-      expect(screen.getByText('Falha na conexão.')).toBeInTheDocument()
+      expect(screen.getByText('Erro ao carregar os grupos.')).toBeInTheDocument()
       expect(
         screen.getByRole('button', { name: /tentar novamente/i }),
       ).toBeInTheDocument()

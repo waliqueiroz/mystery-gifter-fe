@@ -26,12 +26,8 @@ export function ResultReveal({ groupId }: ResultRevealProps) {
     try {
       const user = await getUserMatch(groupId)
       setRecipient(user)
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'Ocorreu um erro. Tente novamente.',
-      )
+    } catch {
+      setError('Erro ao carregar o resultado.')
     } finally {
       setLoading(false)
     }

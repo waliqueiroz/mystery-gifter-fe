@@ -30,12 +30,9 @@ export function GroupActions({ group, onGroupUpdate }: GroupActionsProps) {
           : await archiveGroup(group.id)
       onGroupUpdate(updated)
       setModal('none')
-    } catch (err) {
+    } catch {
       showToast({
-        message:
-          err instanceof Error
-            ? err.message
-            : 'Ocorreu um erro. Tente novamente.',
+        message: 'Ocorreu um erro. Tente novamente.',
         type: 'error',
       })
     } finally {

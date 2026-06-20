@@ -7,7 +7,7 @@ import type { Group, User } from '@/types/api'
 jest.mock('@/services/api/groupService', () => ({ generateDraw: jest.fn() }))
 
 const mockShowToast = jest.fn()
-jest.mock('@/components/ui/Toast/useToast', () => ({
+jest.mock('@/hooks/useToast', () => ({
   useToast: () => ({ showToast: mockShowToast }),
 }))
 
@@ -70,11 +70,11 @@ describe('DrawButton', () => {
   })
 
   it('shows error toast when draw fails', async () => {
-    mockGenerateDraw.mockRejectedValue(new Error('Falha no sorteio.'))
+    mockGenerateDraw.mockRejectedValue(new Error('server error'))
     render(<DrawButton group={makeGroup(3)} onGroupUpdate={() => {}} />)
     await userEvent.click(screen.getByRole('button', { name: /realizar sorteio/i }))
     await waitFor(() =>
-      expect(mockShowToast).toHaveBeenCalledWith({ message: 'Falha no sorteio.', type: 'error' }),
+      expect(mockShowToast).toHaveBeenCalledWith({ message: 'Erro ao realizar o sorteio.', type: 'error' }),
     )
   })
 })

@@ -35,10 +35,10 @@ describe('ResultReveal', () => {
   })
 
   it('shows error message when fetch fails', async () => {
-    mockGetUserMatch.mockRejectedValue(new Error('Erro ao buscar resultado.'))
+    mockGetUserMatch.mockRejectedValue(new Error('server error'))
     render(<ResultReveal groupId="g1" />)
     await userEvent.click(screen.getByRole('button', { name: /ver quem você presenteia/i }))
-    expect(await screen.findByText('Erro ao buscar resultado.')).toBeInTheDocument()
+    expect(await screen.findByText('Erro ao carregar o resultado.')).toBeInTheDocument()
   })
 
   it('calls getUserMatch with the correct groupId', async () => {
