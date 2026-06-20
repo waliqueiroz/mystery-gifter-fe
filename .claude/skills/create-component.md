@@ -1,6 +1,8 @@
 # Skill: Criar componente React
 
-Use esta skill sempre que precisar criar um novo componente React no projeto mystery-gifter-fe.
+Use esta skill sempre que precisar criar um novo componente React neste projeto.
+
+Antes de começar, leia os componentes existentes para entender os padrões em uso — especialmente os primitivos de UI compartilhados. Isso evita criar código duplicado e garante consistência.
 
 ## Estrutura de diretório
 
@@ -12,20 +14,15 @@ src/components/<area>/<ComponentName>/
   ComponentName.test.tsx
 ```
 
-Exemplos de `<area>`: `ui/`, `groups/`, `profile/`, `invite/`, `auth/`, `landing/`, `login/`, `register/`.
-
 **Nunca** criar componentes como arquivo plano na raiz do diretório de área.
 
 ## Template de componente
 
 ```tsx
-// Adicionar 'use client' SOMENTE quando necessário:
-// - hooks de browser (useRouter, usePathname, useSearchParams, useState, useEffect, useRef)
-// - context providers / consumers
-// - event handlers definidos no componente
-// - leitura de localStorage
+// Adicionar 'use client' SOMENTE quando necessário (ver seção abaixo)
 'use client'
 
+// Importar utilitário de composição de classes do projeto
 import { cn } from '@/lib/cn'
 
 // Props: sempre interface nomeada — NUNCA inline anônima
@@ -56,17 +53,18 @@ export function ComponentName({ prop, className }: ComponentNameProps) {
 - Nunca usar inline anônima: `{ prop }: { prop: string }` — proibido
 - Aceitar `className?: string` quando o componente renderiza um elemento raiz estilizável
 - Para variants/shapes/sizes, usar `type` union, não `enum`:
-  ```ts
-  // ✅ Correto
-  type ComponentVariant = 'primary' | 'secondary' | 'outline'
 
-  // ❌ Proibido
-  enum ComponentVariant { Primary = 'primary', ... }
-  ```
+```ts
+// ✅ Correto
+type ComponentVariant = 'primary' | 'secondary' | 'outline'
 
-## Composição de classes com cn()
+// ❌ Proibido
+enum ComponentVariant { Primary = 'primary', ... }
+```
 
-Usar `cn()` de `@/lib/cn` **somente** quando houver lógica condicional no className:
+## Composição de classes
+
+Usar o helper `cn()` do projeto **somente** quando houver lógica condicional no className:
 
 ```tsx
 // ✅ Usar cn() — há condicional
@@ -79,12 +77,12 @@ className="base-class static-class"
 className={`base-class ${isActive ? 'active-class' : ''}`}
 ```
 
-Para lookup tables de variantes (padrão de Button, GroupStatusBadge):
+Para lookup tables de variantes:
 
 ```tsx
 const VARIANT_CLASSES: Record<ComponentVariant, string> = {
-  primary: 'bg-mg-green text-black',
-  secondary: 'bg-mg-surface-2 text-mg-text',
+  primary: 'token-de-destaque',
+  secondary: 'token-secundario',
 }
 
 // No JSX:
@@ -93,16 +91,7 @@ className={cn('base', VARIANT_CLASSES[variant], className)}
 
 ## Tokens de design
 
-Usar sempre os tokens do design system. **Nunca** hardcodar cores ou espaçamentos fora de `tailwind.config.ts` ou `globals.css`.
-
-| Categoria | Tokens disponíveis |
-|---|---|
-| Cores de fundo | `bg-mg-bg`, `bg-mg-surface`, `bg-mg-surface-2`, `bg-mg-surface-3` |
-| Texto | `text-mg-text`, `text-mg-text-muted`, `text-mg-text-negative` |
-| Verde funcional | `text-mg-green`, `bg-mg-green` — apenas em CTAs e estados ativos |
-| Borda | `border-mg-border-light` |
-| Bordas arredondadas | `rounded-pill`, `rounded-pill-lg`, `rounded-full`, `rounded-card`, `rounded-card-sm` |
-| Sombras | `shadow-mg-inset`, `shadow-mg-card`, `shadow-mg-dialog` |
+Usar sempre os tokens do design system definidos em `tailwind.config.ts` e `globals.css`. **Nunca** hardcodar cores, espaçamentos ou sombras fora desses dois arquivos — consulte-os antes de estilizar um componente novo.
 
 ## 'use client' — quando usar
 
@@ -112,58 +101,23 @@ Usar sempre os tokens do design system. **Nunca** hardcodar cores ou espaçament
 | `useRouter`, `usePathname`, `useSearchParams` | Sim |
 | `useContext` / Context Provider | Sim |
 | `localStorage` / `sessionStorage` | Sim |
-| `@radix-ui` (Dialog, etc.) | Sim |
+| Bibliotecas de UI com estado (Radix, etc.) | Sim |
 | Apenas props + JSX estático | Não |
 | Componentes que só compõem outros Server Components | Não |
 
 ## Loading state
 
-Usar `react-loading-skeleton` via `<SkeletonBox>`, `<SkeletonText>`, `<SkeletonCircle>` — **nunca spinners**.
+Verificar se o projeto já tem componentes skeleton antes de criar loading states. Nunca usar spinners — o padrão do projeto é skeleton.
 
-Para evitar flash de skeleton em carregamentos rápidos:
-
-```tsx
-import { useDelayedFlag } from '@/hooks/useDelayedFlag'
-
-const showSkeleton = useDelayedFlag(loading, 150)
-```
+Para evitar flash de skeleton em carregamentos rápidos, verificar se o projeto tem um hook de delay (ex.: `useDelayedFlag`) e usá-lo.
 
 ## Estados vazios e de erro
 
-Usar o componente compartilhado `<EmptyState>`:
-
-```tsx
-import { EmptyState } from '@/components/ui/EmptyState/EmptyState'
-
-// Estado vazio
-<EmptyState
-  icon={<Icon name="Inbox" size={28} />}
-  title="Nenhum item encontrado"
-  description="Crie o primeiro item para começar."
-  cta={{ label: 'Criar item', href: '/items/new' }}
-/>
-
-// Estado de erro
-<EmptyState
-  variant="error"
-  icon={<Icon name="CircleAlert" size={28} />}
-  title="Erro ao carregar"
-  description={errorMessage}
-  cta={{ label: 'Tentar novamente', onClick: handleRetry }}
-/>
-```
-
-**Nunca** criar variações ad-hoc de estado vazio/erro.
+Antes de criar um estado vazio ou de erro, verificar se o projeto já tem um componente compartilhado para isso (ex.: `EmptyState`). **Nunca** criar variações ad-hoc — usar o componente existente com as props adequadas.
 
 ## Ícones
 
-Usar o wrapper `<Icon>` de `@/components/ui/Icon/Icon`:
-
-```tsx
-import { Icon, type IconName } from '@/components/ui/Icon/Icon'
-
-<Icon name="Gift" size={24} aria-hidden />
-```
+Verificar qual biblioteca de ícones o projeto usa e se há um componente wrapper (ex.: `<Icon name="..." />`). Preferir sempre o wrapper ao invés de importar ícones diretamente da biblioteca.
 
 Ícones decorativos: sempre `aria-hidden`. Ícones funcionais: sempre `aria-label` no elemento pai ou no próprio ícone.
 
@@ -175,7 +129,7 @@ import { Icon, type IconName } from '@/components/ui/Icon/Icon'
 - `aria-current="page"` em links de navegação ativos
 - `aria-pressed` em botões toggle
 - `aria-invalid` + `aria-describedby` em inputs com erro
-- Contraste mínimo 4.5:1 (WCAG AA) — os tokens do design system já garantem isso
+- Contraste mínimo 4.5:1 (WCAG AA)
 
 ## Async em handlers e useEffect
 
@@ -188,7 +142,7 @@ useEffect(() => {
       const data = await fetchSomething()
       setState(data)
     } catch (err) {
-      showToast({ message: err instanceof Error ? err.message : 'Erro.', type: 'error' })
+      // tratar erro
     } finally {
       setLoading(false)
     }
@@ -203,8 +157,6 @@ useEffect(() => {
 import { render, screen } from '@testing-library/react'
 import { ComponentName } from './ComponentName'
 
-// Mocks necessários aqui
-
 describe('ComponentName', () => {
   it('renders the main content', () => {
     render(<ComponentName prop="value" />)
@@ -213,7 +165,7 @@ describe('ComponentName', () => {
 
   it('applies variant classes correctly', () => {
     render(<ComponentName variant="primary" />)
-    expect(screen.getByRole('...')).toHaveClass('bg-mg-green')
+    expect(screen.getByRole('...')).toHaveClass('...')
   })
 })
 ```
@@ -221,10 +173,6 @@ describe('ComponentName', () => {
 Regras de teste:
 - Descrições (`describe`/`it`) sempre em **inglês**
 - Importar o componente com named import: `import { ComponentName } from './ComponentName'`
-- Cobertura mínima: 80% de linhas em arquivos modificados
 - Usar `@testing-library/react` + `@testing-library/user-event`
 - Testar comportamento (o que o usuário vê), não implementação interna
-
-## Strings de UI
-
-Sempre em **pt-BR**. URLs e paths em inglês (`/register`, não `/registro`).
+- Atingir a cobertura mínima definida no projeto
