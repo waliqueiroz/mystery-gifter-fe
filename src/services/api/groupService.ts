@@ -1,19 +1,5 @@
-import type {
-  Group,
-  GroupSearchResult,
-  GroupStatus,
-  CreateGroupPayload,
-} from '@/types/api'
+import type { Group, GroupSearchResult, CreateGroupPayload, ListGroupsParams } from '@/types/api'
 import { http } from './client'
-
-export interface ListGroupsParams {
-  userId: string
-  offset?: number
-  limit?: number
-  name?: string
-  statuses?: GroupStatus[]
-  sortDirection?: 'ASC' | 'DESC'
-}
 
 export function listGroups({
   userId,

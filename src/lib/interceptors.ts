@@ -43,7 +43,8 @@ export function createSessionExpiryInterceptor(skipPaths: string[]): ResponseInt
   }
 }
 
-export async function httpErrorInterceptor(response: Response): Promise<Response> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function httpErrorInterceptor(response: Response, _url: string): Promise<Response> {
   if (!response.ok) {
     const body: ApiError = await response.json()
     const message = body.message ?? 'Ocorreu um erro. Tente novamente.'

@@ -121,6 +121,16 @@ export interface CreateGroupPayload {
 
 // ─── Group Filters ────────────────────────────────────────────────────────────
 
+/** Query params for GET /api/v1/groups */
+export interface ListGroupsParams {
+  userId: string
+  offset?: number
+  limit?: number
+  name?: string
+  statuses?: GroupStatus[]
+  sortDirection?: 'ASC' | 'DESC'
+}
+
 /** Active filter/sort state for the groups list */
 export interface GroupFilterParams {
   name: string

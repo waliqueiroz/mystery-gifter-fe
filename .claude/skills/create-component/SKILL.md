@@ -1,13 +1,14 @@
 ---
 name: create-component
 description: >
-  Use this skill whenever you need to create a new React component in this project —
-  whether the user asks to "build a card", "add a form", "create a component for X",
-  or implement any UI feature that requires a new .tsx file. Also use it proactively
-  when implementing a feature that will need new components, even if the user didn't
-  say "create a component" explicitly. Covers: directory structure, export style,
-  props interface, className composition, 'use client' rules, loading/empty states,
-  accessibility, async patterns, and co-located test conventions.
+  Use proativamente sempre que precisar criar um novo componente React neste projeto —
+  seja quando o usuário pedir para "criar um card", "adicionar um formulário", "criar um
+  componente para X", ou implementar qualquer funcionalidade de UI que exija um novo
+  arquivo .tsx. Usar também proativamente ao implementar features que precisarão de novos
+  componentes, mesmo que o usuário não diga explicitamente "criar um componente". Cobre:
+  estrutura de diretório, estilo de export, interface de props, composição de className,
+  regras de 'use client', loading/empty states, acessibilidade, padrões async e convenções
+  de testes co-localizados.
 ---
 
 # Criar componente React
