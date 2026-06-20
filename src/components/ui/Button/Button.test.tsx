@@ -125,9 +125,9 @@ describe('Button', () => {
       expect(btn).toHaveAttribute('aria-busy', 'true')
     })
 
-    it('replaces content with skeleton, never with spinner', () => {
+    it('replaces content with a pulse placeholder, never with a spinner', () => {
       render(<Button loading>Salvando</Button>)
-      expect(document.querySelector('.react-loading-skeleton')).not.toBeNull()
+      expect(document.querySelector('.animate-pulse')).not.toBeNull()
       expect(screen.queryByRole('status')).toBeNull()
     })
 

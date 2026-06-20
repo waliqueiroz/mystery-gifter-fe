@@ -1,4 +1,3 @@
-import { SkeletonText } from '@/components/ui/Skeleton/SkeletonText'
 import { cn } from '@/lib/cn'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
@@ -105,7 +104,7 @@ export function Button({
       )}
     >
       {loading ? (
-        <SkeletonText width="60%" />
+        <span className="h-3 w-[60%] animate-pulse rounded-full bg-current opacity-40" />
       ) : (
         <>
           {iconLeft}
