@@ -153,6 +153,8 @@ export function GroupList() {
         />
       ) : showSkeleton ? (
         <SkeletonList />
+      ) : loadingInitial ? (
+        null
       ) : groups.length === 0 ? (
         <GroupEmptyState />
       ) : (

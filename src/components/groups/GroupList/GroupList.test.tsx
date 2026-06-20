@@ -94,6 +94,16 @@ describe('GroupList', () => {
       expect(screen.queryByRole('status', { name: /carregando/i })).toBeNull()
       jest.useRealTimers()
     })
+
+    it('does NOT show empty state before the skeleton delay elapses', () => {
+      jest.useFakeTimers()
+      mockListGroups.mockReturnValue(new Promise(() => {}))
+      render(<GroupList />)
+      // 0 ms: loading=true, showSkeleton=false, groups=[] — must render neither
+      expect(screen.queryByText('Nenhum grupo ainda')).toBeNull()
+      expect(screen.queryByTestId('group-list-skeleton')).toBeNull()
+      jest.useRealTimers()
+    })
   })
 
   it('renders GroupCards after load', async () => {
