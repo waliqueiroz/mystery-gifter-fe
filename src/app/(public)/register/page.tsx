@@ -1,5 +1,5 @@
-import GuestGuard from '@/components/auth/GuestGuard'
-import RegisterForm from '@/components/register/RegisterForm'
+import { GuestGuard } from '@/components/auth/GuestGuard/GuestGuard'
+import { RegisterForm } from '@/components/register/RegisterForm/RegisterForm'
 
 export default function RegisterPage() {
   return (

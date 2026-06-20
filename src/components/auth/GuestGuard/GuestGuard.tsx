@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { isAuthenticated } from '@/lib/auth'
 
-export default function GuestGuard({ children }: { children: React.ReactNode }) {
+interface GuestGuardProps {
+  children: React.ReactNode
+}
+
+export function GuestGuard({ children }: GuestGuardProps) {
   const router = useRouter()
   const [checked, setChecked] = useState(false)
 

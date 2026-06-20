@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import FormField from './FormField'
+import { FormField } from './FormField'
 
 const defaultProps = {
   id: 'email',

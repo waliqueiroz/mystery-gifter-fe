@@ -31,7 +31,7 @@ interface FormFieldProps {
  * O `onChange` recebe direto o valor da string (não o evento), simplificando
  * o uso no consumidor: `onChange={setEmail}` em vez de wrapper de evento.
  */
-export default function FormField({
+export function FormField({
   id,
   label,
   type = 'text',

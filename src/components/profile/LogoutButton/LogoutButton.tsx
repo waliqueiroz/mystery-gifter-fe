@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { clearToken } from '@/lib/auth'
 
 export function LogoutButton() {

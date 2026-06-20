@@ -4,15 +4,15 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
-import FormField from '@/components/ui/FormField/FormField'
+import { FormField } from '@/components/ui/FormField/FormField'
 import { setSession } from '@/lib/auth'
 import { ConflictError } from '@/lib/errors'
 import { register } from '@/services/api/authService'
 import type { RegisterFormData } from '@/types/forms'
 
-export default function RegisterForm() {
+export function RegisterForm() {
   const router = useRouter()
   const [form, setForm] = useState<RegisterFormData>({
     name: '',

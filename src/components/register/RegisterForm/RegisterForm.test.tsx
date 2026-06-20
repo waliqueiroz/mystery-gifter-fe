@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import RegisterForm from './RegisterForm'
+import { RegisterForm } from './RegisterForm'
 import * as authService from '@/services/api/authService'
 import * as auth from '@/lib/auth'
 import { ConflictError } from '@/lib/errors'

@@ -1,5 +1,5 @@
-import GuestGuard from '@/components/auth/GuestGuard'
-import HeroSection from '@/components/landing/HeroSection'
+import { GuestGuard } from '@/components/auth/GuestGuard/GuestGuard'
+import { HeroSection } from '@/components/landing/HeroSection/HeroSection'
 
 export default function HomePage() {
   return (

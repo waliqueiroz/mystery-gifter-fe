@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
 import { Icon } from '@/components/ui/Icon/Icon'
 import { getUserMatch } from '@/services/api/inviteService'

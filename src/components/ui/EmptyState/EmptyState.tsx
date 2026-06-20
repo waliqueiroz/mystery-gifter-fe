@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { cn } from '@/lib/cn'
 
 export type EmptyStateVariant = 'default' | 'error'

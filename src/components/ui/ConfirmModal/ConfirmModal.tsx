@@ -2,7 +2,7 @@
 
 import * as Dialog from '@radix-ui/react-dialog'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { cn } from '@/lib/cn'
 
 interface ConfirmModalProps {

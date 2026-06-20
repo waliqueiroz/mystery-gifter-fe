@@ -66,7 +66,7 @@ const SIZE_CIRCLE: Record<ButtonSize, string> = {
   lg: 'h-12 w-12',
 }
 
-export default function Button({
+export function Button({
   children,
   type = 'button',
   variant = 'primary',

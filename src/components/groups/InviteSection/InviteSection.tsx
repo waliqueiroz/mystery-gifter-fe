@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { Icon } from '@/components/ui/Icon/Icon'
 import type { GroupStatus } from '@/types/api'
 

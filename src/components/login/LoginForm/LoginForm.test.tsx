@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import LoginForm from './LoginForm'
+import { LoginForm } from './LoginForm'
 import * as authService from '@/services/api/authService'
 import * as auth from '@/lib/auth'
 import { UnauthorizedError } from '@/lib/errors'

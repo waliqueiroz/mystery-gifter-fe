@@ -4,15 +4,15 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
-import Button from '@/components/ui/Button/Button'
+import { Button } from '@/components/ui/Button/Button'
 import { ErrorAlert } from '@/components/ui/ErrorAlert/ErrorAlert'
-import FormField from '@/components/ui/FormField/FormField'
+import { FormField } from '@/components/ui/FormField/FormField'
 import { setSession } from '@/lib/auth'
 import { UnauthorizedError } from '@/lib/errors'
 import { login } from '@/services/api/authService'
 import type { LoginFormData } from '@/types/forms'
 
-export default function LoginForm() {
+export function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [form, setForm] = useState<LoginFormData>({ email: '', password: '' })

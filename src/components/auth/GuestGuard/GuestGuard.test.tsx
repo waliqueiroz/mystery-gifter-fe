@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import GuestGuard from './GuestGuard'
+import { GuestGuard } from './GuestGuard'
 import * as auth from '@/lib/auth'
 
 const mockPush = jest.fn()
