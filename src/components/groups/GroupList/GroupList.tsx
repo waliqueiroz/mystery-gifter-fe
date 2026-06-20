@@ -82,8 +82,7 @@ export function GroupList() {
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [userId],
+    [userId, showToast],
   )
 
   useEffect(() => {
