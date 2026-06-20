@@ -98,7 +98,9 @@ className={cn('base', VARIANT_CLASSES[variant], className)}
 
 ## Tokens de design
 
-Usar sempre os tokens definidos em `tailwind.config.ts` e `globals.css`. Nunca hardcodar cores, espaçamentos ou sombras fora desses dois arquivos — consulte-os antes de estilizar.
+`DESIGN.md` (na raiz do projeto) é a fonte primária de verdade para identidade visual: paleta de cores, tipografia, espaçamento, raios de borda e regras de uso. `tailwind.config.ts` e `globals.css` são a implementação desses tokens em código.
+
+Antes de estilizar qualquer componente novo, consulte o `DESIGN.md`. Nunca hardcode cores, sombras ou espaçamentos fora de `tailwind.config.ts` / `globals.css`.
 
 ## 'use client'
 
