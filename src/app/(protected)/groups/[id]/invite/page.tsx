@@ -132,7 +132,7 @@ export default function InvitePage() {
     typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 desk:max-w-content desk:mx-auto">
       <header className="flex items-center gap-2">
         <Button
           variant="ghost"

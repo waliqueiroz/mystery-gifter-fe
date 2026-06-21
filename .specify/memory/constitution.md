@@ -99,9 +99,10 @@ A UI DEVE apresentar uma experiência coerente e previsível em todas as telas e
 - Acessibilidade DEVE ser considerada: todo elemento interativo DEVE ser navegável por
   teclado, expor `:focus-visible` com anel verde, e ter `aria-label` ou `aria-current`
   adequados onde a semântica nativa não basta.
-- Design responsivo é **mobile-first**; a estética app-like persiste em todas as
-  larguras (em desktop o conteúdo permanece centralizado dentro de `max-w-app`, não
-  expande como painel).
+- Design responsivo é **mobile-first**. Em telas ≥896px (breakpoint `desk`), a
+  navegação migra para sidebar lateral (`<Sidebar>`) e o conteúdo expande para usar o
+  espaço disponível. Em telas <896px, o layout mobile (`max-w-app` centralizado +
+  bottom tab bar) é preservado sem alterações.
 
 **Justificativa**: UX consistente constrói confiança do usuário e reduz carga de
 suporte. Mover a base de Bootstrap+AdminLTE para Tailwind+DESIGN.md (Mystery Gifter v2
@@ -230,8 +231,9 @@ Hardcode de cor, raio, sombra ou tamanho tipográfico fora desses dois arquivos 
 - **Rótulos de botão**: uppercase + `tracking-btn` (letter-spacing ~ 0.1em).
 - **Tipografia**: Manrope (família principal) + Noto Sans (scripts globais) carregadas via
   `next/font/google`. Pesos permitidos: 400, 600, 700.
-- **Navegação app-like**: bottom tab bar persistente em todas as larguras, com `Grupos` e
-  `Perfil` apenas; `Sair` vive dentro de Perfil.
+- **Navegação adaptativa**: em mobile (<896px), bottom tab bar com `Grupos` e `Perfil`;
+  em desktop (≥896px), sidebar lateral com os mesmos itens. `Sair` vive dentro de Perfil
+  em ambos os formatos.
 - **Modais**: apenas para confirmação de ações destrutivas/irreversíveis (via `ConfirmModal`
   sobre Radix Dialog). Demais fluxos: rota dedicada (formulários/multi-passos) ou bottom
   sheet (visualização rápida read-only).
@@ -343,4 +345,4 @@ e convenções informais no projeto mystery-gifter-fe.
 Violações exigem justificativa explícita documentada na tabela Complexity Tracking do
 `plan.md` relevante antes do merge.
 
-**Version**: 2.0.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-06-17
+**Version**: 2.1.0 | **Ratified**: 2026-03-08 | **Last Amended**: 2026-06-21

@@ -106,6 +106,14 @@ beforeEach(() => {
 })
 
 describe('GroupDetailPage', () => {
+  it('root container has desk:max-w-content for desktop centering', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup())
+    const { container } = render(<GroupDetailPage />)
+    await screen.findByText('Grupo Teste')
+    const root = container.querySelector('[class*="desk:max-w-content"]')
+    expect(root).not.toBeNull()
+  })
+
   it('does NOT show spinner — displays skeleton after the delay (FR-024)', () => {
     jest.useFakeTimers()
     try {

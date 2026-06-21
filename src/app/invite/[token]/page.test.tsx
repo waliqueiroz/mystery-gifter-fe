@@ -34,6 +34,13 @@ describe('InvitePage', () => {
     expect(card).toHaveAttribute('data-token', 'tok-abc')
   })
 
+  it('wraps InviteJoinCard in a max-w-content centered container', () => {
+    mockIsAuthenticated.mockReturnValue(true)
+    const { container } = render(<InvitePage />)
+    const wrapper = container.querySelector('.max-w-content')
+    expect(wrapper).not.toBeNull()
+  })
+
   it('redirects to /login with returnUrl query param when unauthenticated', () => {
     mockIsAuthenticated.mockReturnValue(false)
     render(<InvitePage />)

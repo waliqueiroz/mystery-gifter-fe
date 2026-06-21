@@ -36,6 +36,13 @@ beforeEach(() => {
 })
 
 describe('NewGroupPage', () => {
+  it('root container has desk:max-w-content for desktop centering', () => {
+    const { container } = render(<NewGroupPage />)
+    const root = container.firstChild as HTMLElement
+    expect(root?.className).toContain('desk:max-w-content')
+    expect(root?.className).toContain('desk:mx-auto')
+  })
+
   it('renders heading "Criar grupo" and CreateGroupForm', () => {
     render(<NewGroupPage />)
     expect(

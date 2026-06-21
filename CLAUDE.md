@@ -191,3 +191,10 @@ git rebase --onto 005-mobile-ui-redesign task/005-phase-1-setup
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
+
+## Active Technologies
+- TypeScript 5+, Node.js LTS + Next.js 15.5.4 (App Router), React 19, Tailwind CSS, lucide-react, clsx, tailwind-merge, react-loading-skeleton (006-desktop-layout)
+- N/A — feature puramente de UI (006-desktop-layout)
+
+## Recent Changes
+- 006-desktop-layout: Added TypeScript 5+, Node.js LTS + Next.js 15.5.4 (App Router), React 19, Tailwind CSS, lucide-react, clsx, tailwind-merge, react-loading-skeleton

@@ -31,7 +31,17 @@ describe('AppShell', () => {
     expect(outer).toHaveClass('bg-mg-bg')
   })
 
-  it('centers content with max-w-app (app-like aesthetic on desktop)', () => {
+  it('outer container has desk:flex for responsive sidebar layout', () => {
+    const { container } = render(
+      <AppShell>
+        <span>x</span>
+      </AppShell>,
+    )
+    const outer = container.querySelector('.min-h-dvh')
+    expect(outer?.className).toContain('desk:flex')
+  })
+
+  it('applies max-w-app and mx-auto on mobile for app-like aesthetic', () => {
     render(
       <AppShell>
         <span>x</span>
@@ -41,6 +51,17 @@ describe('AppShell', () => {
     expect(screen.getByRole('main')).toHaveClass('mx-auto')
   })
 
+  it('main has desk:flex-1 and desk:max-w-none to expand on desktop', () => {
+    render(
+      <AppShell>
+        <span>x</span>
+      </AppShell>,
+    )
+    const main = screen.getByRole('main')
+    expect(main.className).toContain('desk:flex-1')
+    expect(main.className).toContain('desk:max-w-none')
+  })
+
   it('renders the BottomTabBar (nav "Navegação principal")', () => {
     render(
       <AppShell>
@@ -48,11 +69,22 @@ describe('AppShell', () => {
       </AppShell>,
     )
     expect(
-      screen.getByRole('navigation', { name: /navegação principal/i }),
+      screen.getByRole('navigation', { name: 'Navegação principal' }),
     ).toBeInTheDocument()
   })
 
-  it('reserves bottom padding to prevent content from being covered by the tab bar', () => {
+  it('renders the Sidebar (nav "Navegação principal — desktop")', () => {
+    render(
+      <AppShell>
+        <span>x</span>
+      </AppShell>,
+    )
+    expect(
+      screen.getByRole('navigation', { name: 'Navegação principal — desktop' }),
+    ).toBeInTheDocument()
+  })
+
+  it('reserves bottom padding on mobile to prevent content from being covered by the tab bar', () => {
     render(
       <AppShell>
         <span>x</span>

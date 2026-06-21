@@ -64,7 +64,7 @@ function GroupDetailContent() {
   if (loading || !group) return null
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 desk:max-w-content desk:mx-auto">
       <header className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-3">
           <h1 className="flex-grow text-2xl font-bold text-mg-text break-words">

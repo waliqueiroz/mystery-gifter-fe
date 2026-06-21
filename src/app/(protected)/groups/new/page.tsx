@@ -20,7 +20,7 @@ export default function NewGroupPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 desk:max-w-content desk:mx-auto">
       <h1 className="text-2xl font-bold text-mg-text">Criar grupo</h1>
       <CreateGroupForm onSuccess={handleSuccess} onCancel={handleCancel} />
     </div>

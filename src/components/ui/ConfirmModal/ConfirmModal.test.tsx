@@ -82,9 +82,9 @@ describe('ConfirmModal', () => {
       expect(buttons.some((btn) => btn.getAttribute('aria-busy') === 'true')).toBe(true)
     })
 
-    it('substitui texto do botão de confirmação por skeleton (sem spinner)', () => {
+    it('substitui texto do botão de confirmação por barra pulsante (sem spinner)', () => {
       render(<ConfirmModal {...baseProps} isLoading />)
-      expect(document.querySelector('.react-loading-skeleton')).not.toBeNull()
+      expect(document.querySelector('.animate-pulse')).not.toBeNull()
       expect(screen.queryByRole('status')).toBeNull()
     })
   })
