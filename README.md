@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mystery Gifter — Frontend
 
-## Getting Started
+Interface web do Mystery Gifter, um sistema de amigo secreto online.  
+Backend: https://github.com/waliqueiroz/mystery-gifter-api
 
-First, run the development server:
+## Stack
+
+- **Framework**: Next.js 15 (App Router) + React 19
+- **Linguagem**: TypeScript 5
+- **Estilização**: Tailwind CSS com tokens customizados
+- **Testes**: Jest + React Testing Library
+- **Ícones**: Lucide React | **Overlays**: Radix UI Dialog
+
+## Pré-requisitos
+
+- Node.js 22+
+- npm 10+
+- Backend rodando em `http://localhost:8080` (ver [repositório do backend](https://github.com/waliqueiroz/mystery-gifter-api))
+
+## Variáveis de ambiente
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variável | Descrição | Padrão |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | URL base do backend (usado pelo proxy Next.js) | `http://localhost:8080` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Rodando localmente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Acesse http://localhost:3000.
 
-To learn more about Next.js, take a look at the following resources:
+## Rodando com Docker
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+docker compose up --build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Por padrão o container aponta para `http://host.docker.internal:8080` (o backend rodando no host). Para apontar para outra URL:
 
-## Deploy on Vercel
+```bash
+NEXT_PUBLIC_API_URL=http://meu-backend:8080 docker compose up --build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+> **Linux**: descomente `extra_hosts` no `docker-compose.yml` para habilitar `host.docker.internal`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+| Comando | Descrição |
+|---|---|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Build de produção |
+| `npm run start` | Servidor de produção |
+| `npm test` | Testes unitários |
+| `npm run test:coverage` | Testes com relatório de cobertura |
+| `npm run lint` | ESLint |
+| `npm run type-check` | Verificação de tipos TypeScript |
+| `npm run format` | Prettier |
+
+## Licença
+
+Apache 2.0 — veja [LICENSE](./LICENSE).
