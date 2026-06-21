@@ -50,6 +50,7 @@ export function BottomTabBar() {
       className={cn(
         'fixed inset-x-0 bottom-0 z-30 border-t border-mg-border/40 bg-mg-surface',
         'pb-[env(safe-area-inset-bottom)]',
+        'desk:hidden',
       )}
     >
       <ul className="mx-auto flex max-w-app">

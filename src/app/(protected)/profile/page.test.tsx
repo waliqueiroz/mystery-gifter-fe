@@ -10,6 +10,13 @@ jest.mock('@/components/profile/LogoutButton/LogoutButton', () => ({
 }))
 
 describe('ProfilePage', () => {
+  it('root container has desk:max-w-content for desktop centering', () => {
+    const { container } = render(<ProfilePage />)
+    const root = container.firstChild as HTMLElement
+    expect(root?.className).toContain('desk:max-w-content')
+    expect(root?.className).toContain('desk:mx-auto')
+  })
+
   it('renders the ProfileCard component', () => {
     render(<ProfilePage />)
     expect(screen.getByTestId('profile-card')).toBeInTheDocument()

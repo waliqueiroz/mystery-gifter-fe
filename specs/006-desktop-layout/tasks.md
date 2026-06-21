@@ -17,7 +17,7 @@
 
 **Objetivo**: Adicionar ao sistema de design os tokens necessários para as classes responsivas desktop. Bloqueia todas as fases seguintes.
 
-- [ ] T001 Atualizar `tailwind.config.ts` adicionando: breakpoint customizado `desk: '896px'` em `theme.extend.screens`, token de largura `sidebar: '220px'` em `theme.extend.width`, e token `content: '640px'` em `theme.extend.maxWidth`
+- [X] T001 Atualizar `tailwind.config.ts` adicionando: breakpoint customizado `desk: '896px'` em `theme.extend.screens`, token de largura `sidebar: '220px'` em `theme.extend.width`, e token `content: '640px'` em `theme.extend.maxWidth`
 
 **Checkpoint**: Classes `desk:*`, `w-sidebar` e `max-w-content` disponíveis em todo o projeto.
 
@@ -29,8 +29,8 @@
 
 **⚠️ CRÍTICO**: Phase 3 (US1) não pode começar sem a Sidebar existir.
 
-- [ ] T002 Criar `src/components/ui/Sidebar/Sidebar.test.tsx` cobrindo: render sem crash, exibe ícone Gift + texto "Mystery Gifter", exibe links "Grupos" e "Perfil", link ativo recebe `aria-current="page"` e classes `text-mg-green`, link inativo NÃO tem `aria-current`, ambos os links são acessíveis via teclado
-- [ ] T003 Criar `src/components/ui/Sidebar/Sidebar.tsx` implementando: `"use client"` (usa `usePathname`), elemento `<nav>` com `aria-label="Navegação principal — desktop"`, seção de brand com `<Icon name="Gift" aria-hidden />` + "Mystery Gifter" em tipografia title, lista de links (Grupos → `/groups`, Perfil → `/profile`) detectando ativo via `pathname.startsWith`, ativo em `text-mg-green`, inativo em `text-mg-text-muted hover:text-mg-text`, `aria-current="page"` no link ativo, fundo `bg-mg-bg`, borda direita `border-r border-mg-border/40`, altura `min-h-screen` (ou `h-screen sticky top-0` para scroll), largura `w-sidebar`
+- [X] T002 Criar `src/components/ui/Sidebar/Sidebar.test.tsx` cobrindo: render sem crash, exibe ícone Gift + texto "Mystery Gifter", exibe links "Grupos" e "Perfil", link ativo recebe `aria-current="page"` e classes `text-mg-green`, link inativo NÃO tem `aria-current`, ambos os links são acessíveis via teclado
+- [X] T003 Criar `src/components/ui/Sidebar/Sidebar.tsx` implementando: `"use client"` (usa `usePathname`), elemento `<nav>` com `aria-label="Navegação principal — desktop"`, seção de brand com `<Icon name="Gift" aria-hidden />` + "Mystery Gifter" em tipografia title, lista de links (Grupos → `/groups`, Perfil → `/profile`) detectando ativo via `pathname.startsWith`, ativo em `text-mg-green`, inativo em `text-mg-text-muted hover:text-mg-text`, `aria-current="page"` no link ativo, fundo `bg-mg-bg`, borda direita `border-r border-mg-border/40`, altura `min-h-screen` (ou `h-screen sticky top-0` para scroll), largura `w-sidebar`
 
 **Checkpoint**: `Sidebar` renderiza corretamente com testes passando. `npm test Sidebar` verde.
 
@@ -44,13 +44,13 @@
 
 ### Testes para US1
 
-- [ ] T004 Atualizar `src/components/ui/AppShell/AppShell.test.tsx` adicionando testes: AppShell renderiza `<Sidebar>` no DOM, AppShell renderiza `<BottomTabBar>` no DOM, main tem classe `flex-1` (desktop), wrapper raiz tem `flex` e `desk:flex-row`
-- [ ] T005 [P] Atualizar `src/components/ui/BottomTabBar/BottomTabBar.test.tsx` adicionando teste: elemento `<nav>` raiz possui a classe `desk:hidden`
+- [X] T004 Atualizar `src/components/ui/AppShell/AppShell.test.tsx` adicionando testes: AppShell renderiza `<Sidebar>` no DOM, AppShell renderiza `<BottomTabBar>` no DOM, main tem classe `flex-1` (desktop), wrapper raiz tem `flex` e `desk:flex-row`
+- [X] T005 [P] Atualizar `src/components/ui/BottomTabBar/BottomTabBar.test.tsx` adicionando teste: elemento `<nav>` raiz possui a classe `desk:hidden`
 
 ### Implementação de US1
 
-- [ ] T006 Atualizar `src/components/ui/AppShell/AppShell.tsx` reestruturando para layout responsivo: wrapper raiz passa a `flex desk:flex-row min-h-dvh bg-mg-bg text-mg-text`; adicionar `<Sidebar />` com `hidden desk:flex flex-col w-sidebar shrink-0`; `<main>` passa a `flex-1 min-w-0 mx-auto max-w-app px-4 pt-6 pb-[calc(...)] desk:max-w-none desk:mx-0 desk:px-6 desk:pb-6`; remover `max-w-app` e padding de bottom tab bar no breakpoint desktop; manter `<SkeletonProvider>` e `<BottomTabBar>`
-- [ ] T007 [P] Atualizar `src/components/ui/BottomTabBar/BottomTabBar.tsx` adicionando classe `desk:hidden` ao elemento `<nav>` raiz (uma linha de mudança)
+- [X] T006 Atualizar `src/components/ui/AppShell/AppShell.tsx` reestruturando para layout responsivo: wrapper raiz passa a `flex desk:flex-row min-h-dvh bg-mg-bg text-mg-text`; adicionar `<Sidebar />` com `hidden desk:flex flex-col w-sidebar shrink-0`; `<main>` passa a `flex-1 min-w-0 mx-auto max-w-app px-4 pt-6 pb-[calc(...)] desk:max-w-none desk:mx-0 desk:px-6 desk:pb-6`; remover `max-w-app` e padding de bottom tab bar no breakpoint desktop; manter `<SkeletonProvider>` e `<BottomTabBar>`
+- [X] T007 [P] Atualizar `src/components/ui/BottomTabBar/BottomTabBar.tsx` adicionando classe `desk:hidden` ao elemento `<nav>` raiz (uma linha de mudança)
 
 **Checkpoint**: US1 completa. Sidebar visível em ≥896px, bottom tab bar oculta. Mobile inalterado. `npm test` verde para AppShell e BottomTabBar.
 
@@ -64,11 +64,11 @@
 
 ### Testes para US2
 
-- [ ] T008 Atualizar `src/components/groups/GroupList/GroupList.test.tsx` adicionando testes: container de cards tem classe `grid` (não mais `flex`), container de cards tem `grid-cols-1`, container de skeleton (`data-testid="group-list-skeleton"`) também tem classe `grid`
+- [X] T008 Atualizar `src/components/groups/GroupList/GroupList.test.tsx` adicionando testes: container de cards tem classe `grid` (não mais `flex`), container de cards tem `grid-cols-1`, container de skeleton (`data-testid="group-list-skeleton"`) também tem classe `grid`
 
 ### Implementação de US2
 
-- [ ] T009 Atualizar `src/components/groups/GroupList/GroupList.tsx` alterando o container de cards de `flex flex-col gap-3` para `grid grid-cols-1 gap-3 desk:grid-cols-2 xl:grid-cols-3`, e aplicando as mesmas classes no container de skeletons da função `SkeletonList`
+- [X] T009 Atualizar `src/components/groups/GroupList/GroupList.tsx` alterando o container de cards de `flex flex-col gap-3` para `grid grid-cols-1 gap-3 desk:grid-cols-2 xl:grid-cols-3`, e aplicando as mesmas classes no container de skeletons da função `SkeletonList`
 
 **Checkpoint**: US2 completa. Grade responsiva funciona com cards, skeletons e estado vazio. `npm test GroupList` verde.
 
@@ -84,23 +84,23 @@
 
 ### Páginas Públicas (paralelas entre si; dependem de T001)
 
-- [ ] T010 [P] [US3] Atualizar `src/components/login/LoginForm/LoginForm.tsx` adicionando `mx-auto max-w-content` ao container raiz do formulário (wrapper `<div>` ou `<form>` mais externo)
-- [ ] T011 [P] [US3] Atualizar `src/components/login/LoginForm/LoginForm.test.tsx` verificando que o container raiz possui `max-w-content`
-- [ ] T012 [P] [US3] Atualizar o componente de cadastro (verificar caminho real: provavelmente `src/components/register/RegisterForm/RegisterForm.tsx` ou inline em `src/app/(public)/register/page.tsx`) adicionando `mx-auto max-w-content` ao container raiz
-- [ ] T013 [P] [US3] Atualizar o teste correspondente ao componente de cadastro verificando o `max-w-content`
-- [ ] T014 [P] [US3] Atualizar a página pública de aceite de convite (verificar caminho real: componente filho de `src/app/invite/[token]/page.tsx`) adicionando `mx-auto max-w-content` ao container raiz
-- [ ] T015 [P] [US3] Atualizar `src/app/invite/[token]/page.test.tsx` verificando o `max-w-content` no container
+- [X] T010 [P] [US3] Atualizar `src/components/login/LoginForm/LoginForm.tsx` adicionando `mx-auto max-w-content` ao container raiz do formulário (wrapper `<div>` ou `<form>` mais externo)
+- [X] T011 [P] [US3] Atualizar `src/components/login/LoginForm/LoginForm.test.tsx` verificando que o container raiz possui `max-w-content`
+- [X] T012 [P] [US3] Atualizar o componente de cadastro (verificar caminho real: provavelmente `src/components/register/RegisterForm/RegisterForm.tsx` ou inline em `src/app/(public)/register/page.tsx`) adicionando `mx-auto max-w-content` ao container raiz
+- [X] T013 [P] [US3] Atualizar o teste correspondente ao componente de cadastro verificando o `max-w-content`
+- [X] T014 [P] [US3] Atualizar a página pública de aceite de convite (verificar caminho real: componente filho de `src/app/invite/[token]/page.tsx`) adicionando `mx-auto max-w-content` ao container raiz
+- [X] T015 [P] [US3] Atualizar `src/app/invite/[token]/page.test.tsx` verificando o `max-w-content` no container
 
 ### Páginas Protegidas (paralelas entre si; dependem de T006)
 
-- [ ] T016 [P] [US3] Atualizar `src/components/groups/CreateGroupForm/CreateGroupForm.tsx` adicionando `mx-auto max-w-content` ao container raiz do formulário
-- [ ] T017 [P] [US3] Atualizar `src/components/groups/CreateGroupForm/CreateGroupForm.test.tsx` verificando `max-w-content` no container raiz
-- [ ] T018 [P] [US3] Atualizar `src/app/(protected)/groups/[id]/page.tsx` (função `GroupDetailContent`) adicionando `desk:max-w-content desk:mx-auto` ao `<div>` raiz do conteúdo
-- [ ] T019 [P] [US3] Atualizar `src/app/(protected)/groups/[id]/page.test.tsx` verificando `max-w-content` no container de detalhe
-- [ ] T020 [P] [US3] Atualizar a página/componente de convite de membro (verificar caminho: `src/app/(protected)/groups/[id]/invite/page.tsx` ou componente filho) adicionando `mx-auto max-w-content`
-- [ ] T021 [P] [US3] Atualizar `src/app/(protected)/groups/[id]/invite/page.test.tsx` verificando `max-w-content`
-- [ ] T022 [P] [US3] Atualizar a página/componente de perfil (verificar caminho: `src/app/(protected)/profile/page.tsx` ou componente filho) adicionando `mx-auto max-w-content`
-- [ ] T023 [P] [US3] Atualizar `src/app/(protected)/profile/page.test.tsx` verificando `max-w-content`
+- [X] T016 [P] [US3] Atualizar `src/components/groups/CreateGroupForm/CreateGroupForm.tsx` adicionando `mx-auto max-w-content` ao container raiz do formulário
+- [X] T017 [P] [US3] Atualizar `src/components/groups/CreateGroupForm/CreateGroupForm.test.tsx` verificando `max-w-content` no container raiz
+- [X] T018 [P] [US3] Atualizar `src/app/(protected)/groups/[id]/page.tsx` (função `GroupDetailContent`) adicionando `desk:max-w-content desk:mx-auto` ao `<div>` raiz do conteúdo
+- [X] T019 [P] [US3] Atualizar `src/app/(protected)/groups/[id]/page.test.tsx` verificando `max-w-content` no container de detalhe
+- [X] T020 [P] [US3] Atualizar a página/componente de convite de membro (verificar caminho: `src/app/(protected)/groups/[id]/invite/page.tsx` ou componente filho) adicionando `mx-auto max-w-content`
+- [X] T021 [P] [US3] Atualizar `src/app/(protected)/groups/[id]/invite/page.test.tsx` verificando `max-w-content`
+- [X] T022 [P] [US3] Atualizar a página/componente de perfil (verificar caminho: `src/app/(protected)/profile/page.tsx` ou componente filho) adicionando `mx-auto max-w-content`
+- [X] T023 [P] [US3] Atualizar `src/app/(protected)/profile/page.test.tsx` verificando `max-w-content`
 
 **Checkpoint**: US3 completa. Todos os formulários e páginas de detalhe exibem `max-w-content` centralizado em desktop. `npm test` verde em todas as páginas modificadas.
 
@@ -110,7 +110,7 @@
 
 **Objetivo**: Atualizar a constituição para refletir o design responsivo implementado e remover as regras obsoletas que conflitam com a feature 006.
 
-- [ ] T024 Atualizar `.specify/memory/constitution.md` fazendo: (1) atualizar Princípio III removendo "conteúdo permanece centralizado dentro de max-w-app" e substituindo pela regra de layout adaptativo (≥896px → sidebar + conteúdo expandido; <896px → mobile inalterado); (2) atualizar regra de navegação de "bottom tab bar persistente em todas as larguras" para "navegação adaptativa: bottom tab bar em mobile, sidebar em desktop"; (3) bump de versão `2.0.0` → `2.1.0`; (4) atualizar `Last Amended` para a data do merge da feature
+- [X] T024 Atualizar `.specify/memory/constitution.md` fazendo: (1) atualizar Princípio III removendo "conteúdo permanece centralizado dentro de max-w-app" e substituindo pela regra de layout adaptativo (≥896px → sidebar + conteúdo expandido; <896px → mobile inalterado); (2) atualizar regra de navegação de "bottom tab bar persistente em todas as larguras" para "navegação adaptativa: bottom tab bar em mobile, sidebar em desktop"; (3) bump de versão `2.0.0` → `2.1.0`; (4) atualizar `Last Amended` para a data do merge da feature
 
 **Checkpoint**: Constituição v2.1.0 reflete o estado real do produto sem contradições.
 

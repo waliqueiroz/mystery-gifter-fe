@@ -22,7 +22,7 @@ export default function InvitePage() {
 
   return (
     <div className="min-h-dvh flex items-center justify-center bg-mg-bg px-4">
-      <div className="w-full max-w-app">
+      <div className="w-full max-w-content">
         <InviteJoinCard token={token} />
       </div>
     </div>

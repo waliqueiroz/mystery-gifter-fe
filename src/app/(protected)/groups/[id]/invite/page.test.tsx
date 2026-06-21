@@ -92,6 +92,15 @@ beforeEach(() => {
 })
 
 describe('InvitePage', () => {
+  it('root container has desk:max-w-content for desktop centering', async () => {
+    mockGetGroup.mockResolvedValue(makeGroup())
+    mockGetActiveInvite.mockResolvedValue(mockInvite)
+    const { container } = render(<InvitePage />)
+    await screen.findByRole('heading', { name: /convite/i })
+    const root = container.querySelector('[class*="desk:max-w-content"]')
+    expect(root).not.toBeNull()
+  })
+
   it('renders "Convite" heading and back button', async () => {
     mockGetGroup.mockResolvedValue(makeGroup())
     mockGetActiveInvite.mockResolvedValue(mockInvite)

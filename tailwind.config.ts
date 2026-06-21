@@ -14,6 +14,9 @@ const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      screens: {
+        desk: '896px',
+      },
       colors: {
         mg: {
           // Backgrounds e superfícies (depth via shade variation)
@@ -79,9 +82,14 @@ const config: Config = {
         'mg-inset':
           'rgb(18, 18, 18) 0px 1px 0px, rgb(124, 124, 124) 0px 0px 0px 1px inset',
       },
+      width: {
+        sidebar: '220px',
+      },
       maxWidth: {
-        // Container app-like em desktop (PR-007 + FR-022)
+        // Container app-like em mobile
         app: '480px',
+        // Max-width para formulários e páginas de detalhe em desktop
+        content: '640px',
       },
       keyframes: {
         // Animação de revelação: fade + leve spring para momentos de destaque

@@ -22,7 +22,7 @@ const SKELETON_PLACEHOLDER_COUNT = 5
 
 function SkeletonList() {
   return (
-    <div className="flex flex-col gap-3" data-testid="group-list-skeleton">
+    <div className="grid grid-cols-1 gap-3 desk:grid-cols-2 xl:grid-cols-3" data-testid="group-list-skeleton">
       {Array.from({ length: SKELETON_PLACEHOLDER_COUNT }).map((_, i) => (
         <SkeletonBox key={i} height={72} borderRadius={8} />
       ))}
@@ -158,7 +158,7 @@ export function GroupList() {
         <GroupEmptyState />
       ) : (
         <>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 gap-3 desk:grid-cols-2 xl:grid-cols-3" data-testid="group-card-grid">
             {groups.map((group) => (
               <GroupCard key={group.id} group={group} />
             ))}

@@ -115,6 +115,25 @@ describe('GroupList', () => {
     expect(screen.getByText('Grupo g2')).toBeInTheDocument()
   })
 
+  it('card container uses CSS grid layout for responsive multi-column support', async () => {
+    mockListGroups.mockResolvedValue(makeResult([makeGroup('g1')]))
+    render(<GroupList />)
+    await screen.findByText('Grupo g1')
+    const gridContainer = screen.getByTestId('group-card-grid')
+    expect(gridContainer).toHaveClass('grid')
+    expect(gridContainer).toHaveClass('grid-cols-1')
+  })
+
+  it('skeleton container also uses CSS grid for layout consistency during loading', async () => {
+    jest.useFakeTimers()
+    mockListGroups.mockReturnValue(new Promise(() => {}))
+    render(<GroupList />)
+    act(() => { jest.advanceTimersByTime(160) })
+    const skeleton = screen.getByTestId('group-list-skeleton')
+    expect(skeleton).toHaveClass('grid')
+    jest.useRealTimers()
+  })
+
   it('displays empty state when there are no groups', async () => {
     mockListGroups.mockResolvedValue(makeResult([]))
     render(<GroupList />)

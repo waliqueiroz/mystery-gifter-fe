@@ -34,11 +34,17 @@ describe('BottomTabBar', () => {
     ).toBeInTheDocument()
   })
 
-  it('applies fixed bottom positioning at all widths', () => {
+  it('applies fixed bottom positioning on mobile', () => {
     render(<BottomTabBar />)
     const nav = screen.getByRole('navigation')
     expect(nav).toHaveClass('fixed')
     expect(nav).toHaveClass('bottom-0')
+  })
+
+  it('is hidden on desktop via desk:hidden class', () => {
+    render(<BottomTabBar />)
+    const nav = screen.getByRole('navigation')
+    expect(nav).toHaveClass('desk:hidden')
   })
 
   it('applies padding-bottom respecting safe-area-inset-bottom (iOS)', () => {
