@@ -32,7 +32,6 @@ function SkeletonList() {
 
 export function GroupList() {
   const user = useUser()
-  const userId = user?.id ?? null
   const { showToast } = useToast()
 
   const [groups, setGroups] = useState<GroupSummary[]>([])
@@ -59,10 +58,9 @@ export function GroupList() {
       append: boolean,
       activeFilters: GroupFilterParams,
     ) => {
-      if (!userId) return
+      if (!user) return
       try {
         const result = await listGroups({
-          userId,
           offset,
           limit: PAGE_SIZE,
           name: activeFilters.name || undefined,
@@ -82,11 +80,11 @@ export function GroupList() {
         }
       }
     },
-    [userId, showToast],
+    [user, showToast],
   )
 
   useEffect(() => {
-    if (!userId) return
+    if (!user) return
     async function load() {
       setLoadingInitial(true)
       setError(null)
@@ -98,7 +96,7 @@ export function GroupList() {
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchGroups, userId])
+  }, [fetchGroups, user])
 
   async function handleFilterChange(next: GroupFilterParams) {
     setFilters(next)

@@ -23,7 +23,7 @@ export function MemberList({
 }: MemberListProps) {
   const { showToast } = useToast()
   const [removingId, setRemovingId] = useState<string | null>(null)
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const isOwner = currentUserId === group.owner_id
   const canRemove = group.status === 'OPEN'
 
@@ -60,7 +60,13 @@ export function MemberList({
             >
               <button
                 type="button"
-                onClick={() => setSelectedUserId(user.id)}
+                onClick={() => {
+                  if (user) {
+                    setSelectedUser(user)
+                  } else {
+                    showToast({ message: 'Não foi possível carregar o perfil.', type: 'error' })
+                  }
+                }}
                 aria-label={`Ver perfil de ${user.name} ${user.surname}`}
                 className={cn(
                   'flex flex-grow items-center gap-2 rounded-card px-1 py-1 text-left text-sm text-mg-text',
@@ -110,8 +116,8 @@ export function MemberList({
         })}
       </ul>
       <MemberProfileSheet
-        userId={selectedUserId}
-        onClose={() => setSelectedUserId(null)}
+        user={selectedUser}
+        onClose={() => setSelectedUser(null)}
       />
     </section>
   )
