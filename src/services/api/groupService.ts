@@ -2,7 +2,6 @@ import type { Group, GroupSearchResult, CreateGroupPayload, ListGroupsParams } f
 import { http } from './client'
 
 export function listGroups({
-  userId,
   offset = 0,
   limit = 15,
   name,
@@ -10,7 +9,6 @@ export function listGroups({
   sortDirection = 'DESC',
 }: ListGroupsParams): Promise<GroupSearchResult> {
   const params = new URLSearchParams({
-    user_id: userId,
     limit: String(limit),
     offset: String(offset),
     sort_by: 'created_at',

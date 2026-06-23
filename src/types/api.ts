@@ -123,7 +123,6 @@ export interface CreateGroupPayload {
 
 /** Query params for GET /api/v1/groups */
 export interface ListGroupsParams {
-  userId: string
   offset?: number
   limit?: number
   name?: string
