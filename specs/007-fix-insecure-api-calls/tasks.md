@@ -22,13 +22,13 @@ Esta feature é exclusivamente uma refatoração em arquivos existentes. Nenhuma
 
 **Independent Test**: Abrir a tela de detalhes de um grupo, clicar em um membro e verificar no DevTools (aba Network) que nenhuma requisição para `/api/v1/users/` é disparada. O painel deve abrir em menos de 50ms.
 
-- [ ] T001 [US1] Refatorar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx`: alterar prop de `userId: string | null` para `user: User | null`; remover imports de `getUserById`, `useCallback`, `useEffect`, `useDelayedFlag`, `NotFoundError`; remover estados `loading`, `error`, `userData` e a função `fetchUser`; remover renderização de skeleton e estado de erro; renderizar `user.name`, `user.surname`, `user.email` diretamente da prop
-- [ ] T002 [US1] Atualizar `src/components/groups/MemberList/MemberList.tsx`: renomear estado `selectedUserId: string | null` para `selectedUser: User | null`; alterar `setSelectedUserId(user.id)` para `setSelectedUser(user)` no onClick; adicionar guard de toast se `user` for falsy (defesa de runtime); atualizar `<MemberProfileSheet user={selectedUser} onClose={() => setSelectedUser(null)} />`
-- [ ] T003 [P] [US1] Atualizar `src/components/groups/MemberProfileSheet/MemberProfileSheet.test.tsx`: adaptar testes para nova assinatura de props (`user: User | null` em vez de `userId`); remover testes de estados de loading, erro de rede e retry; adicionar testes para: sheet abre quando `user !== null`, exibe nome/sobrenome/email, fecha via `onClose`
-- [ ] T004 [P] [US1] Atualizar `src/components/groups/MemberList/MemberList.test.tsx`: atualizar mocks e asserções para refletir que o clique no membro agora passa o objeto `User` completo ao `MemberProfileSheet` em vez do `userId`
-- [ ] T005 [US1] Excluir `src/services/api/userService.ts` (arquivo inteiro — `getUserById` era a única função)
-- [ ] T006 [US1] Excluir `src/services/api/userService.test.ts` (arquivo inteiro — testava apenas `getUserById`)
-- [ ] T007 [US1] Executar `npx jest --testPathPattern="MemberProfileSheet|MemberList"` e corrigir qualquer falha antes de prosseguir
+- [x] T001 [US1] Refatorar `src/components/groups/MemberProfileSheet/MemberProfileSheet.tsx`: alterar prop de `userId: string | null` para `user: User | null`; remover imports de `getUserById`, `useCallback`, `useEffect`, `useDelayedFlag`, `NotFoundError`; remover estados `loading`, `error`, `userData` e a função `fetchUser`; remover renderização de skeleton e estado de erro; renderizar `user.name`, `user.surname`, `user.email` diretamente da prop
+- [x] T002 [US1] Atualizar `src/components/groups/MemberList/MemberList.tsx`: renomear estado `selectedUserId: string | null` para `selectedUser: User | null`; alterar `setSelectedUserId(user.id)` para `setSelectedUser(user)` no onClick; adicionar guard de toast se `user` for falsy (defesa de runtime); atualizar `<MemberProfileSheet user={selectedUser} onClose={() => setSelectedUser(null)} />`
+- [x] T003 [P] [US1] Atualizar `src/components/groups/MemberProfileSheet/MemberProfileSheet.test.tsx`: adaptar testes para nova assinatura de props (`user: User | null` em vez de `userId`); remover testes de estados de loading, erro de rede e retry; adicionar testes para: sheet abre quando `user !== null`, exibe nome/sobrenome/email, fecha via `onClose`
+- [x] T004 [P] [US1] Atualizar `src/components/groups/MemberList/MemberList.test.tsx`: atualizar mocks e asserções para refletir que o clique no membro agora passa o objeto `User` completo ao `MemberProfileSheet` em vez do `userId`
+- [x] T005 [US1] Excluir `src/services/api/userService.ts` (arquivo inteiro — `getUserById` era a única função)
+- [x] T006 [US1] Excluir `src/services/api/userService.test.ts` (arquivo inteiro — testava apenas `getUserById`)
+- [x] T007 [US1] Executar `npx jest --testPathPattern="MemberProfileSheet|MemberList"` e corrigir qualquer falha antes de prosseguir
 
 **Checkpoint**: Nenhuma referência a `getUserById` ou `/api/v1/users/:id` existe no codebase. Testes de `MemberProfileSheet` e `MemberList` passam. Abrir o perfil de um membro não gera chamada de rede.
 
@@ -40,11 +40,11 @@ Esta feature é exclusivamente uma refatoração em arquivos existentes. Nenhuma
 
 **Independent Test**: Acessar a tela de grupos e verificar no DevTools (aba Network) que a URL da chamada não contém `user_id=`. Os grupos continuam sendo exibidos corretamente.
 
-- [ ] T008 [US2] Remover o campo `userId: string` de `ListGroupsParams` em `src/types/api.ts`
-- [ ] T009 [US2] Remover `user_id: userId` da construção de `URLSearchParams` em `src/services/api/groupService.ts`; remover `userId` do parâmetro `{ userId, offset, ... }` da função `listGroups`
-- [ ] T010 [US2] Atualizar `src/components/groups/GroupList/GroupList.tsx`: remover `userId` do argumento passado a `listGroups`; substituir guard `if (!userId)` por `if (!user)` nas verificações de carregamento
-- [ ] T011 [US2] Atualizar testes de `src/services/api/groupService.test.ts`: remover assertions que verificam `user_id=u1` na URL; atualizar chamadas de `listGroups({ userId: 'u1', ... })` para `listGroups({ offset: 0, limit: 15, ... })`
-- [ ] T012 [US2] Executar `npx jest --testPathPattern="groupService|GroupList"` e corrigir qualquer falha antes de prosseguir
+- [x] T008 [US2] Remover o campo `userId: string` de `ListGroupsParams` em `src/types/api.ts`
+- [x] T009 [US2] Remover `user_id: userId` da construção de `URLSearchParams` em `src/services/api/groupService.ts`; remover `userId` do parâmetro `{ userId, offset, ... }` da função `listGroups`
+- [x] T010 [US2] Atualizar `src/components/groups/GroupList/GroupList.tsx`: remover `userId` do argumento passado a `listGroups`; substituir guard `if (!userId)` por `if (!user)` nas verificações de carregamento
+- [x] T011 [US2] Atualizar testes de `src/services/api/groupService.test.ts`: remover assertions que verificam `user_id=u1` na URL; atualizar chamadas de `listGroups({ userId: 'u1', ... })` para `listGroups({ offset: 0, limit: 15, ... })`
+- [x] T012 [US2] Executar `npx jest --testPathPattern="groupService|GroupList"` e corrigir qualquer falha antes de prosseguir
 
 **Checkpoint**: Nenhuma referência a `userId` em `ListGroupsParams` ou na URL de `listGroups`. Testes de `groupService` passam. A tela de grupos carrega normalmente.
 
@@ -54,7 +54,7 @@ Esta feature é exclusivamente uma refatoração em arquivos existentes. Nenhuma
 
 **Propósito**: Confirmar ausência de regressões em toda a suite antes de abrir PR.
 
-- [ ] T013 Executar `npx jest` (suite completa) e confirmar que todos os testes passam sem regressões
+- [x] T013 Executar `npx jest` (suite completa) e confirmar que todos os testes passam sem regressões
 
 ---
 

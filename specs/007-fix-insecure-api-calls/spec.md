@@ -2,7 +2,7 @@
 
 **Feature Branch**: `007-fix-insecure-api-calls`
 **Created**: 2026-06-22
-**Status**: Draft
+**Status**: Done
 **Input**: User description: "Corrigir consumo de endpoints inseguros no frontend: remover chamada ao GET /users/:id no MemberProfileSheet usando dados já disponíveis no grupo, e ajustar chamada ao GET /groups para não enviar user_id como query param"
 
 ## User Scenarios & Testing *(mandatory)*
