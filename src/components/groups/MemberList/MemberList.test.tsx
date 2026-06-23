@@ -17,14 +17,14 @@ jest.mock(
   '@/components/groups/MemberProfileSheet/MemberProfileSheet',
   () => ({
     MemberProfileSheet: ({
-      userId,
+      user,
       onClose,
     }: {
-      userId: string | null
+      user: User | null
       onClose: () => void
     }) =>
-      userId ? (
-        <div data-testid="member-profile-sheet" data-userid={userId}>
+      user ? (
+        <div data-testid="member-profile-sheet" data-userid={user.id}>
           <button onClick={onClose}>Fechar sheet</button>
         </div>
       ) : null,
@@ -182,7 +182,7 @@ describe('MemberList', () => {
     ).toBeInTheDocument()
   })
 
-  it('clicking the name opens MemberProfileSheet with the correct userId', async () => {
+  it('clicking the name opens MemberProfileSheet with the correct user', async () => {
     render(
       <MemberList
         group={baseGroup}
@@ -198,7 +198,7 @@ describe('MemberList', () => {
     expect(sheet).toHaveAttribute('data-userid', 'u2')
   })
 
-  it('onClose of the sheet resets selectedUserId (sheet hidden)', async () => {
+  it('onClose of the sheet resets selectedUser (sheet hidden)', async () => {
     render(
       <MemberList
         group={baseGroup}

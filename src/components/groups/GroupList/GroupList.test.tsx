@@ -195,7 +195,7 @@ describe('GroupList', () => {
     ).toHaveAttribute('href', '/groups/new')
   })
 
-  it('calls listGroups with the userId from context', async () => {
+  it('calls listGroups when the context user is present (no user_id param)', async () => {
     mockUseUser.mockReturnValue({
       id: 'user-42',
       name: 'Test',
@@ -206,7 +206,7 @@ describe('GroupList', () => {
     render(<GroupList />)
     await waitFor(() =>
       expect(mockListGroups).toHaveBeenCalledWith(
-        expect.objectContaining({ userId: 'user-42' }),
+        expect.not.objectContaining({ userId: expect.anything() }),
       ),
     )
   })
